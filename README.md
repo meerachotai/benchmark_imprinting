@@ -1,2 +1,1 @@
-# benchmark_imprinting
-Benchmarking plant imprinting data analysis pipelines (in progress)
+# Benchmarking Plant Imprinting Data Analysis Pipelines
