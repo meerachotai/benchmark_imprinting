@@ -67,4 +67,4 @@ Log files of interest:
 
 The files produced at the end will be: annotations and FASTA files for both strainA and strainB, which can then be used for step 2, where you simulate reads using these simulated genomes.
 
-Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime
+Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime 
