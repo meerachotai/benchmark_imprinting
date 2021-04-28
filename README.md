@@ -2,6 +2,7 @@
 ## Step 1: Simulating genomes:
 
 Run file: simulate_genome.sh
+
 Note on running file: for now, it does everything in the current directory so navigate to the right directory first (need to change that later)
 
 Dependencies (that are not on loadenv): 
