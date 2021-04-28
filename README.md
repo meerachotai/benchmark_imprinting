@@ -4,6 +4,7 @@
 ### Run file: simulate_genome.sh
 
 Note on running file: for now, it does everything in the current directory so navigate to the right directory first (need to change that later)
+
 I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime 
 
 ### Dependencies: 
