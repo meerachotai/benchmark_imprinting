@@ -77,7 +77,7 @@ Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 m
 
 ### Run file: simulate_reads.sh
 
-Dependencies (already on loadenv):
+Dependencies:
 * R
 
 Helper scripts required: (enter directory for helper scripts under option -d)
