@@ -62,7 +62,7 @@ mkdir $strainA
 gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
 ```
 Log files of interest:
-* per_chrom/un_edited_chr - a list of chromosomes that weren't added to strainB because simuG had to be killed
+* per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
 * per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 The files produced at the end will be: annotations and FASTA files for both strainA and strainB, which can then be used for step 2, where you simulate reads using these simulated genomes.
