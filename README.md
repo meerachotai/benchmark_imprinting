@@ -79,10 +79,10 @@ Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 m
 
 Again, works in current directory.
 
-Dependencies:
+### Dependencies:
 * R
 
-Helper scripts required: (enter directory for helper scripts under option -d)
+### Helper scripts required: (enter directory for helper scripts under option -d)
 * simulated_read-counts.R
 * reads_simul.R
 
