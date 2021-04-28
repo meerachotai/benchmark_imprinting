@@ -1,28 +1,29 @@
 # Benchmarking Imprinting Data Analysis Pipelines
 ## Step 1: Simulating genomes:
 
-Run file: simulate_genome.sh
+### Run file: simulate_genome.sh
 
 Note on running file: for now, it does everything in the current directory so navigate to the right directory first (need to change that later)
 
-Dependencies (that are not on loadenv): 
+### Dependencies: 
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
 * simuG (https://github.com/yjx1217/simuG, enter directory for simuG under option -D)
+* Others (will update): R, samtools
 
-Others (will update): R, samtools
-
-Helper scripts required: (enter directory for helper scripts under option -d)
+### Helper scripts required: 
+(enter directory for helper scripts under option -d)
 * edit_genome.sh
 * make_annot.R
 * inv_transform_sampling.R 
 * scoring.R
 
-A quick summary of the options is below:
+### Summary of options
 ```
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
 -r original reference genome (from which strainA genome will be simulated)
+-a original annotation (from which strainA genome will be simulated)
 -D simuG directory
 -d helper scripts directory
 -S similarity score (in %)
@@ -66,6 +67,53 @@ Log files of interest:
 * per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
 * per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
-The files produced at the end will be: annotations and FASTA files for both strainA and strainB, which can then be used for step 2, where you simulate reads using these simulated genomes.
+### Output:
+
+Annotations and FASTA files for both strainA and strainB
 
 Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime 
+
+## Step 2: Simulating reads
+
+### Run file: simulate_reads.sh
+
+Dependencies (already on loadenv):
+* R
+
+Helper scripts required: (enter directory for helper scripts under option -d)
+* simulated_read-counts.R
+* reads_simul.R
+
+### Summary of options:
+```
+-A strainA (for file and folder names)
+-B strainB (for file and folder names)
+-d helper scripts directory
+-m number of MEGs to be simulated
+-p number of PEGs to be simulated
+-u number of unbiased genes to be simulated
+-M %maternal bias for MEGs
+-P %maternal bias for PEGs
+-r read length for FASTQ files
+-R number of replicates to be simulated (needed for DESeq2 specifically)
+-s seed
+```
+
+Sample command:
+ ```
+scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
+strainA="cviA"
+strainB="cviB"
+
+$scripts_dir/simulate_reads_opt.sh -A $strainA -B $strainB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25
+```
+
+### Output:
+
+FASTQ (.fq) files that match counts simulated.
+
+Other relevant files: 
+* reads_simul/simul_counts+id_A.txt and reads_simul/simul_counts+id_A.txt will give a summary of transcript/'chromosome' ids alongisde read counts
+* counts_simul_megs.txt and counts_simul_pegs.txt will give true MEG and PEG lists (to use in verifying imprinting calls)
+
+
