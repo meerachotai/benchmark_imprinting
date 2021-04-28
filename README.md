@@ -16,6 +16,7 @@ Helper scripts required: (enter directory for helper scripts under option -d)
 * edit_genome.sh
 * make_annot.R
 * inv_transform_sampling.R 
+* scoring.R
 
 A quick summary of the options is below:
 ```
