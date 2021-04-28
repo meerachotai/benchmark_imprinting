@@ -131,7 +131,7 @@ do
 	done
 done
 
-for f in per_chrom/*.simseq.genome.fa ; do sed -e '$s/$//' $f ; done > ${new_strain}/${new_strain}_genome.fa	
+for f in $(ls -v per_chrom/*.simseq.genome.fa) ; do sed -e '$s/$//' $f ; done > ${new_strain}/${new_strain}_genome.fa
 
 # rm per_chrom/seed_reproducibility.txt
 # echo "chosen seed: ${seed}" > per_chrom/seed_reproducibility.txt
