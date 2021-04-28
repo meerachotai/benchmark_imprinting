@@ -4,6 +4,7 @@
 ### Run file: simulate_genome.sh
 
 Note on running file: for now, it does everything in the current directory so navigate to the right directory first (need to change that later)
+I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime 
 
 ### Dependencies: 
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
@@ -63,15 +64,13 @@ I'm currently having some difficulty with placing gffread on $PATH while the scr
 mkdir $strainA
 gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
 ```
-Log files of interest:
-* per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
-* per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
-
 ### Output:
 
 Annotations and FASTA files for both strainA and strainB
 
-Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation, might need to optimize runtime 
+Log files of interest:
+* per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
+* per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 ## Step 2: Simulating reads
 
