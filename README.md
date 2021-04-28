@@ -77,6 +77,8 @@ Note: I have only tried it with 50 chromosomes (-n 50), and it takes around 10 m
 
 ### Run file: simulate_reads.sh
 
+Again, works in current directory.
+
 Dependencies:
 * R
 
