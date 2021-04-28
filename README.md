@@ -20,7 +20,7 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 * inv_transform_sampling.R 
 * scoring.R
 
-### Summary of options
+### Options:
 ```
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
@@ -87,7 +87,7 @@ Again, works in current directory.
 * simulated_read-counts.R
 * reads_simul.R
 
-### Summary of options:
+### Options:
 ```
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
