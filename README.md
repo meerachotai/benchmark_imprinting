@@ -116,7 +116,7 @@ $scripts_dir/simulate_reads_opt.sh -A $strainA -B $strainB -d $scripts_dir -s 5 
 FASTQ (.fq) files that match counts simulated.
 
 Other relevant files: 
-* reads_simul/simul_counts+id_A.txt and reads_simul/simul_counts+id_A.txt - give sa summary of transcript/'chromosome' ids alongside read counts
-* counts_simul_megs.txt and counts_simul_pegs.txt - gives true MEG and PEG lists to use in verifying imprinting calls
+* reads_simul/simul_counts+id_A.txt and reads_simul/simul_counts+id_A.txt - a summary of transcript/'chromosome' ids alongside read counts
+* counts_simul_megs.txt and counts_simul_pegs.txt - true MEG and PEG lists to use in verifying imprinting calls
 
 
