@@ -82,7 +82,8 @@ Again, works in current directory.
 ### Dependencies:
 * R
 
-### Helper scripts required: (enter directory for helper scripts under option -d)
+### Helper scripts required: 
+(enter directory for helper scripts under option -d)
 * simulated_read-counts.R
 * reads_simul.R
 
