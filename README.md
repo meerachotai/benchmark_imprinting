@@ -1,4 +1,4 @@
-# Benchmarking Plant Imprinting Data Analysis Pipelines
+# Benchmarking Imprinting Data Analysis Pipelines
 ## Step 1: Simulating genomes:
 
 Run file: simulate_genome.sh
