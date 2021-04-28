@@ -48,8 +48,8 @@ ref="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.chr.all.v2.0.fasta"
 annot="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
 scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 simuG="${scripts_dir}/simuG"
-strainA=cviA
-strainB=cviB
+strainA="cviA"
+strainB="cviB"
 
 mkdir simul_trial
 cd simul_trial
@@ -58,7 +58,7 @@ cd simul_trial
 ```
 Other notes: I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
-mkdir strainA
+mkdir $strainA
 gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
 ```
 Log files of interest:
