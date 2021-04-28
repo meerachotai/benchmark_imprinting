@@ -57,7 +57,7 @@ cd simul_trial
 
 ./simulate_genome.sh -r $ref -a $annot -A $strainA -B $strainB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5
 ```
-Other notes: I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
+I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
 mkdir $strainA
 gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
