@@ -108,6 +108,7 @@ scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 strainA="cviA"
 strainB="cviB"
 
+cd simul_trial # directory where simulated genomes are located
 $scripts_dir/simulate_reads_opt.sh -A $strainA -B $strainB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25
 ```
 
