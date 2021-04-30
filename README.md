@@ -73,6 +73,8 @@ Log files of interest:
 * per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
 * per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
+Other notes: this script produces a table called \*\_seq.txt from the FASTA files, which would potentially take up additional memory if a large genome is simulated. I'm instead going to use the Biostrings library in R to read in a FASTA file directly to do the scoring and (in step 2) read simulating (will add to dependencies).
+
 ## Step 2: Simulating reads
 
 ### Run file: simulate_reads.sh
