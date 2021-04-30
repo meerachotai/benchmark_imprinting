@@ -23,14 +23,6 @@ pegs_bias=25
 AxB="count_simul_AxB.txt"
 BxA="count_simul_BxA.txt"
 
-# made-up genome
-refA="${strainA}_Stranscripts.fa"
-annotA="${refA}_annot.gff3"
-
-# made-up genome + introduced mutations
-refB="${strainB}_genome.fa"
-annotB="${refB}_annot.gff3"
-
 while getopts "A:B:d:m:p:u:s:r:R:M:P:" opt; do
 	case $opt in
 		A)	strainA="$OPTARG"
