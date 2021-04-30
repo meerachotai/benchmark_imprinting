@@ -11,7 +11,7 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
 * simuG (https://github.com/yjx1217/simuG, enter directory for simuG under option -D)
-* Others: R, samtools
+* Others: R (argparse, tidyverse), samtools
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
@@ -82,7 +82,7 @@ Other notes: this script produces a table called \*\_seq.txt from the FASTA file
 Again, works in current directory.
 
 ### Dependencies:
-* R
+* R (argparse, tidyverse)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
