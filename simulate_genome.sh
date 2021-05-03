@@ -5,6 +5,7 @@
 # dependencies: R, seqkit (https://bioinf.shenwei.me/seqkit/download/), 
 # simuG (https://github.com/yjx1217/simuG)(note: you need to enter directory of simuG in -D)
 # for now, this script does everything in the current directory so navigate to the right directory first (might change that later)
+# need Biostrings library for R
 # 
 # sample command(s):
 # 
@@ -12,11 +13,10 @@
 # annot="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # simuG="${scripts_dir}/simuG"
-
-# mkdir simul_trial
-# cd simul_trial
 # 
-# ./simulate_genome_opt.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5
+# outdir="new_out"
+
+# ${scripts_dir}/simulate_genome.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 80 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 55 -p 5 -t 10 -T 20 -W 1 -v 5 -o $outdir -x cviA_genome.fa -y cviB_genome.fa -X cviA_annot.gff3 -Y cviB_annot.gff3
 
 # Required arguments ------------------------
 scripts_dir=""
@@ -29,6 +29,7 @@ ref=""
 annot=""
 
 strainB=""
+outdir=""
 
 # Defaults ------------------------------
 seed=5
@@ -48,16 +49,33 @@ total_n=50
 
 score=70 # to change, use -2
 
+refA=""
+annotA=""
+refB=""
+annotB=""
+
+workdir=$( pwd )
+
 # Flag options -----------------------------
 skip1=false
 transcript_error=false
 
-while getopts "A:B:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
+while getopts "o:A:B:x:y:X:Y:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
 	case $opt in
+		o)	outdir="$OPTARG"
+			;;
 		A)	strainA="$OPTARG"
 			;;
 		B)	strainB="$OPTARG"
 			;;
+		x)	refA="$OPTARG"
+			;;
+		y)	refB="$OPTARG"
+			;;
+		X)	annotA="$OPTARG"
+			;;
+		Y)	annotB="$OPTARG"
+			;;	
 		r)	ref="$OPTARG"
 			;;
 		a)	annot="$OPTARG"
@@ -99,6 +117,10 @@ while getopts "A:B:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
 	esac
 done
 
+outdir=${workdir}/${outdir}
+
+
+
 printf "\nSummary of calls:\n"
 printf "creating two genomes: ${strainA}, ${strainB}\n"
 printf "Achieving a similarity score of ${score}%% \n"
@@ -111,60 +133,62 @@ if [ "$transcript_error" == "false" ]; then
 else
 	printf "running on mode: error in getting transcripts from gffreads\n"
 fi
-printf "for reproducibility, using seed = ${seed} \n\n"
+printf "for reproducibility, using seed = ${seed} \n"
+printf "working in directory: ${outdir} \n\n"
 
-
-# DO NOT CHANGE -------------------------------
-# made-up genome: strainA
-refA="${strainA}_genome.fa"
-annotA="${refA}_annot.gff3"
-
-# made-up genome + introduced mutations: strainB
-refB="${strainB}_genome.fa"
-annotB="${strainB}_annot.gff3"
+mkdir $outdir
 
 #################
 ### functions ###
 #################
 
 make_annot() { 
-	ref=$1
-	scripts_dir=$2
-
-	samtools faidx ${ref}
-	cut -f1-2 ${ref}.fai > ${ref}_length+id.txt
-	${scripts_dir}/make_annot.R ${ref}_length+id.txt ${ref}
-}
-
-make_seq_table() { 
 	strain=$1
 	ref=$2
-
-	# multi-line to single-line fasta
-	awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' ${strain}/${ref} > ${strain}/${strain}_sl_transcripts.fa
-	# make table from .fa file
-	cat ${strain}/${strain}_sl_transcripts.fa | paste - - > ${strain}/${strain}_seq.txt
+	scripts_dir=$3
+	out=$4
+	outdir=$5
+	
+	samtools faidx ${ref}
+	cut -f1-2 ${ref}.fai > ${outdir}/${strain}/${strain}_length+id.txt
+	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}
 }
 
 transcript_maker() { 
 	strain=$1
 	ref=$2
 	annot=$3
+	outdir=$4
 	
 	# wget https://github.com/broadinstitute/picard/releases/download/2.24.2/picard.jar
 	java -jar picard.jar NormalizeFasta --INPUT $ref --OUTPUT edited_$ref --LINE_LENGTH 50
 	mv edited_$ref $ref
-	gffread -w ${strain}/${strain}_transcripts.fa -g $ref $annot
+	gffread -w ${outdir}/${strain}/${strain}_transcripts.fa -g $ref $annot
+}
+
+displaytime () {
+  local T=$1
+  local D=$((T/60/60/24))
+  local H=$((T/60/60%24))
+  local M=$((T/60%60))
+  local S=$((T%60))
+  [[ $D > 0 ]] && printf '%d days ' $D
+  [[ $H > 0 ]] && printf '%d hours ' $H
+  [[ $M > 0 ]] && printf '%d minutes ' $M
+  [[ $D > 0 || $H > 0 || $M > 0 ]] && printf 'and '
+  printf '%d seconds\n' $S
 }
 
 #################
 ### pipeline ####
 #################
 
-# printf "\nMaking outdirectory ${directory}"
+# mkdir $outdir
 
-# mkdir ${directory}
-# cd ${directory}
+time_start=$(date)	# time run was started
+ts=$(date +%s)	# time run was started (in seconds)
+
+echo "Run start on: $time_start"
 
 # ------------------ step 1: make strainA ref and annot -----------------------------------------
 
@@ -174,32 +198,29 @@ if [ "$skip1" == "true" ]; then
 	printf "\nSkipping step 1 (making strainA genome) by user request...\n"
 else
 	
-	mkdir $strainA
+	mkdir ${outdir}/$strainA
 	
 	# produces strainA_genome.fa - which is our new genome
 	
 	if [ "$transcript_error" == "false" ]; then
-		gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
+		gffread -w ${outdir}/${strainA}/${strainA}_transcripts.fa -g $ref $annot
 	else
-		transcript_maker $strainA $ref $annot
+		transcript_maker $strainA $ref $annot $outdir
 	fi
 	
 	# extract sequence ids
-	grep '^>' ${strainA}/${strainA}_transcripts.fa | awk '{print $0}' | sed 's/^>//' > ${strainA}/${strainA}_seq_ids.txt
+	grep '^>' ${outdir}/${strainA}/${strainA}_transcripts.fa | awk '{print $0}' | sed 's/^>//' > ${outdir}/${strainA}/${strainA}_seq_ids.txt
 
 	# choose genes randomly
-	${scripts_dir}/inv_transform_sampling.R ${strainA}/${strainA}_seq_ids.txt -n $total_n -o ${strainA}/${strainA}_genes.txt -s $seed
+	${scripts_dir}/inv_transform_sampling.R ${outdir}/${strainA}/${strainA}_seq_ids.txt -n $total_n -o ${outdir}/${strainA}/${strainA}_genes.txt -s $seed
 
 	# find sequences for sampled genes
-	seqkit grep -n -f ${strainA}/${strainA}_genes.txt ${strainA}/${strainA}_transcripts.fa -o ${strainA}/${strainA}_genome.fa
+	seqkit grep -n -f ${outdir}/${strainA}/${strainA}_genes.txt ${outdir}/${strainA}/${strainA}_transcripts.fa -o ${outdir}/$refA
 	printf "\nsimulated FASTA file for strainA: ${refA}"
 	# makes annotation for smaller genome
 	
-	make_annot ${strainA}/${refA} ${scripts_dir}
+	make_annot $strainA ${outdir}/${refA} ${scripts_dir} ${outdir}/$annotA $outdir
 	printf "\nsimulated annotation file for strainA: ${annotA}\n"
-	
-	# uses ref files to make strainA_seq.txt tables (format: seq_id	fasta_seq)
-	make_seq_table $strainA $refA
 fi
 
 # -------------------------- step 2: edit strainA to make strainB with a certain similarity score ------------------------------------
@@ -207,14 +228,11 @@ fi
 # add mutations (snps + indels) and make strain B reference sequence: strainB_genome.fa
 # options: score snp_score indel_score (indel start) extend_score (indel extended / gap) match_score snp:indel-ratio total_n
 
-$scripts_dir/edit_genome.sh -R $strainA -r $refA -N $strainB -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject > simul_${strainB}_log.txt
-# qsub -V -N simulate_genome -cwd -j y -o qsub_logs/simul_genome.txt -m bae -b y -l h_rt=05:00:00,h_data=8G "$cmd"
+$scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/$refA -B $strainB -b ${outdir}/$refB -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
 printf "\nsimulated FASTA file for strainB: ${refB}"
 
 # use make_annot for strainB:
-make_annot $strainB/$refB $scripts_dir
+make_annot $strainB ${outdir}/${refB} $scripts_dir ${outdir}/${annotB} $outdir
 printf "\nsimulated annotation file for strainB: ${annotB}\n"
 
-# uses ref files to make strainB_seq.txt tables (format: seq_id	fasta_seq)
-make_seq_table $strainB $refB
-
+te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
