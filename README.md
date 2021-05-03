@@ -20,7 +20,7 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 
 ### Options:
 ```
--o outdirectory (if it doesn't already exist it will be created, and all output will be stored here)
+-o outdirectory (all output will be stored here - HAS to be relative to current working directory)
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
 -x name for strainA FASTA file
@@ -55,7 +55,7 @@ ref="/path/to/reference.fasta"
 annot="/path/to/reference_annotation.gff3"
 scripts_dir="/path/to/helper/scripts"
 simuG="/path/to/simuG"
-simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome.fa -y strainB_genome.fa -X strainA_annot.gff3 -Y strainB_annot.gff3 -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o $outdir
+simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome.fa -y strainB_genome.fa -X strainA_annot.gff3 -Y strainB_annot.gff3 -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
