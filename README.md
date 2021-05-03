@@ -73,10 +73,8 @@ Log files of interest:
 
 ### Run file: simulate_reads.sh
 
-Again, works in current directory.
-
 ### Dependencies:
-* R (argparse, tidyverse)
+* R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
@@ -87,6 +85,8 @@ Again, works in current directory.
 ```
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
+-x reference strainA FASTA file for read simulation
+-y reference strainB FASTA file for read simulation
 -d helper scripts directory
 -m number of MEGs to be simulated
 -p number of PEGs to be simulated
@@ -96,16 +96,16 @@ Again, works in current directory.
 -r read length for FASTQ files
 -R number of replicates to be simulated (needed for DESeq2 specifically)
 -s seed
+-o outdirectory (HAS to be relative to current directory, will store output files here)
 ```
 
 Sample command:
  ```
-scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-strainA="cviA"
-strainB="cviB"
+scripts_dir="/path/to/helper_scripts/scripts_import"
+refA="/path/to/refA.fa"
+refB="/path/to/refB.fa"
 
-cd simul_trial # directory where simulated genomes are located
-$scripts_dir/simulate_reads_opt.sh -A $strainA -B $strainB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25
+$scripts_dir/simulate_reads_opt.sh -A strainA -B strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o outdir
 ```
 
 ### Output:
@@ -113,7 +113,7 @@ $scripts_dir/simulate_reads_opt.sh -A $strainA -B $strainB -d $scripts_dir -s 5 
 FASTQ (.fq) files that match counts simulated.
 
 Other relevant files: 
-* reads_simul/simul_counts+id_A.txt and reads_simul/simul_counts+id_B.txt - a summary of 'chromosome' ids alongside read counts
-* counts_simul_megs.txt and counts_simul_pegs.txt - true MEG and PEG lists to use in verifying imprinting calls
+* $outdir/reads_simul/simul_counts+id_A.txt and $outdir/reads_simul/simul_counts+id_B.txt - a summary of 'chromosome' ids alongside read counts
+* $outdir/counts_simul_megs.txt and $outdir/counts_simul_pegs.txt - true MEG and PEG lists to use in verifying imprinting calls
 
 
