@@ -4,12 +4,14 @@ if (is.element('argparse', installed.packages()[,1])==FALSE) { stop("Error: R pa
 suppressPackageStartupMessages(library(argparse))
 if (is.element('tidyverse', installed.packages()[,1])==FALSE) { stop("Error: R package tidyverse could not be loaded") }
 suppressPackageStartupMessages(library(tidyverse))
+if (is.element('Biostrings', installed.packages()[,1])==FALSE) { stop("Error: R package Biostrings could not be loaded") }
+suppressPackageStartupMessages(library(Biostrings))
 
 parser = ArgumentParser()
 parser$add_argument("-a", type = "character", default = "", help = "AxB counts file (simulated)")
 parser$add_argument("-b", type = "character", default = "", help = "BxA counts file (simulated)")
-parser$add_argument("-A", type = "character", default = "", help = "gene_id + sequences for A")
-parser$add_argument("-B", type = "character", default = "", help = "gene_id + sequences for B")
+parser$add_argument("-A", type = "character", default = "", help = "genome.fa strain A")
+parser$add_argument("-B", type = "character", default = "", help = "genome.fa strain B")
 parser$add_argument("-p", type = "character", default = 'I', help = "ASCII code for PHRED+33 score, default = I")
 parser$add_argument("-r", type="double", default = 50, help = "read length, default = 50")
 parser$add_argument("-s", type="double", default = 5, help = "set seed for reproducibility")
@@ -45,8 +47,14 @@ set.seed(seed)
 counts_AxB = read.table(counts_AxB, sep = "\t", header=F, row.names = 1)
 counts_BxA = read.table(counts_BxA, sep = "\t", header=F, row.names = 1)
 
-seq_A = read.table(seq_A, sep = "\t", colClasses = "character", header=F)
-seq_B = read.table(seq_B, sep = "\t", colClasses = "character", header=F)
+# seq_A = read.table(seq_A, sep = "\t", colClasses = "character", header=F)
+# seq_B = read.table(seq_B, sep = "\t", colClasses = "character", header=F)
+
+A = readDNAStringSet(seq_A)
+B = readDNAStringSet(seq_B)
+
+seq_A = cbind(names(A), paste(A))
+seq_B = cbind(names(B), paste(B))
 
 phred_vec = paste(rep(phred, read_length), collapse = "")
 
@@ -86,7 +94,8 @@ reads_simul = function(counts, seq_table, out, read_length, phred_vec) {
   # save file
   sink(paste0(out, ".fq"))
   for(i in 1:length(all_reads)) {
-    cat(paste0("@",str_split(all_labels[i], '>')[[1]][2]), "\n")
+    # cat(paste0("@",str_split(all_labels[i], '>')[[1]][2]), "\n")
+    cat(paste0("@",all_labels[i], "\n"))
     cat(paste(all_reads[i], "+", phred_vec, sep = "\n"), "\n")
   }
   sink()
@@ -129,4 +138,3 @@ write.table(counts_id_B, paste0(outprefix, "_counts+id_B.txt"), col.names = T, r
 # for(i in 1:nrow(seq_A)) { counts_check_AxB_A[i] = length(grep(seq_A[i,1], all_labels_AxB_A)) }
 # inspect = as.data.frame(cbind(counts_AxB_A, counts_check_AxB_A))
 # inspect[inspect[,1] != inspect[,2], ]
-
