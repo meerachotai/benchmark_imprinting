@@ -3,8 +3,6 @@
 
 ### Run file: simulate_genome.sh
 
-Note on running file: for now, it does everything in the current directory so navigate to the right directory first (need to change that later)
-
 I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation (might need to optimize runtime) 
 
 ### Dependencies: 
@@ -22,7 +20,7 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 
 ### Options:
 ```
--o outdirectory (if it doesn't already exist it will be created)
+-o outdirectory (if it doesn't already exist it will be created, and all output will be stored here)
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
 -x name for strainA FASTA file
@@ -57,7 +55,7 @@ ref="/path/to/reference.fasta"
 annot="/path/to/reference_annotation.gff3"
 scripts_dir="/path/to/helper/scripts"
 simuG="/path/to/simuG"
-./simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
+./simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o $outdir
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
@@ -69,8 +67,8 @@ gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
 Annotations and FASTA files for both strainA and strainB
 
 Log files of interest:
-* per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
-* per_chrom/scores_log.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
+* $outdir/per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
+* $outdir/per_chrom/scores_log.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 ## Step 2: Simulating reads
 
