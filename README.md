@@ -11,7 +11,7 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
 * simuG (https://github.com/yjx1217/simuG, enter directory for simuG under option -D)
-* Others: R (argparse, tidyverse), samtools
+* Others: R (argparse, tidyverse, Biostrings), samtools
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
@@ -22,8 +22,13 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 
 ### Options:
 ```
+-o outdirectory (if it doesn't already exist it will be created)
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
+-x name for strainA FASTA file
+-y name for strainB FASTA file
+-X name for strainA annotation file
+-Y name for strainB annotation file
 -r original reference genome (from which strainA genome will be simulated)
 -a original annotation (from which strainA genome will be simulated)
 -D simuG directory
@@ -48,17 +53,11 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 
 Sample command:
 ```
-ref="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.chr.all.v2.0.fasta"
-annot="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
-scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-simuG="${scripts_dir}/simuG"
-strainA="cviA"
-strainB="cviB"
-
-mkdir simul_trial
-cd simul_trial
-
-./simulate_genome.sh -r $ref -a $annot -A $strainA -B $strainB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5
+ref="/path/to/reference.fasta"
+annot="/path/to/reference_annotation.gff3"
+scripts_dir="/path/to/helper/scripts"
+simuG="/path/to/simuG"
+./simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
@@ -71,9 +70,7 @@ Annotations and FASTA files for both strainA and strainB
 
 Log files of interest:
 * per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
-* per_chrom/indel_scores.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
-
-Other notes: this script produces a table called \*\_seq.txt from the FASTA files, which would potentially take up additional memory if a large genome is simulated. I'm instead going to use the Biostrings library in R to read in a FASTA file directly to do the scoring and (in step 2) read simulating (will add to dependencies).
+* per_chrom/scores_log.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 ## Step 2: Simulating reads
 
