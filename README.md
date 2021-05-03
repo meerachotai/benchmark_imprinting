@@ -59,8 +59,7 @@ simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome.fa 
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
 ```
-mkdir $strainA
-gffread -w ${strainA}/${strainA}_transcripts.fa -g $ref $annot
+gffread -w strainA/strainA_transcripts.fa -g $ref $annot
 ```
 ### Output:
 
