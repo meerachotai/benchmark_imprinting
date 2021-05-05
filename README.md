@@ -18,6 +18,10 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 * inv_transform_sampling.R 
 * scoring.R
 
+### Similarity Scoring
+
+A rejection-sampling approach is used for similarity scoring (edit_genome.sh). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (scoring.R), which is the input for simuG (-P). The vcf files from simuG are used to calculate the actual score (-V), and then compared with the desire score. This is done per-chromosome basis, which might be slowing down the process. Currently working on modifying this process to a whole-genome basis and pruning the genome as a chromosome achieves the desired score. simuG is intended to work on whole-genome, so this might decrease runtime.
+
 ### Options:
 ```
 -o outdirectory (all output will be stored here - HAS to be relative to current working directory)
