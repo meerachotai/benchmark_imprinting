@@ -42,19 +42,21 @@ replicates = opt$R
 # counts_BxA = "count_simul_BxA.txt"
 # phred = 'I'
 
+cat("\nSetting seed:", seed)
 set.seed(seed)
 
+cat("\nReading count files:", counts_AxB, counts_BxA)
 counts_AxB = read.table(counts_AxB, sep = "\t", header=F, row.names = 1)
 counts_BxA = read.table(counts_BxA, sep = "\t", header=F, row.names = 1)
 
-# seq_A = read.table(seq_A, sep = "\t", colClasses = "character", header=F)
-# seq_B = read.table(seq_B, sep = "\t", colClasses = "character", header=F)
-
+cat("\nReading genome files:", seq_A, seq_B, "\n")
 A = readDNAStringSet(seq_A)
 B = readDNAStringSet(seq_B)
 
 seq_A = cbind(names(A), paste(A))
 seq_B = cbind(names(B), paste(B))
+
+# cat(nrow(seq_A), nrow(seq_B), nrow(counts_AxB), nrow(counts_BxA))
 
 phred_vec = paste(rep(phred, read_length), collapse = "")
 
