@@ -2,10 +2,11 @@
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # strainA="cviA"
 # strainB="cviB"
+# outdir="new_out"
 # refA="$outdir/cviA_genome.fa"
 # refB="$outdir/cviB_genome.fa" 
-# outdir="new_out"
-# $scripts_dir/simulate_reads.sh -A $strainA -B $strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 35 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o $outdir
+# 
+# $scripts_dir/simulate_reads.sh -A $strainA -B $strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o $outdir
 
 # Required arguments ------------------------
 scripts_dir=""
@@ -25,10 +26,6 @@ rep=3
 megs_bias=95
 pegs_bias=25
 
-# DO NOT CHANGE -----------------------------------
-AxB="count_simul_AxB.txt"
-BxA="count_simul_BxA.txt"
-
 # made-up genome
 # refA="${strainA}_Stranscripts.fa"
 # annotA="${refA}_annot.gff3"
@@ -37,6 +34,7 @@ BxA="count_simul_BxA.txt"
 # refB="${strainB}_genome.fa"
 # annotB="${refB}_annot.gff3"
 
+# https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
 displaytime () {
   local T=$1
   local D=$((T/60/60/24))
@@ -109,8 +107,12 @@ printf "outdirectory: ${outdir}\n\n"
 printf "Simulating counts...\n"
 $scripts_dir/simulated_read-counts.R --seed $seed --disp med --n $unbiased --nMEG $meg --nPEG $peg --MEGbias $megs_bias --PEGbias $pegs_bias --rep $rep "${outdir}/count_simul"
 
+# DO NOT CHANGE -----------------------------------
+AxB="${outdir}/count_simul_AxB.txt"
+BxA="${outdir}/count_simul_BxA.txt"
+
 printf "Simulating reads...\n"
-mkdir reads_simul
+mkdir ${outdir}/reads_simul
 ${scripts_dir}/reads_simul.R -a $AxB -b $BxA -A $refA -B $refB -p I -r $read_length -s $seed -R $rep ${outdir}/reads_simul/simul
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
