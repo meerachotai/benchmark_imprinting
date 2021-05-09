@@ -144,7 +144,7 @@ Note: Some recent changes have broken the code at the HTSeqcount part, and all c
 #### FASTQ files
 For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
 
-* The file name MUST end with the suffix **cross_rep.fq**
+* The file name MUST end with the suffix **cross_replicate.fq**
 * The address and the prefix of the file names should be placed under the option -f
 
 **Example:** 
