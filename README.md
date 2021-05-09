@@ -157,7 +157,7 @@ If you followed with the steps 1 and 2, there's no need to use -f at all, it is 
 
 #### FASTA and annotation files
 
-For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. 
+For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format
 
 If you followed with steps 1 and 2, there is no need to use the -i option, it uses the default.
 
@@ -231,7 +231,7 @@ cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 -Y name for strainB annotation file
 -d helper scripts directory
 -r number of replicates available
--i annotation gff3 attribute name (column 9) refer: http://gmod.org/wiki/GFF3#GFF3_Format (default: ID)
+-i annotation gff3 attribute name (column 9) (default: ID)
 -f represents the start of the FASTQ reads file name
 -e boolean, use if you want to skip editing the files
 ```
