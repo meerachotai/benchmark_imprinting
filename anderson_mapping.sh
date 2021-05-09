@@ -1,15 +1,17 @@
+#!/usr/bin/env bash
+
 # dependencies: htseqcount, hisat2
 # sample commands
 # module load hisat2
 # strainA="cviA"
 # strainB="cviB"
 # outdir="new_out"
-# fastq_dir="$( pwd )/$outdir/reads_simul/simul_"
+# scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # refA="$( pwd )/$outdir/cviA_genome.fa"
 # refB="$( pwd )/$outdir/cviB_genome.fa" 
 # annotA="$( pwd )/$outdir/cviA_annot.gff3"
 # annotB="$( pwd )/$outdir/cviB_annot.gff3"
-# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -f $fastq_dir -o new_out -e -i ID -r 3 -d $scripts_dir
+# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
 
 # REQUIRED
 scripts_dir=""
@@ -27,7 +29,7 @@ gene_key=""
 
 htseq_i="ID"
 rep=3
-unedited=false
+edited=false
 
 while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:" opt; do
 	case $opt in
@@ -55,7 +57,7 @@ while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:" opt; do
 			;;
 		f)	fastq_dir="$OPTARG"
 			;;
-		e)	unedited=true # assumes it's already renamed add -e to edit using default func
+		e)	edited=true # assumes it's not renamed, add -e to let us know you've already done it
 			;;
 	esac
 done
@@ -85,14 +87,14 @@ map() {
 	map=$4	
 	fastq_dir=$5
 	
-	# concatenate reads files for A,B
-	cat ${fastq_dir}${cross}_A.fq ${fastq_dir}${cross}_B.fq > ${map}/${strainA}_${strainB}_${cross}.fq
-	hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${map}/${strainA}_${strainB}_${cross}.fq
+	# concatenate reads files for A,B - moved to simulate_reads.sh
+	# cat ${fastq_dir}${cross}_A.fq ${fastq_dir}${cross}_B.fq > ${map}/${strainA}_${strainB}_${cross}.fq
+	
+	hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq_dir}${cross}.fq
 }
 
 # -------------------- step 10: counting -------------------------
 
-# with Parent instead of ID for better counts file
 # strainA strainB cross_name(AxB/BxA)
 count() { 
 	strainA=$1
@@ -101,8 +103,11 @@ count() {
 	map=$4
 	htseq_i=$5
 	
+	# CURRENTLY BREAKING THE CODE - WHY??
 	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3 > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
+
+# # qsub -V -N counts -cwd -j y -o qsub_logs/counts.txt -m bae -b y -l h_rt=01:00:00,h_data=8G "$cmd"
 
 displaytime () {
   local T=$1
@@ -124,13 +129,18 @@ displaytime () {
 time_start=$(date)	# time run was started
 ts=$(date +%s)	# time run was started (in seconds)
 
+if [ ${#fastq_dir} == 0 ]; then
+	fastq_dir="$( pwd )/$outdir/reads_simul/${strainA}_${strainB}_"
+fi
+
 echo "Run start on: $time_start"
 
 printf "\nMake sure the following dependencies are loaded: hisat2, htseqcount\n"
 printf "\nSummary of calls:\n"
 printf "using reference genome files: ${refA}, ${refB}\n"
 printf "using annotation files: ${annotA}, ${annotB}\n"
-printf "outdirectory: ${outdir}\n\n"
+printf "outdirectory: ${outdir}\n"
+printf "using FASTQ directory: ${fastq_dir}\n\n"
 
 workdir=$( pwd )
 outdir=${workdir}/${outdir}
@@ -142,7 +152,7 @@ map="${outdir}/map" # where intermediate files will be stored
 # preparing for concatenating:
 # renames the ids to give strain names, adds A or B as needed for HTseq count
 
-if [ "$unedited" == "true" ]; then
+if [ "$edited" == "false" ]; then
 	printf "Renaming chromosomes to match strainA/B...\n"
 	rename_chr $strainA $refA $annotA $map
 	refA="$map/${strainA}_genome.fa"
