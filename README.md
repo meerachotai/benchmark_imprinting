@@ -235,3 +235,9 @@ cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 -f represents the start of the FASTQ reads file name
 -e boolean, use if you want to skip editing the files
 ```
+
+Sample command:
+```
+$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
+```
+
