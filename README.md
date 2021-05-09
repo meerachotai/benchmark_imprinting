@@ -151,7 +151,7 @@ For this particular step, a specific FASTQ file name is required in order to map
 
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being '$strainA_$strainB_'. Adding the file's location to the prefix, the file is called: $outdir/reads_simul/$strainA_$strainB_AxB_1.fq.
 
-Following the above convention, you should place under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
+Following the above convention, under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
 
 If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
