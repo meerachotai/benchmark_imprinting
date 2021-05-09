@@ -39,7 +39,7 @@ fillers = rep(".", nrow(input))
 strand = rep("+", nrow(input))
 parent = paste0(rep("Parent:", nrow(input)),input[,1])
 
-cat("##gff-version 3\n",file=paste0(outprefix, "_annot.gff3"))
+cat("##gff-version 3\n",file=outprefix)
 annot = cbind(seqid, fillers, feature, start, end, fillers, strand, fillers, parent) #, input[,2])
 
 write.table(annot, paste0(outprefix, "_annot.gff3"), append=TRUE, row.names = F, quote = F, col.names = F, sep = "\t")
