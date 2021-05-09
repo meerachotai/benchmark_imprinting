@@ -237,7 +237,7 @@ cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 ```
 
 Sample command:
-```
-$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
+``
+$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
 ```
 
