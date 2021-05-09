@@ -126,7 +126,7 @@ Other relevant files:
 
 ## Type A: Anderson et al. 
 
-Note: Some recent changes has broken the code at the HTSeqcount part, and all counts are showing up as zero. Working on it.
+Note: Some recent changes have broken the code at the HTSeqcount part, and all counts are showing up as zero. Working on it.
 
 ### Run file: anderson_mapping.sh
 
@@ -174,7 +174,7 @@ Below is the function does with some comments and preview of what it does, which
 # ref is the reference FASTA file that needs to be edited
 # annot is the annotation .gff3 file that needs to be edited
  
-# for any line that has > in it, replace > with >$strain_
+# for all lines the begin with >, replace > with >$strain_
 sed "s/^>/>${strain}_/g" $ref > ${strain}_genome.fa 
 
 # at the start of each line, it appends with prefix $strain
