@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # sample command:
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # strainA="cviA"
@@ -116,5 +118,12 @@ ${scripts_dir}/reads_simul.R -a $AxB -b $BxA -A $refA -B $refB -p I -r $read_len
 # remove spaces for mapping
 for f in $(ls -v ${outdir}/reads_simul/simul_AxB_*) ; do echo "$(awk '{$1=$1};1' $f)" > $f ; done
 for f in $(ls -v ${outdir}/reads_simul/simul_BxA_*) ; do echo "$(awk '{$1=$1};1' $f)" > $f ; done
+
+# concatenating both A and B reads to one file
+for i in $(seq 1 1 $rep)
+do
+	cat ${outdir}/reads_simul/simul_AxB_${i}_A.fq ${outdir}/reads_simul/simul_AxB_${i}_B.fq > ${outdir}/reads_simul/${strainA}_${strainB}_AxB_${i}.fq
+	cat ${outdir}/reads_simul/simul_BxA_${i}_A.fq ${outdir}/reads_simul/simul_BxA_${i}_B.fq > ${outdir}/reads_simul/${strainA}_${strainB}_BxA_${i}.fq
+done
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
