@@ -126,6 +126,8 @@ Other relevant files:
 
 ## Type A: Anderson et al. 
 
+Note: Some recent changes has broken the code at the HTSeqcount part, and all counts are showing up as zero. Working on it.
+
 ### Run file: anderson_mapping.sh
 
 (adapted from: https://github.com/SNAnderson/Imprinting2020)
