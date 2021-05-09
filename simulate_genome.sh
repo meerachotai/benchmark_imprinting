@@ -16,7 +16,7 @@
 # 
 # outdir="new_out"
 
-# ${scripts_dir}/simulate_genome.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 80 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 55 -p 5 -t 10 -T 20 -W 1 -v 5 -o $outdir -x cviA_genome.fa -y cviB_genome.fa -X cviA_annot.gff3 -Y cviB_annot.gff3
+# ${scripts_dir}/simulate_genome.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 90 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 2 -t 10 -T 10 -W 2 -v 5 -o $outdir -x cviA_genome.fa -y cviB_genome.fa -X cviA_annot.gff3 -Y cviB_annot.gff3
 
 # Required arguments ------------------------
 scripts_dir=""
@@ -119,8 +119,6 @@ done
 
 outdir=${workdir}/${outdir}
 
-
-
 printf "\nSummary of calls:\n"
 printf "creating two genomes: ${strainA}, ${strainB}\n"
 printf "Achieving a similarity score of ${score}%% \n"
@@ -166,6 +164,7 @@ transcript_maker() {
 	gffread -w ${outdir}/${strain}/${strain}_transcripts.fa -g $ref $annot
 }
 
+# https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
 displaytime () {
   local T=$1
   local D=$((T/60/60/24))
@@ -220,6 +219,7 @@ else
 	# makes annotation for smaller genome
 	
 	make_annot $strainA ${outdir}/${refA} ${scripts_dir} ${outdir}/$annotA $outdir
+	sed -i "s/$/A/" ${outdir}/$annotA # add 'A' at the end for later mapping
 	printf "\nsimulated annotation file for strainA: ${annotA}\n"
 fi
 
@@ -233,6 +233,8 @@ printf "\nsimulated FASTA file for strainB: ${refB}"
 
 # use make_annot for strainB:
 make_annot $strainB ${outdir}/${refB} $scripts_dir ${outdir}/${annotB} $outdir
+sed -i "s/$/B/" ${outdir}/${annotB} # add 'B' at the end for later mapping
+
 printf "\nsimulated annotation file for strainB: ${annotB}\n"
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
