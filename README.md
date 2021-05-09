@@ -75,6 +75,8 @@ Log files of interest:
 
 ## Step 2: Simulating reads
 
+Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for this to work. Please refer the instructions below.
+
 ### Run file: simulate_reads.sh
 
 ### Dependencies:
@@ -120,4 +122,114 @@ Other relevant files:
 * $outdir/reads_simul/simul_counts+id_A.txt and $outdir/reads_simul/simul_counts+id_B.txt - a summary of 'chromosome' ids alongside read counts
 * $outdir/counts_simul_megs.txt and $outdir/counts_simul_pegs.txt - true MEG and PEG lists to use in verifying imprinting calls
 
+## Step 3: Calling Imprinting
 
+## Type A: Anderson et al. 
+
+### Run file: anderson_mapping.sh
+
+(adapted from: https://github.com/SNAnderson/Imprinting2020)
+
+### Dependencies:
+* hisat2
+* HTSeqcount
+
+### Helper scripts required:
+(enter directory for helper scripts under option -d)
+
+### Required conventions:
+
+#### FASTQ files
+For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
+
+* The file name MUST end with the suffix **cross_rep.fq**
+* The address and the prefix of the file names should be placed under the option -f
+
+**Example:** 
+
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being '$strainA_$strainB_'. Adding the file's location to the prefix, the file is called: $outdir/reads_simul/$strainA_$strainB_AxB_1.fq.
+
+Following the above convention, you should place under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
+
+If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+
+#### FASTA and annotation files
+
+For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. 
+
+If you followed with steps 1 and 2, there is no need to use the -i option, it uses the default.
+
+Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. 
+
+For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. It is applied automatically, but if you want to skip it, use the option -e.
+
+If you followed with steps 1 and 2, do not use -e, and it will work with your files reference and annotation files automatically if you provide the correct location for it under the -x -y -X and -Y options.
+
+Below is the function does with some comments and preview of what it does, which might help if you're trying to edit it beforehand.
+
+```
+# strain is the strain name for A/B strain (ex: cviA)
+# ref is the reference FASTA file that needs to be edited
+# annot is the annotation .gff3 file that needs to be edited
+ 
+# for any line that has > in it, replace > with >$strain_
+sed "s/^>/>${strain}_/g" $ref > ${strain}_genome.fa 
+
+# at the start of each line, it appends with prefix $strain
+sed "s/^/${strain}_/" $annot > map/${strain}_annot.gff3 # start of line	
+
+# since the previous command also applied on the 'gff-version 3' header in the annotation file, replace it	
+head="##gff-version 3"
+sed -i "1s/.*/$head/" map/${strain}_annot.gff3
+```
+
+**FASTA:** 
+
+Before:
+```
+>ATCVI-1G19970.1 gene=ATCVI-1G19970 CDS=1-1998
+ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
+ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
+CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC 
+```
+After:
+```
+>cviA_ATCVI-1G19970.1 gene=ATCVI-1G19970 CDS=1-1998
+ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
+ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
+CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC
+```
+**Annotation:**
+
+Before:
+```
+##gff-version 3
+ATCVI-1G19970.1	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970.1A
+ATCVI-1G33940.1	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940.1A
+ATCVI-1G38040.1	.	exon	1	401	.	+	.	ID=ATCVI-1G38040.1A
+ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
+```
+After:
+```
+##gff-version 3
+cviA_ATCVI-1G19970.1	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970.1A
+cviA_ATCVI-1G33940.1	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940.1A
+cviA_ATCVI-1G38040.1	.	exon	1	401	.	+	.	ID=ATCVI-1G38040.1A
+cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
+```
+
+### Options:
+```
+-o outdirectory (all output will be stored here - HAS to be relative to current working directory)
+-A strainA (for file and folder names)
+-B strainB (for file and folder names)
+-x name for strainA FASTA file
+-y name for strainB FASTA file
+-X name for strainA annotation file
+-Y name for strainB annotation file
+-d helper scripts directory
+-r number of replicates available
+-i annotation gff3 attribute name (column 9) refer: http://gmod.org/wiki/GFF3#GFF3_Format (default: ID)
+-f represents the start of the FASTQ reads file name
+-e boolean, use if you want to skip editing the files
+```
