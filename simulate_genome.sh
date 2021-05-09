@@ -219,7 +219,7 @@ else
 	# makes annotation for smaller genome
 	
 	make_annot $strainA ${outdir}/${refA} ${scripts_dir} ${outdir}/$annotA $outdir
-	sed -i "s/$/A/" ${outdir}/$annotA # add 'A' at the end for later mapping
+	awk '{if(NR==1){print $0} else{print $0"A"}}' ${outdir}/$annotA # add 'A' at the end for later mapping
 	printf "\nsimulated annotation file for strainA: ${annotA}\n"
 fi
 
@@ -233,8 +233,7 @@ printf "\nsimulated FASTA file for strainB: ${refB}"
 
 # use make_annot for strainB:
 make_annot $strainB ${outdir}/${refB} $scripts_dir ${outdir}/${annotB} $outdir
-sed -i "s/$/B/" ${outdir}/${annotB} # add 'B' at the end for later mapping
-
+awk '{if(NR==1){print $0} else{print $0"B"}}' ${outdir}/${annotB} # add 'B' at the end for later mapping
 printf "\nsimulated annotation file for strainB: ${annotB}\n"
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
