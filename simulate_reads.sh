@@ -115,4 +115,8 @@ printf "Simulating reads...\n"
 mkdir ${outdir}/reads_simul
 ${scripts_dir}/reads_simul.R -a $AxB -b $BxA -A $refA -B $refB -p I -r $read_length -s $seed -R $rep ${outdir}/reads_simul/simul
 
+# remove spaces for mapping
+for f in $(ls -v ${outdir}/reads_simul/simul_AxB_*) ; do awk '{$1=$1};1' $f > $f ; done
+for f in $(ls -v ${outdir}/reads_simul/simul_BxA_*) ; do awk '{$1=$1};1' $f > $f ; done
+
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
