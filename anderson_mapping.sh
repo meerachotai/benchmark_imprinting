@@ -103,7 +103,6 @@ count() {
 	map=$4
 	htseq_i=$5
 	
-	# CURRENTLY BREAKING THE CODE - WHY??
 	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3 > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
