@@ -3,8 +3,6 @@
 
 ### Run file: simulate_genome.sh
 
-I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes to run through the strainB simulation (might need to optimize runtime) 
-
 ### Dependencies: 
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
@@ -20,7 +18,13 @@ I have only tried it with 50 chromosomes (-n 50), and it takes around 10 minutes
 
 ### Similarity Scoring
 
-A rejection-sampling approach is used for similarity scoring (edit_genome.sh). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (scoring.R, -P), which is the input for simuG. The vcf files from simuG are used to calculate the actual score (-V), and compared with desired score. This is repeated until it is within the window of the desired score. This is done per-chromosome basis, which might be slowing down the process. Currently working on modifying this process to a whole-genome basis and pruning the genome as a chromosome achieves the desired score. simuG is intended to work on whole-genome, so this might decrease runtime.
+A rejection-sampling approach is used for similarity scoring (edit_genome.sh). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (scoring.R, -P), which is the input for simuG. The vcf files from simuG are used to calculate the actual score (-V), and compared with desired score. This is repeated until it is within the window of the desired score. This is done per-chromosome basis, which might be slowing down the process. 
+
+**Alternate**
+
+Modifying this part of pipeline to instead operate on a whole-genome basis and pruning the original genome as a chromosome achieves the desired score. The required helper scripts are uploaded under helper_scripts/edit_genome_v2. This increased runtime relative to the original per-chromosome method. Increasing the window might decrease runtime, possibly, but it hasn't been tried out yet.
+
+Some metrics on comparing the two :
 
 ### Options:
 ```
