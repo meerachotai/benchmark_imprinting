@@ -23,6 +23,7 @@ A rejection-sampling approach is used for similarity scoring (edit_genome.sh). G
 **Alternate branch (helper_scripts/edit_genome_v2):** Modifying this part of pipeline to instead operate on a whole-genome basis and pruning the original genome as a chromosome achieves the desired score. The required helper scripts are uploaded under helper_scripts/edit_genome_v2. This increased runtime relative to the original per-chromosome method. Increasing the window might decrease runtime, possibly, but it hasn't been tried out yet.
 
 Added dependencies for alternate scripts: R - vcfR library
+
 Sample command (after conducting step 1 from below):
 ```
 edit_genome_v2.sh -A $strainA -a $refA -B $strainB -b refB -D $simuG_dir -d $scripts_dir -S 90 -n 50 -v 5 -p 3 -t 10 -W 3 -o $outdir
