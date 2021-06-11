@@ -290,7 +290,7 @@ Note that for Anderson/DESeq2 approach, replicates are required.
 
 Sample command:
 ```
-$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
+$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a .1A -b .1B -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
 ```
 
 ### Output:
