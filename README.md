@@ -265,8 +265,8 @@ ATCVI-1G81680.1A	ATCVI-1G81680.1B
 -M maternal expression cutoff for calling imprinting (default: 0.8)
 -P paternal expression cutoff for calling imprinting
 -g gene key with syntelogs between strainA and strainB
--a counts file rowname that is UNIQUE to strainA
--b counts file rowname that is UNIQUE to strainB
+-a attribute substring that is UNIQUE to strainA
+-b attribute substring that is UNIQUE to strainB
 -O outprefix for imprinting files
 ```
 
