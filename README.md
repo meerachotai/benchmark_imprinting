@@ -246,7 +246,7 @@ ATCVI-1G67300.1A	ATCVI-1G67300.1B
 ATCVI-1G75310.1A	ATCVI-1G75310.1B
 ATCVI-1G81680.1A	ATCVI-1G81680.1B
 ```
-#### Imprinting Counts File
+#### Counts Files
 
 If you already have the counts files and are planning to use the helper script call_imprinting_anderson.R directly, there are two options you can take:
 * name files exactly with the suffix **cross_replicate.txt**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
