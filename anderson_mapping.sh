@@ -11,7 +11,7 @@
 # refB="$( pwd )/$outdir/cviB_genome.fa" 
 # annotA="$( pwd )/$outdir/cviA_annot.gff3"
 # annotB="$( pwd )/$outdir/cviB_annot.gff3"
-# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
+# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -i ID -r 3 -d $scripts_dir -a .1A -b .1B
 
 # REQUIRED
 scripts_dir=""
@@ -31,7 +31,14 @@ htseq_i="ID"
 rep=3
 edited=false
 
-while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:" opt; do
+pval=0.05
+mat_cutoff=0.8
+pat_cutoff=0.5
+logfc=1
+a_annot="strainA"
+b_annot="strainB"
+
+while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:" opt; do
 	case $opt in
 		A)	strainA="$OPTARG"
 			;;
@@ -59,6 +66,18 @@ while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:" opt; do
 			;;
 		e)	edited=true # assumes it's not renamed, add -e to let us know you've already done it
 			;;
+		p)	pval="$OPTARG"
+			;;
+		M)	mat_cutoff="$OPTARG"
+			;;
+		P)	pat_cutoff="$OPTARG"
+			;;
+		a)	a_annot="$OPTARG"
+			;;
+		b)	b_annot="OPTARG"
+			;;
+		l)	logfc="$OPTARG"
+			;;	
 	esac
 done
 
@@ -103,6 +122,7 @@ count() {
 	map=$4
 	htseq_i=$5
 	
+	# CURRENTLY BREAKING THE CODE - WHY??
 	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3 > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
@@ -191,7 +211,15 @@ do
 	count $strainA $strainB BxA_${i} $map $htseq_i
 done
 
-te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
+# gene key format MUST BE A | B, tab-delimited, syntelogs side-by-side, if user-provided
+if [ ${#gene_key} == 0 ]; then
+	printf "Creating gene key list...\n"
+	printf "A\tB\n" > ${map}/${strainA}_${strainB}_gene_key.txt # for later
+	paste <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotA}) <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotB}) >> ${map}/${strainA}_${strainB}_gene_key.txt
+	gene_key="${map}/${strainA}_${strainB}_gene_key.txt"
+fi
 
-# get syntelogs 'gene key' strainA_strainB_gene_key.txt
-# make_key $strainA $strainB $annotA $annotB # or provided from user
+printf "Calling imprinting...\n"
+${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C simul
+
+te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
