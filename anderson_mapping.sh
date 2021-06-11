@@ -37,8 +37,9 @@ pat_cutoff=0.5
 logfc=1
 a_annot="strainA"
 b_annot="strainB"
+outprefix="out"
 
-while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:" opt; do
+while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:O:" opt; do
 	case $opt in
 		A)	strainA="$OPTARG"
 			;;
@@ -78,6 +79,8 @@ while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:" opt; do
 			;;
 		l)	logfc="$OPTARG"
 			;;	
+		O) 	outprefix="$OPTARG"
+			;;
 	esac
 done
 
@@ -220,6 +223,6 @@ if [ ${#gene_key} == 0 ]; then
 fi
 
 printf "Calling imprinting...\n"
-${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C simul
+${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C $outprefix
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
