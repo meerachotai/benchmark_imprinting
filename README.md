@@ -267,6 +267,7 @@ ATCVI-1G81680.1A	ATCVI-1G81680.1B
 -g gene key with syntelogs between strainA and strainB
 -a counts file rowname that is UNIQUE to strainA
 -b counts file rowname that is UNIQUE to strainB
+-O outprefix for imprinting files
 ```
 
 Sample command:
