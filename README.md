@@ -119,10 +119,6 @@ Steps 1 and 2 can be skipped in favor of providing real-data files for mapping a
 
 Sample command:
  ```
-scripts_dir="/path/to/helper_scripts/scripts_import"
-refA="/path/to/refA.fa"
-refB="/path/to/refB.fa"
-
 $scripts_dir/simulate_reads_opt.sh -A strainA -B strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o outdir
 ```
 
