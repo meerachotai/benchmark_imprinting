@@ -246,6 +246,23 @@ ATCVI-1G67300.1A	ATCVI-1G67300.1B
 ATCVI-1G75310.1A	ATCVI-1G75310.1B
 ATCVI-1G81680.1A	ATCVI-1G81680.1B
 ```
+#### Imprinting Counts File
+
+If you already have the counts files and are planning to use the helper script call_imprinting_anderson.R directly, there are two options you can take:
+* name files exactly with the suffix **cross_replicate.txt**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
+* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, and provide the one filename under -c AND DO NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
+
+```
+                 AxB_1 AxB_2 AxB_3 BxA_1 BxA_2 BxA_3
+ATCVI-1G19970.1A   228    74    38     6    38     7
+ATCVI-1G19970.1B    35     7    14    90   202    89
+ATCVI-1G33940.1A    48   299   110    65    22    50
+ATCVI-1G33940.1B   135    46    53   256    69   126
+ATCVI-1G38040.1A    55   156   109    91    60    17
+ATCVI-1G38040.1B    99    63    11   189    85   159
+```
+
+Note that for Anderson/DESeq2 approach, replicates are required.
 
 ### Options:
 ```
