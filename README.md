@@ -172,11 +172,9 @@ For the annotation files, depending on your file's convention, the 'attributes' 
 
 If you followed with steps 1 and 2, there is no need to use the -i option, it uses the default.
 
-Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. 
+Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. 
 
-For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. It is applied automatically, but if you want to skip it, use the option -e.
-
-If you followed with steps 1 and 2, do not use -e, and it will work with your files reference and annotation files automatically if you provide the correct location for it under the -x -y -X and -Y options.
+The renaming function is used automatically, but if you want to skip it, use the option -e. If you followed with steps 1 and 2, do not use -e, and it will work with your files reference and annotation files automatically if you provide the correct location for it under the -x -y -X and -Y options.
 
 Below is the function does with some comments and preview of what it does, which might help if you're trying to edit it beforehand.
 
@@ -232,7 +230,7 @@ cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 ```
 #### Gene Key
 
-If steps 1 and 2 were not followed, a gene key is required for calling imprinting. It is a tab-delimited file with a header that consists of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the rownames of the htseq-counts file. It must have strainA as first column, and strainB as the second column.
+If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited file .txt with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g.
 
 **Example:**
 ```
@@ -276,4 +274,7 @@ Sample command:
 $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
 ```
 
+### Output:
 
+outprefix_anderson_MEGs.txt and outprefix_anderson_PEGs.txt - imprinted MEGs/PEGs lists with both syntelog names given
+outprefix__anderson_stats.txt - DESeq2 stats and imprinting status for all syntelogs
