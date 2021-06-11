@@ -144,9 +144,11 @@ Other relevant files:
 ### Dependencies:
 * hisat2
 * HTSeqcount
+* R (DESeq2, argparse)
 
 ### Helper scripts required:
 (enter directory for helper scripts under option -d)
+* call_imprinting_anderson.R
 
 ### Required conventions:
 
@@ -228,6 +230,23 @@ cviA_ATCVI-1G33940.1	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940.1A
 cviA_ATCVI-1G38040.1	.	exon	1	401	.	+	.	ID=ATCVI-1G38040.1A
 cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 ```
+#### Gene Key
+
+If steps 1 and 2 were not followed, a gene key is required for calling imprinting. It is a tab-delimited file with a header that consists of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the rownames of the htseq-counts file. It must have strainA as first column, and strainB as the second column.
+
+**Example:**
+```
+A B
+ATCVI-1G19970.1A	ATCVI-1G19970.1B
+ATCVI-1G33940.1A	ATCVI-1G33940.1B
+ATCVI-1G38040.1A	ATCVI-1G38040.1B
+ATCVI-1G42830.1A	ATCVI-1G42830.1B
+ATCVI-1G64390.1A	ATCVI-1G64390.1B
+ATCVI-1G64620.1A	ATCVI-1G64620.1B
+ATCVI-1G67300.1A	ATCVI-1G67300.1B
+ATCVI-1G75310.1A	ATCVI-1G75310.1B
+ATCVI-1G81680.1A	ATCVI-1G81680.1B
+```
 
 ### Options:
 ```
@@ -243,10 +262,18 @@ cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
 -i annotation gff3 attribute name (column 9) (default: ID)
 -f represents the start of the FASTQ reads file name
 -e boolean, use if you want to skip editing the files
+-p p-value / alpha cutoff for calling imprinting (DESeq2's padj) (default: 0.05)
+-l log2fc cutoff for calling imprinting (DESeq2's log2foldchange) (default: 1, recommended by authors)
+-M maternal expression cutoff for calling imprinting (default: 0.8)
+-P paternal expression cutoff for calling imprinting
+-g gene key with syntelogs between strainA and strainB
+-a counts file rowname that is UNIQUE to strainA
+-b counts file rowname that is UNIQUE to strainB
 ```
 
 Sample command:
 ```
 $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir
 ```
+
 
