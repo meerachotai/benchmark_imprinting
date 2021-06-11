@@ -7,7 +7,8 @@
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
 * simuG (https://github.com/yjx1217/simuG, enter directory for simuG under option -D)
-* Others: R (argparse, tidyverse, Biostrings), samtools
+* samtools
+* Others: R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
