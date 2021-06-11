@@ -276,5 +276,5 @@ $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $a
 
 ### Output:
 
-outprefix_anderson_MEGs.txt and outprefix_anderson_PEGs.txt - imprinted MEGs/PEGs lists with both syntelog names given
-outprefix_anderson_stats.txt - DESeq2 stats and imprinting status for all syntelogs
+* outprefix_anderson_MEGs.txt and outprefix_anderson_PEGs.txt - imprinted MEGs/PEGs lists with both syntelog names given
+* outprefix_anderson_stats.txt - DESeq2 stats and imprinting status for all syntelogs
