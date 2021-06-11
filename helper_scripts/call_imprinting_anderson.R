@@ -198,7 +198,7 @@ imprinted_PEGs = data.frame(PEGs_A_ID, PEGs_B_ID)
 colnames(imprinted_PEGs) = c(A, B)
 write.table(imprinted_PEGs, paste0(outprefix, "_anderson_PEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 
-either_imprinted = syntelogs_AB[syntelogs_AB[imprint_A] != "no.imprint" | syntelogs_AB[imprint_B] != "no.imprint",]
-write.table(either_imprinted, paste0(outprefix, "_anderson_counts+imprint.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
+# either_imprinted = syntelogs_AB[syntelogs_AB[imprint_A] != "no.imprint" | syntelogs_AB[imprint_B] != "no.imprint",]
+write.table(syntelogs_AB, paste0(outprefix, "_anderson_stats.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 
 cat("Done.\n")
