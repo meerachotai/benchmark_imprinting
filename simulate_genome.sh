@@ -9,14 +9,15 @@
 # 
 # sample command(s):
 # 
-# ref="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.chr.all.v2.0.fasta"
-# annot="/u/scratch/m/mchotai/rnaseq_simul/col_simul/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
+# ref="/u/scratch/m/mchotai/rnaseq_simul/ref_files/Cvi.chr.all.v2.0.fasta"
+# annot="/u/scratch/m/mchotai/rnaseq_simul/ref_files/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # simuG="${scripts_dir}/simuG"
 # 
-# outdir="new_out"
-
-# ${scripts_dir}/simulate_genome.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 90 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 2 -t 10 -T 10 -W 2 -v 5 -o $outdir -x cviA_genome.fa -y cviB_genome.fa -X cviA_annot.gff3 -Y cviB_annot.gff3
+# outdir="june12_6pm"
+# strainA=cviA
+# strainB=cviB
+# ${scripts_dir}/simulate_genome_alt.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 97 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 10 -p 2 -t 10 -T 10 -W 2 -v 5 -o $outdir -x cviA_genome -y cviB_genome -X cviA_annot -Y cviB_annot
 
 # Required arguments ------------------------
 scripts_dir=""
@@ -149,7 +150,13 @@ make_annot() {
 	
 	samtools faidx ${ref}
 	cut -f1-2 ${ref}.fai > ${outdir}/${strain}/${strain}_length+id.txt
-	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}
+	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}_anderson.gff3 -A
+	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}_picard.gff3 -P
+	
+	awk -v var="$strain" '{if(NR==1){print $0} else{print $0var}}' ${out}_anderson.gff3 > temp # add strain name at the end for later mapping
+	mv temp ${out}_anderson.gff3
+	awk -v var="$strain" '{print $0var}' ${out}_picard.gff3 > temp
+	mv temp ${out}_picard.gff3
 }
 
 transcript_maker() { 
@@ -208,20 +215,21 @@ else
 	fi
 	
 	# extract sequence ids
-	grep '^>' ${outdir}/${strainA}/${strainA}_transcripts.fa | awk '{print $0}' | sed 's/^>//' > ${outdir}/${strainA}/${strainA}_seq_ids.txt
-
+	grep '^>' ${outdir}/${strainA}/${strainA}_transcripts.fa | awk '{print $0}' | sed 's/^>//' | cut -d "." -f 1 > ${outdir}/${strainA}/${strainA}_seq_ids.txt
+	
+	sed -i 's/\..*//' ${outdir}/${strainA}/${strainA}_transcripts.fa
+	
 	# choose genes randomly
 	${scripts_dir}/inv_transform_sampling.R ${outdir}/${strainA}/${strainA}_seq_ids.txt -n $total_n -o ${outdir}/${strainA}/${strainA}_genes.txt -s $seed
 
 	# find sequences for sampled genes
-	seqkit grep -n -f ${outdir}/${strainA}/${strainA}_genes.txt ${outdir}/${strainA}/${strainA}_transcripts.fa -o ${outdir}/$refA
-	printf "\nsimulated FASTA file for strainA: ${refA}"
-	# makes annotation for smaller genome
+	seqkit grep -n -f ${outdir}/${strainA}/${strainA}_genes.txt ${outdir}/${strainA}/${strainA}_transcripts.fa -o ${outdir}/${refA}.fa
+	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
 	
-	make_annot $strainA ${outdir}/${refA} ${scripts_dir} ${outdir}/$annotA $outdir
-	awk '{if(NR==1){print $0} else{print $0"strainA"}}' ${outdir}/$annotA > temp # add 'strainA' at the end for later mapping
-	mv temp ${outdir}/$annotA 
-	printf "\nsimulated annotation file for strainA: ${annotA}\n"
+	# makes annotation for smaller genome
+	make_annot $strainA ${outdir}/${refA}.fa ${scripts_dir} ${outdir}/$annotA $outdir
+
+	printf "\nsimulated annotation file for strainA: ${annotA}*.gff3\n"
 fi
 
 # -------------------------- step 2: edit strainA to make strainB with a certain similarity score ------------------------------------
@@ -229,13 +237,12 @@ fi
 # add mutations (snps + indels) and make strain B reference sequence: strainB_genome.fa
 # options: score snp_score indel_score (indel start) extend_score (indel extended / gap) match_score snp:indel-ratio total_n
 
-$scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/$refA -B $strainB -b ${outdir}/$refB -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
-printf "\nsimulated FASTA file for strainB: ${refB}"
+$scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/${refA}.fa -B $strainB -b ${outdir}/${refB}.fa -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
+printf "\nsimulated FASTA file for strainB: ${refB}.fa"
 
 # use make_annot for strainB:
-make_annot $strainB ${outdir}/${refB} $scripts_dir ${outdir}/${annotB} $outdir
-awk '{if(NR==1){print $0} else{print $0"strainB"}}' ${outdir}/${annotB} > temp  # add 'strainB' at the end for later mapping
-mv temp ${outdir}/${annotB}
-printf "\nsimulated annotation file for strainB: ${annotB}\n"
+make_annot $strainB ${outdir}/${refB}.fa $scripts_dir ${outdir}/${annotB} $outdir
+
+printf "\nsimulated annotation file for strainB: ${annotB}*.gff3\n"
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
