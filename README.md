@@ -320,7 +320,7 @@ Some conventions that need to be followed for the program to run correctly:
 * Annotations file must have transcript_id and gene_id under attributes column (for STAR and HTSeqcount, respectively). 
 * Annotation files should not contain the ##gff-version 3 header for STAR
 * SNPs file must be in the required format. 
-* Names for chromosomes in genome FASTA files/read files/annotation files do not contain a '.'
+* Names for chromosomes in genome FASTA files/read files/annotation files should not contain a '.'
 
 If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix \_picard.gff3 under the -a option.
