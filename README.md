@@ -163,20 +163,6 @@ Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 
 ### Required conventions:
 
-#### FASTQ files
-For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
-
-* The file name MUST end with the suffix **`cross_replicate.fq`**
-* The address and the prefix of the file names should be placed under the option -f
-
-**Example:** 
-
-The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
-
-Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
-
-If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
-
 #### FASTA and annotation files
 
 For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format
@@ -209,14 +195,14 @@ sed -i "1s/.*/$head/" map/${strain}_annot.gff3
 
 Before:
 ```
->ATCVI-1G19970.1 gene=ATCVI-1G19970 CDS=1-1998
+>ATCVI-1G19970
 ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
 ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
 CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC 
 ```
 After:
 ```
->cviA_ATCVI-1G19970.1 gene=ATCVI-1G19970 CDS=1-1998
+>cviA_ATCVI-1G19970
 ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
 ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
 CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC
@@ -226,18 +212,18 @@ CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC
 Before:
 ```
 ##gff-version 3
-ATCVI-1G19970.1	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970.1A
-ATCVI-1G33940.1	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940.1A
-ATCVI-1G38040.1	.	exon	1	401	.	+	.	ID=ATCVI-1G38040.1A
-ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
+ATCVI-1G19970	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970cviA
+ATCVI-1G33940	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940cviA
+ATCVI-1G38040	.	exon	1	401	.	+	.	ID=ATCVI-1G38040cviA
+ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
 ```
 After:
 ```
 ##gff-version 3
-cviA_ATCVI-1G19970.1	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970.1A
-cviA_ATCVI-1G33940.1	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940.1A
-cviA_ATCVI-1G38040.1	.	exon	1	401	.	+	.	ID=ATCVI-1G38040.1A
-cviA_ATCVI-1G42830.1	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830.1A
+cviA_ATCVI-1G19970	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970cviA
+cviA_ATCVI-1G33940	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940cviA
+cviA_ATCVI-1G38040	.	exon	1	401	.	+	.	ID=ATCVI-1G38040cviA
+cviA_ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
 ```
 #### Gene Key
 
@@ -246,15 +232,15 @@ If steps 1 and 2 were not followed, a gene key is **required** for calling impri
 **Example:**
 ```
 A B
-ATCVI-1G19970.1A	ATCVI-1G19970.1B
-ATCVI-1G33940.1A	ATCVI-1G33940.1B
-ATCVI-1G38040.1A	ATCVI-1G38040.1B
-ATCVI-1G42830.1A	ATCVI-1G42830.1B
-ATCVI-1G64390.1A	ATCVI-1G64390.1B
-ATCVI-1G64620.1A	ATCVI-1G64620.1B
-ATCVI-1G67300.1A	ATCVI-1G67300.1B
-ATCVI-1G75310.1A	ATCVI-1G75310.1B
-ATCVI-1G81680.1A	ATCVI-1G81680.1B
+ATCVI-1G19970cviA	ATCVI-1G19970cviB
+ATCVI-1G33940cviA ATCVI-1G33940cviB
+ATCVI-1G38040cviA	ATCVI-1G38040cviB
+ATCVI-1G42830cviA	ATCVI-1G42830cviB
+ATCVI-1G64390cviA	ATCVI-1G64390cviB
+ATCVI-1G64620cviA	ATCVI-1G64620cviB
+ATCVI-1G67300cviA	ATCVI-1G67300cviB
+ATCVI-1G75310cviA	ATCVI-1G75310cviB
+ATCVI-1G81680cviA ATCVI-1G81680cviB
 ```
 #### Counts Files
 
@@ -264,12 +250,12 @@ If you already have the counts files and are planning to use the helper script `
 
 ```
                  AxB_1 AxB_2 AxB_3 BxA_1 BxA_2 BxA_3
-ATCVI-1G19970.1A   228    74    38     6    38     7
-ATCVI-1G19970.1B    35     7    14    90   202    89
-ATCVI-1G33940.1A    48   299   110    65    22    50
-ATCVI-1G33940.1B   135    46    53   256    69   126
-ATCVI-1G38040.1A    55   156   109    91    60    17
-ATCVI-1G38040.1B    99    63    11   189    85   159
+ATCVI-1G19970cviA   228    74    38     6    38     7
+ATCVI-1G19970cviB   35     7    14    90   202    89
+ATCVI-1G33940cviA   48   299   110    65    22    50
+ATCVI-1G33940cviB   135    46    53   256    69   126
+ATCVI-1G38040cviA   55   156   109    91    60    17
+ATCVI-1G38040cviB    99    63    11   189    85   159
 ```
 
 Note that for Anderson/DESeq2 approach, replicates are required.
@@ -300,7 +286,7 @@ Note that for Anderson/DESeq2 approach, replicates are required.
 
 Sample command:
 ```
-anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a .1A -b .1B -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
+anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a cviA -b cviB -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
 ```
 
 ### Output:
@@ -337,6 +323,16 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 Some conventions that need to be followed for the program to run correctly:
 * Annotations file must have transcript_id and gene_id under attributes column (for STAR and HTSeqcount, respectively). 
 * Annotation files should not contain the ##gff-version 3 header for STAR
+
+An example is given below:
+```
+ATCVI-1G19970	.	exon	1	1998	.	+	.	gene_id=ATCVI-1G19970;transcript_id ATCVI-1G19970cviA
+ATCVI-1G33940	.	exon	1	1548	.	+	.	gene_id=ATCVI-1G33940;transcript_id ATCVI-1G33940cviA
+ATCVI-1G38040	.	exon	1	411	.	+	.	gene_id=ATCVI-1G38040;transcript_id ATCVI-1G38040cviA
+ATCVI-1G42830	.	exon	1	1134	.	+	.	gene_id=ATCVI-1G42830;transcript_id ATCVI-1G42830cviA
+ATCVI-1G64390	.	exon	1	1524	.	+	.	gene_id=ATCVI-1G64390;transcript_id ATCVI-1G64390cviA
+ATCVI-1G64620	.	exon	1	1041	.	+	.	gene_id=ATCVI-1G64620;transcript_id ATCVI-1G64620cviA
+```
 * SNPs file must be in the required format. 
 * Names for chromosomes in genome FASTA files/read files/annotation files should not contain a '.'
 
@@ -344,21 +340,7 @@ If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix `_picard.gff3` under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
-#### FASTQ files
-For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
-
-* The file name MUST end with the suffix **`cross_replicate.fq`**
-* The address and the prefix of the file names should be placed under the option -f
-
-**Example:** 
-
-The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
-
-Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
-
-If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
-
-For now, FASTQ files from reciprocal crosses with same replicate number attached to them are considered paired. Working on adding another option to consider them separately (calling imprinting using combinations of all AxB and BxA replicates).
+Note: For now, FASTQ files from reciprocal crosses with same replicate number attached to them are considered paired. Working on adding another option to consider them separately (calling imprinting using combinations of all AxB and BxA replicates).
 
 Sample command:
 
