@@ -1,7 +1,7 @@
 # Benchmarking Imprinting Data Analysis Pipelines
 ## Step 1: Simulating genomes
 
-### Run file: simulate_genome.sh
+### Run file: `simulate_genome.sh`
 
 ### Dependencies: 
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
@@ -12,16 +12,16 @@
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
-* edit_genome.sh
-* make_annot.R
-* inv_transform_sampling.R 
-* scoring.R
+* `edit_genome.sh`
+* `make_annot.R`
+* `inv_transform_sampling.R`
+* `scoring.R`
 
 ### Similarity Scoring
 
-A rejection-sampling approach is used for similarity scoring (edit_genome.sh). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (scoring.R, -P), which is the input for simuG. The vcf files from simuG are used to calculate the actual score (-V), and compared with desired score. This is repeated until it is within the window of the desired score. This is done per-chromosome basis in the main branch given below.
+A rejection-sampling approach is used for similarity scoring (`edit_genome.sh`). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (`scoring.R`, -P), which is the input for simuG. The vcf files from simuG are used to calculate the actual score (-V), and compared with desired score. This is repeated until it is within the window of the desired score. This is done per-chromosome basis in the main branch given below.
 
-**Alternate branch (helper_scripts/edit_genome_v2):** Operates on a whole-genome basis and prunes the original genome as a chromosome achieves the desired score. This increased runtime relative to the original per-chromosome method (see metrics below). Increasing the window might decrease runtime, possibly, but it hasn't been tried out yet.
+**Alternate branch (`helper_scripts/edit_genome_v2`):** Operates on a whole-genome basis and prunes the original genome as a chromosome achieves the desired score. This increased runtime relative to the original per-chromosome method (see metrics below). Increasing the window might decrease runtime, possibly, but it hasn't been tried out yet.
 
 Added dependencies for alternate scripts: R - vcfR library
 
@@ -78,22 +78,22 @@ gffread -w outdir/strainA/strainA_transcripts.fa -g $ref $annot
 Annotations and FASTA files for both strainA and strainB (in outdir)
 
 Log files of interest:
-* $outdir/per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
-* $outdir/per_chrom/scores_log.txt - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
+* `$outdir/per_chrom/un_edited_chr.txt` - a list of chromosomes that weren't added to strainB because simuG had to be killed
+* `$outdir/per_chrom/scores_log.txt` - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 ## Step 2: Simulating reads
 
 Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for this to work. Please refer the instructions below.
 
-### Run file: simulate_reads.sh
+### Run file: `simulate_reads.sh`
 
 ### Dependencies:
 * R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
-* simulated_read-counts.R
-* reads_simul.R
+* `simulated_read-counts.R`
+* `reads_simul.R`
 
 ### Options:
 ```
@@ -123,14 +123,14 @@ $scripts_dir/simulate_reads_opt.sh -A strainA -B strainB -x $refA -y $refB -d $s
 FASTQ (.fq) files that match counts simulated.
 
 Other relevant files: 
-* $outdir/reads_simul/simul_counts+id_A.txt and $outdir/reads_simul/simul_counts+id_B.txt - a summary of 'chromosome' ids alongside read counts
-* $outdir/counts_simul_megs.txt and $outdir/counts_simul_pegs.txt - true MEG and PEG lists to use in verifying imprinting calls
+* `$outdir/reads_simul/simul_counts+id_A.txt` and `$outdir/reads_simul/simul_counts+id_B.txt` - a summary of 'chromosome' ids alongside read counts
+* `$outdir/counts_simul_megs.txt` and `$outdir/counts_simul_pegs.txt` - true MEG and PEG lists to use in verifying imprinting calls
 
 ## Step 3: Calling Imprinting
 
 ## Type A: Anderson et al. 
 
-### Run file: anderson_mapping.sh
+### Run file: `anderson_mapping.sh`
 
 Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 
@@ -141,21 +141,21 @@ Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 
 ### Helper scripts required:
 (enter directory for helper scripts under option -d)
-* call_imprinting_anderson.R
+* `call_imprinting_anderson.R`
 
 ### Required conventions:
 
 #### FASTQ files
 For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
 
-* The file name MUST end with the suffix **cross_replicate.fq**
+* The file name MUST end with the suffix **`cross_replicate.fq`**
 * The address and the prefix of the file names should be placed under the option -f
 
 **Example:** 
 
-The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being '$strainA_$strainB_'. Adding the file's location to the prefix, the file is called: $outdir/reads_simul/$strainA_$strainB_AxB_1.fq.
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
-Following the above convention, under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
+Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
 
 If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
@@ -163,7 +163,7 @@ If you followed with the steps 1 and 2, there's no need to use -f at all, it is 
 
 For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format
 
-If you followed with steps 1 and 2, enter the annotation with the \_anderson.gff3 suffix under the -X and -Y options. Additionally, there is no need to use the -i option, it uses the default.
+If you followed with steps 1 and 2, enter the annotation with the `_anderson.gff3` suffix under the -X and -Y options. Additionally, there is no need to use the -i option, it uses the default.
 
 Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. 
 
@@ -240,8 +240,8 @@ ATCVI-1G81680.1A	ATCVI-1G81680.1B
 ```
 #### Counts Files
 
-If you already have the counts files and are planning to use the helper script call_imprinting_anderson.R directly, use one of the two options below:
-* name files exactly with the suffix **cross_replicate.txt**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
+If you already have the counts files and are planning to use the helper script `call_imprinting_anderson.R` directly, use one of the two options below:
+* name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
 * merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, and provide the one filename under -c AND DO NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
 
 ```
@@ -287,12 +287,12 @@ $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $a
 
 ### Output:
 
-* outprefix_anderson_MEGs.txt and outprefix_anderson_PEGs.txt - imprinted MEGs/PEGs lists with both syntelog names given
-* outprefix_anderson_stats.txt - DESeq2 stats and imprinting status for all syntelogs
+* `outprefix_anderson_MEGs.txt` and `outprefix_anderson_PEGs.txt` - imprinted MEGs/PEGs lists with both syntelog names given
+* `outprefix_anderson_stats.txt` - DESeq2 stats and imprinting status for all syntelogs
 
 ## Type B: Picard and Gehring 
 
-### Run file: picard_mapping.sh
+### Run file: `picard_mapping.sh`
 
 Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly.
 
@@ -323,20 +323,20 @@ Some conventions that need to be followed for the program to run correctly:
 * Names for chromosomes in genome FASTA files/read files/annotation files should not contain a '.'
 
 If you followed with steps 1 and 2, adjustments will be made automatically:
-* Use the annotation file with the suffix \_picard.gff3 under the -a option.
+* Use the annotation file with the suffix `_picard.gff3` under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
 #### FASTQ files
 For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
 
-* The file name MUST end with the suffix **cross_replicate.fq**
+* The file name MUST end with the suffix **`cross_replicate.fq`**
 * The address and the prefix of the file names should be placed under the option -f
 
 **Example:** 
 
-The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being '$strainA_$strainB_'. Adding the file's location to the prefix, the file is called: $outdir/reads_simul/$strainA_$strainB_AxB_1.fq.
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
-Following the above convention, under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
+Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
 
 If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
@@ -344,5 +344,5 @@ For now, FASTQ files from reciprocal crosses with same replicate number attached
 
 ### Output:
 
-* outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_MEGs.txt and outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_PEGs.txt where 'x' represents replicate number.
+* `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_MEGs.txt` and `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_PEGs.txt` where 'x' represents replicate number.
 
