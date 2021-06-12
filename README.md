@@ -69,9 +69,9 @@ Sample command:
 ```
 simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome.fa -y strainB_genome.fa -X strainA_annot.gff3 -Y strainB_annot.gff3 -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
 ```
-I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 181-185 and first run gffread directly as given below:
+I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 205-209 and first run gffread directly as given below:
 ```
-gffread -w strainA/strainA_transcripts.fa -g $ref $annot
+gffread -w outdir/strainA/strainA_transcripts.fa -g $ref $annot
 ```
 ### Output:
 
