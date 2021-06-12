@@ -132,7 +132,7 @@ Other relevant files:
 
 ### Run file: anderson_mapping.sh
 
-(adapted from: https://github.com/SNAnderson/Imprinting2020)
+Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 
 ### Dependencies:
 * hisat2
@@ -289,3 +289,60 @@ $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $a
 
 * outprefix_anderson_MEGs.txt and outprefix_anderson_PEGs.txt - imprinted MEGs/PEGs lists with both syntelog names given
 * outprefix_anderson_stats.txt - DESeq2 stats and imprinting status for all syntelogs
+
+## Type B: Picard and Gehring 
+
+### Run file: picard_mapping.sh
+
+Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly.
+
+### Dependencies:
+* Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -p). Must also include all its dependencies, as outlined on their README file.
+
+### Options:
+```
+-o outdirectory (all output will be stored here - HAS to be relative to current working directory)
+-p Picard and Gehring's Imprinting analysis suite directory
+-A strainA (for file and folder names)
+-B strainB (for file and folder names)
+-a reference/strainA annotation file
+-g reference/strainA genome FASTA file
+-M MEGs cutoff for calling imprinting (default: 95)
+-P PEGs cutoff for calling imprinting (default: 25)
+-s SNPs file, in required format
+-r number of replicates (default: 3)
+-f represents the start of the FASTQ reads file name
+```
+### Required Conventions
+
+#### For Picard and Gehring's suite
+Some conventions that need to be followed for the program to run correctly:
+* Annotations file must have transcript_id and gene_id under attributes column (for STAR and HTSeqcount, respectively). 
+* Annotation files should not contain the ##gff-version 3 header for STAR
+* SNPs file must be in the required format. 
+* Names for chromosomes in genome FASTA files/read files/annotation files do not contain a '.'
+
+If you followed with steps 1 and 2, adjustments will be made automatically:
+* Use  under the -a option instead.
+* Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
+
+#### FASTQ files
+For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
+
+* The file name MUST end with the suffix **cross_replicate.fq**
+* The address and the prefix of the file names should be placed under the option -f
+
+**Example:** 
+
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being '$strainA_$strainB_'. Adding the file's location to the prefix, the file is called: $outdir/reads_simul/$strainA_$strainB_AxB_1.fq.
+
+Following the above convention, under -f option place: -f $outdir/reads_simul/$strainA_$strainB_
+
+If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+
+For now, FASTQ files from reciprocal crosses with same replicate number attached to them are considered paired. Working on adding another option to consider them separately (calling imprinting using combinations of all AxB and BxA replicates).
+
+### Output:
+
+* outdir/picard_map/rep_x_imprinting/imprinting/rep_1_imprinting_filtered_MEGs.txt and outdir/picard_map/rep_x_imprinting/imprinting/rep_1_imprinting_filtered_PEGs.txt where 'x' represents replicate number.
+
