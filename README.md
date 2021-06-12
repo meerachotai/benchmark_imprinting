@@ -163,7 +163,7 @@ If you followed with the steps 1 and 2, there's no need to use -f at all, it is 
 
 For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format
 
-If you followed with steps 1 and 2, there is no need to use the -i option, it uses the default.
+If you followed with steps 1 and 2, enter the annotation with the \_anderson.gff3 suffix under the -X and -Y options. Additionally, there is no need to use the -i option, it uses the default.
 
 Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. 
 
@@ -313,7 +313,7 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 -r number of replicates (default: 3)
 -f represents the start of the FASTQ reads file name
 ```
-### Required Conventions
+### Required Conventions:
 
 #### For Picard and Gehring's suite
 Some conventions that need to be followed for the program to run correctly:
@@ -323,7 +323,7 @@ Some conventions that need to be followed for the program to run correctly:
 * Names for chromosomes in genome FASTA files/read files/annotation files do not contain a '.'
 
 If you followed with steps 1 and 2, adjustments will be made automatically:
-* Use  under the -a option instead.
+* Use the annotation file with the suffix \_picard.gff3 under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
 #### FASTQ files
@@ -344,5 +344,5 @@ For now, FASTQ files from reciprocal crosses with same replicate number attached
 
 ### Output:
 
-* outdir/picard_map/rep_x_imprinting/imprinting/rep_1_imprinting_filtered_MEGs.txt and outdir/picard_map/rep_x_imprinting/imprinting/rep_1_imprinting_filtered_PEGs.txt where 'x' represents replicate number.
+* outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_MEGs.txt and outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_PEGs.txt where 'x' represents replicate number.
 
