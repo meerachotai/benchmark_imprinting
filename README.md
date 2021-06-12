@@ -346,7 +346,7 @@ Sample command:
 
 ```
 picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -p $picard -o $outdir
-
+```
 ### Output:
 
 * `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_MEGs.txt` and `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_PEGs.txt` where 'x' represents replicate number.
