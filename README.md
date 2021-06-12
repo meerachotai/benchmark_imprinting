@@ -232,14 +232,14 @@ If steps 1 and 2 were not followed, a gene key is **required** for calling impri
 **Example:**
 ```
 A B
-ATCVI-1G19970cviA	ATCVI-1G19970cviB
+ATCVI-1G19970cviA ATCVI-1G19970cviB
 ATCVI-1G33940cviA ATCVI-1G33940cviB
-ATCVI-1G38040cviA	ATCVI-1G38040cviB
-ATCVI-1G42830cviA	ATCVI-1G42830cviB
-ATCVI-1G64390cviA	ATCVI-1G64390cviB
-ATCVI-1G64620cviA	ATCVI-1G64620cviB
-ATCVI-1G67300cviA	ATCVI-1G67300cviB
-ATCVI-1G75310cviA	ATCVI-1G75310cviB
+ATCVI-1G38040cviA ATCVI-1G38040cviB
+ATCVI-1G42830cviA ATCVI-1G42830cviB
+ATCVI-1G64390cviA ATCVI-1G64390cviB
+ATCVI-1G64620cviA ATCVI-1G64620cviB
+ATCVI-1G67300cviA ATCVI-1G67300cviB
+ATCVI-1G75310cviA ATCVI-1G75310cviB
 ATCVI-1G81680cviA ATCVI-1G81680cviB
 ```
 #### Counts Files
@@ -250,12 +250,12 @@ If you already have the counts files and are planning to use the helper script `
 
 ```
                  AxB_1 AxB_2 AxB_3 BxA_1 BxA_2 BxA_3
-ATCVI-1G19970cviA   228    74    38     6    38     7
-ATCVI-1G19970cviB   35     7    14    90   202    89
-ATCVI-1G33940cviA   48   299   110    65    22    50
-ATCVI-1G33940cviB   135    46    53   256    69   126
-ATCVI-1G38040cviA   55   156   109    91    60    17
-ATCVI-1G38040cviB    99    63    11   189    85   159
+ATCVI-1G19970cviA   228   74    38     6    38     7
+ATCVI-1G19970cviB    35    7    14    90   202    89
+ATCVI-1G33940cviA    48  299   110    65    22    50
+ATCVI-1G33940cviB   135   46    53   256    69   126
+ATCVI-1G38040cviA    55  156   109    91    60    17
+ATCVI-1G38040cviB    99   63    11   189    85   159
 ```
 
 Note that for Anderson/DESeq2 approach, replicates are required.
