@@ -39,10 +39,10 @@ Some one-time metrics on comparing the two approaches:
 -o outdirectory (all output will be stored here - HAS to be relative to current working directory)
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
--x name for strainA FASTA file
--y name for strainB FASTA file
--X name for strainA annotation file
--Y name for strainB annotation file
+-x outprefix for strainA FASTA file
+-y outprefix for strainB FASTA file
+-X outprefix for strainA annotation file
+-Y outprefix for strainB annotation file
 -r original reference genome (from which strainA genome will be simulated)
 -a original annotation (from which strainA genome will be simulated)
 -D simuG directory
@@ -67,7 +67,7 @@ Some one-time metrics on comparing the two approaches:
 
 Sample command:
 ```
-simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome.fa -y strainB_genome.fa -X strainA_annot.gff3 -Y strainB_annot.gff3 -D $simuG -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
+simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome -y strainB_genome -X strainA_annot -Y strainB_annot -D $simuG_dir -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 205-209 and first run gffread directly as given below:
 ```
@@ -82,8 +82,6 @@ Log files of interest:
 * `$outdir/per_chrom/scores_log.txt` - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
 
 ## Step 2: Simulating reads
-
-Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for this to work. Please refer the instructions below.
 
 ### Run file: `simulate_reads.sh`
 
@@ -128,7 +126,27 @@ Other relevant files:
 
 ## Step 3: Calling Imprinting
 
-## Type A: Anderson et al. 
+Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for this to work - refer to the next section below. 
+
+Depending on the method being used, some additional conventions are also required for input files, so refer to individual Method sections for more information.
+
+### Required conventions:
+
+#### FASTQ files
+For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
+
+* The file name MUST end with the suffix **`cross_replicate.fq`**
+* The address and the prefix of the file names should be placed under the option -f
+
+**Example:** 
+
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
+
+Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
+
+If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+
+## Method A: Anderson et al. 
 
 ### Run file: `anderson_mapping.sh`
 
@@ -290,7 +308,7 @@ anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $ann
 * `outprefix_anderson_MEGs.txt` and `outprefix_anderson_PEGs.txt` - imprinted MEGs/PEGs lists with both syntelog names given
 * `outprefix_anderson_stats.txt` - DESeq2 stats and imprinting status for all syntelogs
 
-## Type B: Picard and Gehring 
+## Method B: Picard and Gehring 
 
 ### Run file: `picard_mapping.sh`
 
