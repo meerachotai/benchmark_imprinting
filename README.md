@@ -321,8 +321,10 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 
 #### For Picard and Gehring's suite
 Some conventions that need to be followed for the program to run correctly:
+* SNPs file must be in the required format. 
 * Annotations file must have transcript_id and gene_id under attributes column (for STAR and HTSeqcount, respectively). 
 * Annotation files should not contain the ##gff-version 3 header for STAR
+* Names for chromosomes in genome FASTA files/read files/annotation files should not contain a '.'
 
 An example is given below:
 ```
@@ -333,8 +335,6 @@ ATCVI-1G42830	.	exon	1	1134	.	+	.	gene_id=ATCVI-1G42830;transcript_id ATCVI-1G42
 ATCVI-1G64390	.	exon	1	1524	.	+	.	gene_id=ATCVI-1G64390;transcript_id ATCVI-1G64390cviA
 ATCVI-1G64620	.	exon	1	1041	.	+	.	gene_id=ATCVI-1G64620;transcript_id ATCVI-1G64620cviA
 ```
-* SNPs file must be in the required format. 
-* Names for chromosomes in genome FASTA files/read files/annotation files should not contain a '.'
 
 If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix `_picard.gff3` under the -a option.
