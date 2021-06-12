@@ -115,7 +115,7 @@ Steps 1 and 2 can be skipped in favor of providing real-data files for mapping a
 
 Sample command:
  ```
-$scripts_dir/simulate_reads_opt.sh -A strainA -B strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o outdir
+simulate_reads.sh -A strainA -B strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o outdir
 ```
 
 ### Output:
@@ -282,7 +282,7 @@ Note that for Anderson/DESeq2 approach, replicates are required.
 
 Sample command:
 ```
-$scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a .1A -b .1B -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
+anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a .1A -b .1B -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
 ```
 
 ### Output:
@@ -341,6 +341,11 @@ Following the above convention, under -f option place: -f `$outdir/reads_simul/$
 If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
 For now, FASTQ files from reciprocal crosses with same replicate number attached to them are considered paired. Working on adding another option to consider them separately (calling imprinting using combinations of all AxB and BxA replicates).
+
+Sample command:
+
+```
+picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -p $picard -o $outdir
 
 ### Output:
 
