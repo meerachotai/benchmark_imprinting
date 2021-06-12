@@ -75,7 +75,7 @@ gffread -w strainA/strainA_transcripts.fa -g $ref $annot
 ```
 ### Output:
 
-Annotations and FASTA files for both strainA and strainB
+Annotations and FASTA files for both strainA and strainB (in outdir)
 
 Log files of interest:
 * $outdir/per_chrom/un_edited_chr.txt - a list of chromosomes that weren't added to strainB because simuG had to be killed
