@@ -303,6 +303,8 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 ### Dependencies:
 * Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -p). Must also include all its dependencies, as outlined on their README file.
 
+Other notes: this wrapper script requires a large memory, so set up jobs/interactive sessions accordingly.
+
 ### Options:
 ```
 -o outdirectory (all output will be stored here - HAS to be relative to current working directory)
