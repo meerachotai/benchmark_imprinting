@@ -309,26 +309,6 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 
 Other notes: this wrapper script requires a large memory, and depending on the size of your genome, and the number of replicates available it could take very long to run as well - set up jobs/interactive sessions accordingly.
 
-### Options:
-```
--o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--D Picard and Gehring's Imprinting analysis suite directory
--d helper scripts directory
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--a reference/strainA annotation file
--g reference/strainA genome FASTA file
--M MEGs cutoff for calling imprinting (default: 95)
--P PEGs cutoff for calling imprinting (default: 25)
--s SNPs file, in required format
--r number of replicates (optional, can use -x and -y instead)
--x number of AxB replicates
--y number of BxA replicates
--f represents the start of the FASTQ reads file name
--p boolean, use if you want replicates to be treated as reciprocal pairs
--m number of majority votes needed for a gene to be considered imprinted. optional. (default: floor(number of combinations))
--O outprefix for imprinting files
-```
 ### Required Conventions:
 
 #### For Picard and Gehring's suite
@@ -352,10 +332,32 @@ If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix `_picard.gff3` under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
+If you have a different number of AxB and BxA replicates, specifically add these in under the -x and -y options respectively, and do not use the -p tag so that combinations of the two sets will be used to find consensus MEGs and PEGs.
+
+### Options:
+```
+-o outdirectory (all output will be stored here - HAS to be relative to current working directory)
+-D Picard and Gehring's Imprinting analysis suite directory
+-d helper scripts directory
+-A strainA (for file and folder names)
+-B strainB (for file and folder names)
+-a reference/strainA annotation file
+-g reference/strainA genome FASTA file
+-M MEGs cutoff for calling imprinting (default: 95)
+-P PEGs cutoff for calling imprinting (default: 25)
+-s SNPs file, in required format
+-r number of replicates (optional, if left blank, MUST use -x and -y instead)
+-x number of AxB replicates
+-y number of BxA replicates
+-f represents the start of the FASTQ reads file name
+-p boolean, use if you want replicates to be treated as reciprocal pairs
+-m number of majority votes needed for a gene to be considered imprinted. optional. (default: floor(number of combinations))
+-O outprefix for imprinting files
+```
 Sample command:
 
 ```
-picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D $picard -o $outdir -O out -d $scripts_dir -
+picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D $picard -o $outdir -O out -d $scripts_dir -m 2 -
 ```
 ### Output:
 
