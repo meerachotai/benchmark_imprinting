@@ -173,9 +173,9 @@ if [ "$paired" = "true" ]; then
 	for i in $(seq 1 1 $rep)
 	do
 		cross="AxB_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
 		cross="BxA_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
 	done
 	
 	# counting and calling
@@ -188,7 +188,7 @@ if [ "$paired" = "true" ]; then
 		AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
 		BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 		
-		${picard}/call_imprinting.sh -o $map/rep_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r #add -r if retrial
+		${picard}/call_imprinting.sh -o $map/rep_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r >> $map/call_imprint_log.txt
 		
 		cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
 		cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
@@ -212,13 +212,13 @@ else
 	for i in $(seq 1 1 $AxB_rep)
 	do
 		cross="AxB_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
 	done
 	
 	for i in $(seq 1 1 $BxA_rep)
 	do
 		cross="BxA_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
 	done
 	
 	# counting and calling
@@ -232,7 +232,7 @@ else
 			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
 			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 			
-			${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r #add -r if retrial
+			${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r >> $map/call_imprint_log.txt
 			
 			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
 			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
