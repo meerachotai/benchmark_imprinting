@@ -298,7 +298,7 @@ anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $ann
 
 ### Run file: `picard_mapping.sh`
 
-Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly. This wrapper script also has the added functionality of running all reciprocal replicate pairs or all combinations of pairs of reciprocal replicates to call imprinted genes, and then run a quick consensus calling to give a final list of imprinted genes.
+Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly. This wrapper script also has the added functionality of running all reciprocal replicate pairs or all combinations of pairs of reciprocal replicates to call imprinted genes, and then consensus calling to give a final list of imprinted genes.
 
 ### Dependencies:
 * Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -D). Must also include all its dependencies, as outlined on their README file.
@@ -332,7 +332,7 @@ If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix `_picard.gff3` under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
-If you have a different number of AxB and BxA replicates, specifically add these in under the -x and -y options respectively, and do not use the -p tag so that combinations of the two sets will be used to find consensus MEGs and PEGs.
+If you have a different number of AxB and BxA replicates, specifically add these in under the -x and -y options respectively, and do not use the -p flag so that combinations of the two sets will be used to find consensus MEGs and PEGs.
 
 ### Options:
 ```
