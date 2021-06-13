@@ -161,6 +161,14 @@ printf "Calling imprinting...\n"
 if [ "$paired" = "true" ]; then
 	printf "Assuming that reciprocal crosses are paired by replicate\n"
 	
+	if [ ${#rep} == 0 ]; then
+		if [ ${#AxB_rep} ==  ${#BxA_rep} ]; then
+			rep=$AxB_rep
+		else
+			printf "Number of AxB and BxA replicates given do not match, please re-check, or get combinations without using option -p\n"
+		fi
+	fi
+	
 	# mapping
 	for i in $(seq 1 1 $rep)
 	do
@@ -190,6 +198,15 @@ if [ "$paired" = "true" ]; then
 	
 else
 	printf "Assuming that reciprocal crosses are not paired by replicate, finding combinations...\n"
+	
+	if [ ${#AxB_rep} == 0 ] || [ ${#BxA_rep} == 0 ]; then
+		if [ ${#rep} == 0 ]; then
+			printf "Number of replicates not given, please try again and use options -x and -y or -r"
+		else
+			AxB_rep=$rep
+			BxA_rep=$rep
+		fi
+	fi
 	
 	# mapping
 	for i in $(seq 1 1 $AxB_rep)
