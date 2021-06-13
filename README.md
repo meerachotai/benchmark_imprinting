@@ -227,9 +227,9 @@ cviA_ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
 ```
 #### Gene Key
 
-If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited file .txt with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g.
+If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited .txt file with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g.
 
-**Example:**
+**Example:** (the header does not necessarily have to be the one given below:)
 ```
 A B
 ATCVI-1G19970cviA ATCVI-1G19970cviB
@@ -246,8 +246,9 @@ ATCVI-1G81680cviA ATCVI-1G81680cviB
 
 If you already have the counts files and are planning to use the helper script `call_imprinting_anderson.R` directly, use one of the two options below:
 * name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
-* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, and provide the one filename under -c AND DO NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
+* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, add a header and provide the one filename under -c AND DO NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
 
+**Example:** (the header does not necessarily have to be the one given below:)
 ```
                  AxB_1 AxB_2 AxB_3 BxA_1 BxA_2 BxA_3
 ATCVI-1G19970cviA   228   74    38     6    38     7
