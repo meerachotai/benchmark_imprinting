@@ -245,12 +245,12 @@ fi
 printf "Total reciprocal pairs inspected: ${count}\n"
 
 if [ ${#majority} == 0 ]; then
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -t $count -o ${outprefix}_consensus_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -t $count -o ${outprefix}_consensus_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -t $count -o ${outprefix}_picard_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -t $count -o ${outprefix}_picard_PEGs.txt
 else
 	printf "Using majority voting of >= ${majority} for consensus calls\n"
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -m $majority -o ${outprefix}_consensus_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -m $majority -o ${outprefix}_consensus_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -m $majority -o ${outprefix}_picard_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -m $majority -o ${outprefix}_picard_PEGs.txt
 fi
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
