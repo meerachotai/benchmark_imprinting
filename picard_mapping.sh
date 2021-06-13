@@ -188,10 +188,10 @@ if [ "$paired" = "true" ]; then
 		AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
 		BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 		
-		${picard}/call_imprinting.sh -o $map/rep_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r >> $map/call_imprint_log.txt
+		${picard}/call_imprinting.sh -o $map/rep_${i}_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r >> $map/call_imprint_log.txt
 		
-		cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
-		cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
 	done
 	
 	count=$rep
