@@ -298,17 +298,22 @@ anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $ann
 
 ### Run file: `picard_mapping.sh`
 
-Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly.
+Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly. This wrapper script also has the added functionality of running all reciprocal replicate pairs or all combinations of pairs of reciprocal replicates to call imprinted genes, and then run a quick consensus calling to give a final list of imprinted genes.
 
 ### Dependencies:
-* Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -p). Must also include all its dependencies, as outlined on their README file.
+* Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -D). Must also include all its dependencies, as outlined on their README file.
 
-Other notes: this wrapper script requires a large memory, so set up jobs/interactive sessions accordingly.
+### Helper scripts required:
+(enter directory for helper scripts under option -d)
+* `find_consensus.py`
+
+Other notes: this wrapper script requires a large memory, and depending on the size of your genome, and the number of replicates available it could take very long to run as well - set up jobs/interactive sessions accordingly.
 
 ### Options:
 ```
 -o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--p Picard and Gehring's Imprinting analysis suite directory
+-D Picard and Gehring's Imprinting analysis suite directory
+-d helper scripts directory
 -A strainA (for file and folder names)
 -B strainB (for file and folder names)
 -a reference/strainA annotation file
@@ -316,8 +321,13 @@ Other notes: this wrapper script requires a large memory, so set up jobs/interac
 -M MEGs cutoff for calling imprinting (default: 95)
 -P PEGs cutoff for calling imprinting (default: 25)
 -s SNPs file, in required format
--r number of replicates (default: 3)
+-r number of replicates (optional, can use -x and -y instead)
+-x number of AxB replicates
+-y number of BxA replicates
 -f represents the start of the FASTQ reads file name
+-p boolean, use if you want replicates to be treated as reciprocal pairs
+-m number of majority votes needed for a gene to be considered imprinted. optional. (default: floor(number of combinations))
+-O outprefix for imprinting files
 ```
 ### Required Conventions:
 
@@ -342,14 +352,13 @@ If you followed with steps 1 and 2, adjustments will be made automatically:
 * Use the annotation file with the suffix `_picard.gff3` under the -a option.
 * Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
-Note: For now, FASTQ files from reciprocal crosses with same replicate number attached to them are considered paired. Working on adding another option to consider them separately (calling imprinting using combinations of all AxB and BxA replicates).
-
 Sample command:
 
 ```
-picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -p $picard -o $outdir
+picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D $picard -o $outdir -O out -d $scripts_dir -
 ```
 ### Output:
 
-* `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_MEGs.txt` and `outdir/picard_map/rep_x_imprinting/imprinting/rep_x_imprinting_filtered_PEGs.txt` where 'x' represents replicate number.
+* `outprefix_all_MEGs.txt` and `outprefix_all_PEGs.txt` - all MEGs/PEGs list, along with combination count from which it was called
+* `outprefix_consensus_MEGs.txt` and `outprefix_consensus_PEGs.txt` - consensus MEGs/PEGs list
 
