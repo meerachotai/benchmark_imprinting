@@ -363,5 +363,5 @@ picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D 
 ### Output:
 
 * `outprefix_all_MEGs.txt` and `outprefix_all_PEGs.txt` - all MEGs/PEGs list, along with combination count from which it was called
-* `outprefix_consensus_MEGs.txt` and `outprefix_consensus_PEGs.txt` - consensus MEGs/PEGs list
+* `outprefix_picard_MEGs.txt` and `outprefix_picard_PEGs.txt` - consensus MEGs/PEGs list
 
