@@ -133,6 +133,7 @@ Steps 1 and 2 can be skipped in favor of providing real-data files for mapping a
 ### Run file: `anderson_mapping.sh`
 
 Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
+(need to add both forward and reverse reads, working on it)
 
 ### Dependencies:
 * hisat2
