@@ -241,8 +241,11 @@ ATCVI-1G81680cviA ATCVI-1G81680cviB
 #### Counts Files
 
 If you already have the counts files and are planning to use the helper script `call_imprinting_anderson.R` directly, use one of the two options below:
-* name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated
-* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, add a header and provide the one filename under -c AND DO NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
+* name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. 
+
+**Example:** `counts_cviA_cviB_AxB_1.txt` would require that your input command includes: -f `counts_cviA_cviB_` -C
+
+* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, add a header and provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
 
 **Example:** (the header does not necessarily have to be the one given below:)
 ```
