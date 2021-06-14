@@ -66,15 +66,15 @@ need_concat = opt$C
 
 if(need_concat == TRUE) {
   cat("Concatenating files...\n")
-  counts = read.table(paste0(infile, "_AxB_", 1, ".txt"), sep = "\t")
+  counts = read.table(paste0(infile, "AxB_", 1, ".txt"), sep = "\t")
   colnames(counts) = c("feature", "AxB_1")
   for (i in 2:rep) {
-    dat = read.table(paste0(infile, "_AxB_", i, ".txt"), sep = "\t")
+    dat = read.table(paste0(infile, "AxB_", i, ".txt"), sep = "\t")
     colnames(dat) = c("feature", paste0("AxB_",i))
     counts = merge(counts, dat)
   }
   for (i in 1:rep) {
-    dat = read.table(paste0(infile, "_BxA_", i, ".txt"), sep = "\t")
+    dat = read.table(paste0(infile, "BxA_", i, ".txt"), sep = "\t")
     colnames(dat) = c("feature", paste0("BxA_",i))
     counts = merge(counts, dat)
   }
