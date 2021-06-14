@@ -161,7 +161,7 @@ If you followed with the steps 1 and 2, there's no need to use -f at all, it is 
 
 #### FASTA and annotation files
 
-For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format
+For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format.
 
 If you followed with steps 1 and 2, enter the annotation with the `_anderson.gff3` suffix under the -X and -Y options. Additionally, there is no need to use the -i option, it uses the default.
 
@@ -241,11 +241,11 @@ ATCVI-1G81680cviA ATCVI-1G81680cviB
 #### Counts Files
 
 If you already have the counts files and are planning to use the helper script `call_imprinting_anderson.R` directly, use one of the two options below:
-* name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. 
+* Name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. Each file should have two columns: first column with gene names (including genes from strainA and strainB, labelled uniquely, as given under options -a and -b) and second column with counts.
 
-**Example:** `counts_cviA_cviB_AxB_1.txt` would require that your input command includes: `-f counts_cviA_cviB_ -C`
+**Example:** `counts_cviA_cviB_AxB_1.txt` would require that your input command includes: `-c counts_cviA_cviB_ -C`
 
-* merge the files with the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts, add a header and provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
+* Merge the files with a header, the gene names as rownames, the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
 
 **Example:** (the header does not necessarily have to be the one given below:)
 ```
@@ -258,7 +258,7 @@ ATCVI-1G38040cviA    55  156   109    91    60    17
 ATCVI-1G38040cviB    99   63    11   189    85   159
 ```
 
-Note that for Anderson/DESeq2 approach, replicates are required.
+Note that for Anderson/DESeq2 approach, > 1 replicates are required.
 
 ### Options:
 ```
@@ -377,4 +377,64 @@ picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D 
 
 * `outprefix_all_MEGs.txt` and `outprefix_all_PEGs.txt` - all MEGs/PEGs list, along with combination count from which it was called
 * `outprefix_picard_MEGs.txt` and `outprefix_picard_PEGs.txt` - consensus MEGs/PEGs list
+* `${outdir}/picard_map/rep_${i}_${j}_imprinting/counts_per_gene` - directory with counts files generated (where i and j are AxB and BxA replicate numbers respectively)
+
+## Method C: Wyder et al.
+
+### Run file: `wyder_imprinting.sh`
+
+Adapted from scripts on: https://github.com/swyder/Reanalysis_plant_imprinting
+
+### Dependencies:
+* hisat2
+* HTSeqcount
+* R (argparse, edgeR)
+
+### Helper scripts required:
+(enter directory for helper scripts under option -d)
+* `call_imprinting_wyder.R`
+
+### Required Conventions:
+
+#### Counts Files
+
+Running `wyder_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired `*_counts_merged.txt` files already. Provide the directory for these counts files under the option -c. By default it assumes that these counts files are placed under `$outdir/picard_map`.
+
+You can also instead run the mapping and counting steps recommended by Wyder et al. method at https://github.com/swyder/Reanalysis_plant_imprinting, and then directly use the call_imprinting_wyder.R script to run edgeR to call imprinted genes. Any alternate method for mapping and counting also works. However, this will mean that the counts files will need to be in one of two formats given below:
+* Name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. Each file should have three columns: the gene name, strainA counts and strainB counts.
+
+**Example:** `wyder_AxB_1.txt` would require that your input command includes: `-c wyder_ -C`
+
+* Merge the files with a header, gene names as row names, the first 1:(2\*replicates) columns for the AxB counts, and (2\*replicates)+1:(replicates\*4 columns) for the BxA counts. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 1 replicate is given below:
+
+**Example:** (the header does not necessarily have to be the one given below:)
+```
+                 AxB_1_A AxB_1_B BxA_1_A BxA_1_B 
+ATCVI-1G19970     228   74    38     6    
+ATCVI-1G33940      48  299   110    65  
+```
+
+Note that for the Wyder/edgeR method, having only one replicate is also acceptable.
+
+### Options:
+```
+-o outdirectory (all output will be stored here - HAS to be relative to current working directory)
+-A strainA (for file and folder names)
+-B strainB (for file and folder names)
+-d helper scripts directory
+-r number of replicates (optional, if left blank, MUST use -x and -y instead)
+-x number of AxB replicates
+-y number of BxA replicates
+-p p-value / alpha cutoff for calling imprinting (edgeR's FDR) (default: 0.05)
+-l log2fc cutoff for calling imprinting (edgeR's lfc) (default: 0, recommended by authors)
+-p boolean, use if you want replicates to be treated as reciprocal pairs
+-c directory for Picard's count files
+-O outprefix for imprinting files
+```
+
+### Output:
+
+* `outprefix_wyder_MEGs.txt` and `outprefix_wyder_PEGs.txt` - imprinted genes called by Wyder/edgeR method
+* `outprefix_wyder_stats.txt` - edgeR stats for all genes
+
 
