@@ -405,7 +405,7 @@ You can also instead run the mapping and counting steps recommended by Wyder et 
 
 **Example:** `wyder_AxB_1.txt` would require that your input command includes: `-c wyder_ -C`
 
-* Merge the files with a header, gene names as row names, the first 1:(2\*replicates) columns for the AxB counts, and (2\*replicates)+1:(replicates\*4 columns) for the BxA counts. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 1 replicate is given below:
+* Merge the files with a header, gene names as row names, the first 1:(2\*replicates) columns for the AxB counts, and (2\*replicates)+1:(replicates\*4) columns for the BxA counts, with strainA counts first, and strainB counts second. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 1 replicate is given below:
 
 **Example:** (the header does not necessarily have to be the one given below:)
 ```
