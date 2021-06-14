@@ -32,10 +32,12 @@ if(need_concat == TRUE) { # concatenate in the order AxB_1_A AxB_1_B AxB_2_A ...
   cat("Concatenating files...\n")
   counts = read.table(paste0(infile, "AxB_", 1, ".txt"), sep = "\t")
   colnames(counts) = c("feature", "AxB_1_A", "AxB_1_B")
-  for (i in 2:rep) {
-    dat = read.table(paste0(infile, "AxB_", i, ".txt"), sep = "\t")
-    colnames(dat) = c("feature", paste0("AxB_",i, "_A"), paste0("AxB_",i, "_B"))
-    counts = merge(counts, dat)
+  if(rep > 1) {
+    for (i in 2:rep) {
+      dat = read.table(paste0(infile, "AxB_", i, ".txt"), sep = "\t")
+      colnames(dat) = c("feature", paste0("AxB_",i, "_A"), paste0("AxB_",i, "_B"))
+      counts = merge(counts, dat)
+    }
   }
   for (i in 1:rep) {
     dat = read.table(paste0(infile, "BxA_", i, ".txt"), sep = "\t")
@@ -102,5 +104,3 @@ cat("Writing MEG/PEG + counts file...")
 write.table(megs_counts,paste0(outprefix,"_wyder_MEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
 write.table(pegs_counts,paste0(outprefix,"_wyder_PEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
 cat(" Done.\n\n")
-
-
