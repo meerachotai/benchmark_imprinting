@@ -126,25 +126,7 @@ Other relevant files:
 
 ## Step 3: Calling Imprinting
 
-Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for this to work - refer to the next section below. 
-
-Depending on the method being used, some additional conventions are also required for input files, so refer to individual Method sections for more information.
-
-### Required conventions:
-
-#### FASTQ files
-For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
-
-* The file name MUST end with the suffix **`cross_replicate.fq`**
-* The address and the prefix of the file names should be placed under the option -f
-
-**Example:** 
-
-The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
-
-Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
-
-If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for these methods to work - refer to individual Method sections for more information.
 
 ## Method A: Anderson et al. 
 
@@ -162,6 +144,20 @@ Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 * `call_imprinting_anderson.R`
 
 ### Required conventions:
+
+#### FASTQ files
+For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
+
+* The file name MUST end with the suffix **`cross_replicate.fq`**
+* The address and the prefix of the file names should be placed under the option -f
+
+**Example:** 
+
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
+
+Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
+
+If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
 #### FASTA and annotation files
 
@@ -311,6 +307,20 @@ Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_anal
 Other notes: this wrapper script requires a large memory, and depending on the size of your genome, and the number of replicates available it could take very long to run as well - set up jobs/interactive sessions accordingly.
 
 ### Required Conventions:
+
+#### FASTQ files
+For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
+
+* The file name MUST end with the suffix **`cross_replicate.fq`**
+* The address and the prefix of the file names should be placed under the option -f
+
+**Example:** 
+
+The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
+
+Following the above convention, under -f option place: -f `$outdir/reads_simul/$strainA_$strainB_`
+
+If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
 
 #### For Picard and Gehring's suite
 Some conventions that need to be followed for the program to run correctly:
