@@ -181,7 +181,6 @@ syntelogs_AB[,imprint_B][is.na(syntelogs_AB[,imprint_B])] <- "no.imprint"
 
 # ---------------- save imprinting lists --------------------
 
-cat("Writing imprinting lists...\n")
 names(syntelogs_AB)[names(syntelogs_AB) == 'feature'] <- A.colname
 
 MEGs_A_ID = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "MEG" & syntelogs_AB[imprint_B] == "MEG"]
@@ -189,13 +188,22 @@ MEGs_B_ID = syntelogs_AB[,1][syntelogs_AB[imprint_A] == "MEG" & syntelogs_AB[imp
 
 imprinted_MEGs = data.frame(MEGs_A_ID, MEGs_B_ID)
 colnames(imprinted_MEGs) = c(A, B)
-write.table(imprinted_MEGs, paste0(outprefix, "_anderson_MEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 
 PEGs_A_ID = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "PEG" & syntelogs_AB[imprint_B] == "PEG"]
 PEGs_B_ID = syntelogs_AB[,1][syntelogs_AB[imprint_A] == "PEG" & syntelogs_AB[imprint_B] == "PEG"]
 
 imprinted_PEGs = data.frame(PEGs_A_ID, PEGs_B_ID)
 colnames(imprinted_PEGs) = c(A, B)
+
+cat("\n-----------------------------------\n")
+cat("Anderson/DESeq2 imprinted genes summary:\n")
+cat("logFC cutoff: ", log2fc, ", p-value cutoff: ",alpha, "\n")
+cat("maternally-biased: ",nrow(imprinted_MEGs), "\n") 
+cat("paternally-biased: ",nrow(imprinted_PEGs), "\n")
+cat("-----------------------------------\n")
+
+cat("\nWriting imprinting lists...\n")
+write.table(imprinted_MEGs, paste0(outprefix, "_anderson_MEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 write.table(imprinted_PEGs, paste0(outprefix, "_anderson_PEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 
 # either_imprinted = syntelogs_AB[syntelogs_AB[imprint_A] != "no.imprint" | syntelogs_AB[imprint_B] != "no.imprint",]
