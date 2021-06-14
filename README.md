@@ -386,8 +386,6 @@ picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D 
 Adapted from scripts on: https://github.com/swyder/Reanalysis_plant_imprinting
 
 ### Dependencies:
-* hisat2
-* HTSeqcount
 * R (argparse, edgeR)
 
 ### Helper scripts required:
