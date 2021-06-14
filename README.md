@@ -429,6 +429,10 @@ Note that for the Wyder/edgeR method, having only one replicate is also acceptab
 -c directory for Picard's count files
 -O outprefix for imprinting files
 ```
+Sample command:
+```
+wyder_imprinting.sh -A strainA -B strainB -r 1 -p 0.05 -l 0 -O ${outdir}/wyder -d $scripts_dir -o $outdir -P
+```
 
 ### Output:
 
