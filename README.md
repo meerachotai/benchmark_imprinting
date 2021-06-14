@@ -396,14 +396,14 @@ Adapted from scripts on: https://github.com/swyder/Reanalysis_plant_imprinting
 
 #### Counts Files
 
-Running `wyder_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired `*_counts_merged.txt` files already. Provide the directory for these counts files under the option -c. By default it assumes that these counts files are placed under `$outdir/picard_map`.
+Running `wyder_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `rep_${i}_${j}_imprinting/counts_per_gene/rep_${i}_${j}_${strainA}x${strainB}_counts_merged.txt` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under the option -c. Maintain the same settings for paired replicates. 
 
 You can also instead run the mapping and counting steps recommended by Wyder et al. method at https://github.com/swyder/Reanalysis_plant_imprinting, and then directly use the call_imprinting_wyder.R script to run edgeR to call imprinted genes. Any alternate method for mapping and counting also works. However, this will mean that the counts files will need to be in one of two formats given below:
 * Name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. Each file should have three columns: the gene name, strainA counts and strainB counts.
 
 **Example:** `wyder_AxB_1.txt` would require that your input command includes: `-c wyder_ -C`
 
-* Merge the files with a header, gene names as row names, the first 1:(2\*replicates) columns for the AxB counts, and (2\*replicates)+1:(replicates\*4) columns for the BxA counts, with strainA counts first, and strainB counts second. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 1 replicate is given below:
+* Merge the files with a header, gene names as row names, the first 1:(2\*replicates) columns for the AxB counts, and (2\*replicates)+1:(replicates\*4) columns for the BxA counts (with strainA counts first, and strainB counts second). Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 1 replicate is given below:
 
 **Example:** (the header does not necessarily have to be the one given below:)
 ```
