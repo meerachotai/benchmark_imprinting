@@ -6,33 +6,14 @@
 ### Dependencies: 
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
-* simuG (https://github.com/yjx1217/simuG, enter directory for simuG under option -D)
 * samtools
 * Others: R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
-* `edit_genome.sh`
+* `edit_genome.py`
 * `make_annot.R`
 * `inv_transform_sampling.R`
-* `scoring.R`
-
-### Similarity Scoring
-
-A rejection-sampling approach is used for similarity scoring (`edit_genome.sh`). Given a similarity score, and a SNP-Indel ratio, the number of SNPs and indels that need to be simulated is estimated (`scoring.R`, -P), which is the input for simuG. The vcf files from simuG are used to calculate the actual score (-V), and compared with desired score. This is repeated until it is within the window of the desired score. This is done per-chromosome basis in the main branch given below.
-
-**Alternate branch (`helper_scripts/edit_genome_v2`):** Operates on a whole-genome basis and prunes the original genome as a chromosome achieves the desired score. This increased runtime relative to the original per-chromosome method (see metrics below). Increasing the window might decrease runtime, possibly, but it hasn't been tried out yet.
-
-Added dependencies for alternate scripts: R - vcfR library
-
-Sample command (after conducting step 1 from below):
-```
-edit_genome_v2.sh -A $strainA -a $refA -B $strainB -b refB -D $simuG_dir -d $scripts_dir -S 90 -n 50 -v 5 -p 3 -t 10 -W 3 -o $outdir
-```
-
-Some one-time metrics on comparing the two approaches:
-* per-chromosome basis ran for 40 minutes for 50 chromosomes
-* whole-genome basis ran for 3 hours for 39 chromosomes
 
 ### Options:
 ```
