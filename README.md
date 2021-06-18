@@ -50,7 +50,7 @@ Sample command:
 ```
 simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome -y strainB_genome -X strainA_annot -Y strainB_annot -D $simuG_dir -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
 ```
-I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 205-209 and first run gffread directly as given below:
+I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 196-200 and first run gffread directly as given below:
 ```
 gffread -w outdir/strainA/strainA_transcripts.fa -g $ref $annot
 ```
@@ -205,9 +205,9 @@ cviA_ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
 ```
 #### Gene Key
 
-If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited .txt file with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g.
+If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited .txt file with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g. Under -a and -b, enter the substrings that uniquely belong to the A and B gene names respectively. 
 
-**Example:** (the header does not necessarily have to be the one given below:)
+**Example:** gene_key.txt (the header does not necessarily have to be the one given below:)
 ```
 A B
 ATCVI-1G19970cviA ATCVI-1G19970cviB
@@ -220,6 +220,9 @@ ATCVI-1G67300cviA ATCVI-1G67300cviB
 ATCVI-1G75310cviA ATCVI-1G75310cviB
 ATCVI-1G81680cviA ATCVI-1G81680cviB
 ```
+
+For the example above, enter: `-g gene_key -a cviA -b cviB`
+
 #### Counts Files
 
 If you already have the counts files and are planning to use the helper script `call_imprinting_anderson.R` directly, use one of the two options below:
@@ -227,11 +230,11 @@ If you already have the counts files and are planning to use the helper script `
 
 **Example:** `counts_cviA_cviB_AxB_1.txt` would require that your input command includes: `-c counts_cviA_cviB_ -C`
 
-* Merge the files with a header, the gene names as rownames, the first 1:replicates columns for the AxB counts, and replicates+1:replicates\*2 columns for the BxA counts. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
+* Merge the files with a header, the gene names as rownames, with alternating AxB and BxA columns. Provide the one filename under -c and do NOT use the option -C to indicate that the file is already concatenated. An example for a concatenated file with 3 replicates is given below:
 
 **Example:** (the header does not necessarily have to be the one given below:)
 ```
-                 AxB_1 AxB_2 AxB_3 BxA_1 BxA_2 BxA_3
+                 AxB_1 BxA_1 AxB_2 BxA_2 AxB_3 BxA_3
 ATCVI-1G19970cviA   228   74    38     6    38     7
 ATCVI-1G19970cviB    35    7    14    90   202    89
 ATCVI-1G33940cviA    48  299   110    65    22    50
