@@ -223,7 +223,7 @@ fi
 # options: score snp_score indel_score (indel start) extend_score (indel extended / gap) match_score snp:indel-ratio total_n
 # $scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/${refA}.fa -B $strainB -b ${outdir}/${refB}.fa -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
 
-${scripts_dir}/edit_genome.py -A ${outdir}/${refA}.fa -B ${outdir}/${refB}.fa -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -S $score -w $window -n $total_n -d 2 -a 0.2 -R $seed -o ${strainB}/${strainB} > ${strainB}/edit_genome_log.txt
+${scripts_dir}/edit_genome.py -A ${outdir}/${refA}.fa -B ${outdir}/${refB}.fa -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -S $score -w $window -n $total_n -d 2 -a 0.2 -R $seed -o ${outdir}/${strainB}/${strainB} > ${outdir}/${strainB}/edit_genome_log.txt
 printf "\nsimulated FASTA file for strainB: ${refB}.fa"
 
 # use make_annot for strainB:
