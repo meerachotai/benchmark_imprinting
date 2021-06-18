@@ -8,7 +8,6 @@ suppressPackageStartupMessages(library(DESeq2))
 parser = ArgumentParser()
 
 parser$add_argument("-c", type = "character", default = "", help = "concatenated counts filename (only one contrast at a time) / prefix if you need to concatenate first")
-parser$add_argument("-k", type = "character", default = "", help = "gene key file name (can have all together, need appropriate A_ID, B_ID")
 
 parser$add_argument("-p", type = "double", default = 0.05, help = "p-value/alpha cutoff for DESeq2")
 parser$add_argument("-u", type="double", default = 0.8, help = "RER upper limit, default = 0.8")
@@ -18,10 +17,7 @@ parser$add_argument("-r", type="double", default = "", help = "number of replica
 
 parser$add_argument("-A", type = "character", default = "", help = "strain A name")
 parser$add_argument("-B", type = "character", default = "", help = "strain B name")
-parser$add_argument("-a", type = "character", default = "", help = "strain A ID unique")
-parser$add_argument("-b", type = "character", default = "", help = "strain B ID unique")
 
-parser$add_argument("-C", default = FALSE, action="store_true", help = "need to concatenate files?")
 parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -30,7 +26,6 @@ opt <- parser$parse_args()
 
 outprefix = opt$outprefix
 
-key = opt$k
 infile = opt$c
 
 alpha = opt$p
@@ -41,58 +36,61 @@ log2fc = opt$f
 
 A = opt$A
 B = opt$B
-A_ID = opt$a
-B_ID = opt$b
 
-need_concat = opt$C
-
-# outprefix = "simul"
-
+# infile = "counts_"
+# A = "cviA"
+# B = "cviB"
+# 
 # alpha = 0.05
 # upper_lim = 0.7
 # lower_lim = 0.4
 # log2fc = 1
 # rep = 3 # number of replicates
-# 
-# key = "gene_key.txt"
-# 
-# infile = "counts_cviA_cviB"
-# need_concat = TRUE
-# 
-# A = "cviA"
-# B = "cviB"
-# A_ID = ".1A"
-# B_ID = ".1B"
 
-if(need_concat == TRUE) {
-  cat("Concatenating files...\n")
-  counts = read.table(paste0(infile, "AxB_", 1, ".txt"), sep = "\t")
-  colnames(counts) = c("feature", "AxB_1")
-  for (i in 2:rep) {
-    dat = read.table(paste0(infile, "AxB_", i, ".txt"), sep = "\t")
-    colnames(dat) = c("feature", paste0("AxB_",i))
-    counts = merge(counts, dat)
-  }
-  for (i in 1:rep) {
-    dat = read.table(paste0(infile, "BxA_", i, ".txt"), sep = "\t")
-    colnames(dat) = c("feature", paste0("BxA_",i))
-    counts = merge(counts, dat)
-  }
-  rownames(counts) = counts$feature
-  counts = counts[2:length(counts)]
-} else {
-  counts = read.table(infile, header = T, sep = "\t", stringsAsFactors = F, row.names = 1)
+
+cat("Concatenating files with prefix \"", infile, "\"...\n")
+
+counts_AxB = read.table(paste0(infile, "AxB_", 1, ".txt"), sep = "\t", row.names = 1)
+counts_A = data.frame(row.names(counts_AxB), counts_AxB[,1])
+names(counts_A) = c("feature", "AxB_1")
+counts_B = data.frame(row.names(counts_AxB), counts_AxB[,2])
+names(counts_B) = c("feature", "AxB_1")
+
+for (i in 2:rep) {
+  dat = read.table(paste0(infile, "AxB_", i, ".txt"), sep = "\t", row.names = 1)
+  dat_A = data.frame(row.names(dat), dat[,1])
+  names(dat_A) = c("feature", paste0("AxB_", i))
+  counts_A = merge(counts_A, dat_A)
+  
+  dat_B = data.frame(row.names(dat), dat[,2])
+  names(dat_B) = c("feature", paste0("AxB_", i))
+  counts_B = merge(counts_B, dat_B)
 }
 
+for (i in 1:rep) {
+  dat = read.table(paste0(infile, "BxA_", i, ".txt"), sep = "\t", row.names = 1)
+  dat_A = data.frame(row.names(dat), dat[,1])
+  names(dat_A) = c("feature", paste0("BxA_", i))
+  counts_A = merge(counts_A, dat_A)
+  
+  dat_B = data.frame(row.names(dat), dat[,2])
+  names(dat_B) = c("feature", paste0("BxA_", i))
+  counts_B = merge(counts_B, dat_B)
+}
 
-# -------------------- calculate maternal preference --------------------
+counts_A$genome = A
 
-cat("Calculating maternal preferences...")
-# counts = read.table(infile, header = T, sep = "\t", stringsAsFactors = F, row.names = 1)
+counts_B$feature = paste0(counts_B$feature, "_B")
+counts_B$genome = B
 
-counts <- subset(counts,!row.names(counts) %in% c("__no_feature","__ambiguous","__too_low_aQual","__not_aligned","__alignment_not_unique"))
+# CREATE GENE KEY HERE
+gene_key = data.frame(counts_A$feature, counts_B$feature)
+names(gene_key) = c("A", "B")
 
-counts$genome <- ifelse(grepl(A_ID,row.names(counts)),A,ifelse(grepl(B_ID,row.names(counts)),B,"Other")) 
+counts = data.frame(rbind(counts_A, counts_B)) # stack them
+
+rownames(counts) = counts$feature
+counts = counts[2:length(counts)]
 
 counts$feature = row.names(counts)
 
@@ -144,21 +142,14 @@ counts_res$imprint <- ifelse(counts_res$category =="up" & counts_res$genome == A
                                            ifelse(counts_res$category =="up" & counts_res$genome == B,"PEG","no.imprint"))))
 
 # PEGs are not being caught because of strict lims, repeated with new limits from original - 0.8, 0.5
-
-# ------------------ finding syntelogs -----------------------
-
-cat("Reading gene key...\n")
-counts_syntelogs = counts_res
-
-gene_key <- read.table(key,sep="\t",header=T,stringsAsFactors = F)
-gene_key <- subset(gene_key,!duplicated(gene_key[,1])) # remove duplicates
-
+# --------------------------------------------------------------------
 # required format - A | B syntelogs side-by-side
 A.col = 1
 B.col = 2
 A.colname = colnames(gene_key)[A.col] 
 B.colname = colnames(gene_key)[B.col]
 
+counts_syntelogs = counts_res
 
 counts_syntelogs$syntelog <- ifelse(counts_syntelogs$feature %in% gene_key[,A.col] | 
                                       counts_syntelogs$feature %in% gene_key[,B.col], "syntelog","non.syntelog")
@@ -173,40 +164,34 @@ syntelogs_AB <- merge(syntelogs_A,syntelogs_B,by.x = B.colname,by.y="feature",al
 names(syntelogs_AB) <- gsub(".x",paste0(".",A),names(syntelogs_AB),fixed = T)
 names(syntelogs_AB) <- gsub(".y",paste0(".",B),names(syntelogs_AB),fixed = T)
 
-imprint_A = grep(paste0("imprint.",A), colnames(syntelogs_AB))
+imprint_A = grep(paste0("imprint.",A), colnames(syntelogs_AB)) # column number
 imprint_B = grep(paste0("imprint.",B), colnames(syntelogs_AB))
 
-syntelogs_AB[,imprint_A][is.na(syntelogs_AB[,imprint_A])] <- "no.imprint"
+syntelogs_AB[,imprint_A][is.na(syntelogs_AB[,imprint_A])] <- "no.imprint" # NAs are not imprinted
 syntelogs_AB[,imprint_B][is.na(syntelogs_AB[,imprint_B])] <- "no.imprint"
 
 # ---------------- save imprinting lists --------------------
 
 names(syntelogs_AB)[names(syntelogs_AB) == 'feature'] <- A.colname
 
-MEGs_A_ID = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "MEG" & syntelogs_AB[imprint_B] == "MEG"]
-MEGs_B_ID = syntelogs_AB[,1][syntelogs_AB[imprint_A] == "MEG" & syntelogs_AB[imprint_B] == "MEG"]
+imprinted_MEGs = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "MEG" & syntelogs_AB[imprint_B] == "MEG"] # both directions imprinted
 
-imprinted_MEGs = data.frame(MEGs_A_ID, MEGs_B_ID)
-colnames(imprinted_MEGs) = c(A, B)
-
-PEGs_A_ID = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "PEG" & syntelogs_AB[imprint_B] == "PEG"]
-PEGs_B_ID = syntelogs_AB[,1][syntelogs_AB[imprint_A] == "PEG" & syntelogs_AB[imprint_B] == "PEG"]
-
-imprinted_PEGs = data.frame(PEGs_A_ID, PEGs_B_ID)
-colnames(imprinted_PEGs) = c(A, B)
+imprinted_PEGs = syntelogs_AB[,2][syntelogs_AB[imprint_A] == "PEG" & syntelogs_AB[imprint_B] == "PEG"]
 
 cat("\n-----------------------------------\n")
 cat("Anderson/DESeq2 imprinted genes summary:\n")
 cat("logFC cutoff: ", log2fc, ", p-value cutoff: ",alpha, "\n")
-cat("maternally-biased: ",nrow(imprinted_MEGs), "\n") 
-cat("paternally-biased: ",nrow(imprinted_PEGs), "\n")
+cat("maternally-biased: ",length(imprinted_MEGs), "\n") 
+cat("paternally-biased: ",length(imprinted_PEGs), "\n")
 cat("-----------------------------------\n")
 
 cat("\nWriting imprinting lists...\n")
-write.table(imprinted_MEGs, paste0(outprefix, "_anderson_MEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
-write.table(imprinted_PEGs, paste0(outprefix, "_anderson_PEGs.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
+write.table(imprinted_MEGs, paste0(outprefix, "_anderson_MEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
+write.table(imprinted_PEGs, paste0(outprefix, "_anderson_PEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
 
+syntelogs_AB = syntelogs_AB[-1]
 # either_imprinted = syntelogs_AB[syntelogs_AB[imprint_A] != "no.imprint" | syntelogs_AB[imprint_B] != "no.imprint",]
 write.table(syntelogs_AB, paste0(outprefix, "_anderson_stats.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
+
 
 cat("Done.\n")
