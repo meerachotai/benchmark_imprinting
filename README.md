@@ -124,6 +124,7 @@ Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 
 ### Helper scripts required:
 (enter directory for helper scripts under option -d)
+* `get_counts_anderson.R`
 * `call_imprinting_anderson.R`
 
 ### Required conventions:
@@ -279,6 +280,10 @@ anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $ann
 
 * `outprefix_anderson_MEGs.txt` and `outprefix_anderson_PEGs.txt` - imprinted MEGs/PEGs lists with both syntelog names given
 * `outprefix_anderson_stats.txt` - DESeq2 stats and imprinting status for all syntelogs
+
+Output from `get_counts_anderson.R` is in a similar format to the output from the Picard pipeline, so that the second half of the other pipelines (Picard, Wyder) can be used to call imprinting. The file names are as below:
+* `outprefix_cross_rep.txt`files have columns with gene-names, A counts, B counts.
+* `outprefix_cross_A_rep.txt` and `outprefix_cross_B_rep.txt` have the A and B counts separately as well.
 
 ## Method B: Picard and Gehring 
 
