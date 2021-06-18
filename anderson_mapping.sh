@@ -9,9 +9,9 @@
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
 # refA="$( pwd )/$outdir/cviA_genome.fa"
 # refB="$( pwd )/$outdir/cviB_genome.fa" 
-# annotA="$( pwd )/$outdir/cviA_annot.gff3"
-# annotB="$( pwd )/$outdir/cviB_annot.gff3"
-# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o new_out -i ID -r 3 -d $scripts_dir -a .1A -b .1B
+# annotA="$( pwd )/$outdir/cviA_annot_anderson.gff3"
+# annotB="$( pwd )/$outdir/cviB_annot_anderson.gff3"
+# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -i ID -r 3 -d $scripts_dir -a cviA -b cviB
 
 # REQUIRED
 scripts_dir=""
@@ -39,7 +39,7 @@ a_annot="strainA"
 b_annot="strainB"
 outprefix="out"
 
-while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:O:" opt; do
+while getopts "A:B:x:y:X:Y:d:r:o:g:f:p:M:P:a:b:l:O:e" opt; do
 	case $opt in
 		A)	strainA="$OPTARG"
 			;;
@@ -65,8 +65,6 @@ while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:O:" opt; do
 			;;
 		f)	fastq_dir="$OPTARG"
 			;;
-		e)	edited=true # assumes it's not renamed, add -e to let us know you've already done it
-			;;
 		p)	pval="$OPTARG"
 			;;
 		M)	mat_cutoff="$OPTARG"
@@ -80,6 +78,8 @@ while getopts "A:B:x:y:X:Y:d:r:o:g:f:e:p:M:P:a:b:l:O:" opt; do
 		l)	logfc="$OPTARG"
 			;;	
 		O) 	outprefix="$OPTARG"
+			;;
+		e)	edited=true # assumes it's not renamed, add -e to let us know you've already done it
 			;;
 	esac
 done
@@ -223,6 +223,9 @@ if [ ${#gene_key} == 0 ]; then
 fi
 
 printf "Calling imprinting...\n"
-${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C $outprefix
+# ${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C $outprefix
+
+${scripts_dir}/get_counts_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -r $rep -A $strainA -B $strainB -a $a_annot -b $b_annot -C ${map}/${outprefix}
+${scripts_dir}/call_imprinting_anderson.R -c ${map}/${outprefix}_ -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB ${outprefix}
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
