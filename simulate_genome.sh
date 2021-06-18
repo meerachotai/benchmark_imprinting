@@ -41,8 +41,8 @@ extend_score=2.5
 snp_score=2
 match_score=1
 ratio=1
-seed=5
-window=1
+seed=$RANDOM # randomly generated
+window=5
 pausetime=5
 trials_simuG=10
 trials_reject=20
@@ -236,8 +236,9 @@ fi
 
 # add mutations (snps + indels) and make strain B reference sequence: strainB_genome.fa
 # options: score snp_score indel_score (indel start) extend_score (indel extended / gap) match_score snp:indel-ratio total_n
+# $scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/${refA}.fa -B $strainB -b ${outdir}/${refB}.fa -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
 
-$scripts_dir/edit_genome.sh -A $strainA -a ${outdir}/${refA}.fa -B $strainB -b ${outdir}/${refB}.fa -D $simuG -d $scripts_dir -S $score -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -n $total_n -v $seed -p $pausetime -t $trials_simuG -W $window -T $trials_reject -o $outdir > ${outdir}/simul_${strainB}_log.txt
+${scripts_dir}/edit_genome.py -A ${outdir}/${refA}.fa -B ${outdir}/${refB}.fa -s $snp_score -i $indel_score -e $extend_score -m $match_score -r $ratio -S $score -w $window -n $total_n -d 2 -a 0.2 -R $seed -o ${strainB}/${strainB} > ${strainB}/edit_genome_log.txt
 printf "\nsimulated FASTA file for strainB: ${refB}.fa"
 
 # use make_annot for strainB:
