@@ -3,7 +3,6 @@
 # SIMULATING GENOMES with given similarity score
 
 # dependencies: R, seqkit (https://bioinf.shenwei.me/seqkit/download/), 
-# simuG (https://github.com/yjx1217/simuG)(note: you need to enter directory of simuG in -D)
 # for now, this script does everything in the current directory so navigate to the right directory first (might change that later)
 # need Biostrings library for R
 # 
@@ -12,17 +11,15 @@
 # ref="/u/scratch/m/mchotai/rnaseq_simul/ref_files/Cvi.chr.all.v2.0.fasta"
 # annot="/u/scratch/m/mchotai/rnaseq_simul/ref_files/Cvi.protein-coding.genes.v2.5.2019-10-09.gff3"
 # scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-# simuG="${scripts_dir}/simuG"
 # 
 # outdir="june12_6pm"
 # strainA=cviA
 # strainB=cviB
-# ${scripts_dir}/simulate_genome_alt.sh -r $ref -a $annot -A cviA -B cviB -D $simuG -d $scripts_dir -S 97 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 10 -p 2 -t 10 -T 10 -W 2 -v 5 -o $outdir -x cviA_genome -y cviB_genome -X cviA_annot -Y cviB_annot
+# ${scripts_dir}/simulate_genome_alt.sh -r $ref -a $annot -A cviA -B cviB -d $scripts_dir -S 97 -s 2 -m 1 -i 0 -e 2.5 -r 1 -n 10 -W 2 -v 5 -o $outdir -x cviA_genome -y cviB_genome -X cviA_annot -Y cviB_annot
 
 # Required arguments ------------------------
 scripts_dir=""
 # directory=""
-simuG=""
 
 # original genome to start with, needs to be input by user
 strainA=""
@@ -43,9 +40,6 @@ match_score=1
 ratio=1
 seed=$RANDOM # randomly generated
 window=5
-pausetime=5
-trials_simuG=10
-trials_reject=20
 total_n=50
 
 score=70 # to change, use -2
@@ -61,7 +55,7 @@ workdir=$( pwd )
 skip1=false
 transcript_error=false
 
-while getopts "o:A:B:x:y:X:Y:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
+while getopts "o:A:B:x:y:X:Y:r:a:d:S:s:i:e:m:r:n:v:W:2g" opt; do
 	case $opt in
 		o)	outdir="$OPTARG"
 			;;
@@ -81,8 +75,6 @@ while getopts "o:A:B:x:y:X:Y:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
 			;;
 		a)	annot="$OPTARG"
 			;;
-		D)	simuG="$OPTARG"
-			;;
 		d)	scripts_dir="$OPTARG"
 			;;
 		S)	score="$OPTARG"
@@ -100,12 +92,6 @@ while getopts "o:A:B:x:y:X:Y:r:a:D:d:S:s:i:e:m:r:n:v:p:t:T:W:2g" opt; do
 		n)	total_n="$OPTARG"
 			;;
 		v)	seed="$OPTARG"
-			;;
-		p)	pausetime="$OPTARG"
-			;;
-		t)	trials_simuG="$OPTARG"
-			;;
-		T)	trials_reject="$OPTARG"
 			;;
 		W)	window="$OPTARG"
 			;;
@@ -125,8 +111,7 @@ printf "creating two genomes: ${strainA}, ${strainB}\n"
 printf "Achieving a similarity score of ${score}%% \n"
 printf "Using snp score = ${snp_score}, match score = ${match_score}, indel score: ${indel_score}, extend score: ${extend_score} \n"
 printf "Simulating ${total_n} genes \n"
-printf "simuG trial-kill settings: pausing for ${pausetime} seconds, for ${trials_simuG} times \n"
-printf "for simulating strainB: rejection sampling for ${trials_reject} times and a window of ${window}%% \n"
+printf "for simulating strainB: window of ${window}%% \n"
 if [ "$transcript_error" == "false" ]; then
 	printf "running on mode: no error in getting transcripts from gffreads\n"
 else
