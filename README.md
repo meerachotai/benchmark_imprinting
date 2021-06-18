@@ -56,11 +56,12 @@ gffread -w outdir/strainA/strainA_transcripts.fa -g $ref $annot
 ```
 ### Output:
 
-Annotations and FASTA files for both strainA and strainB (in outdir)
+* annotations and FASTA files for both strainA and strainB (in outdir), named as required by -x -y -X -Y options.
+* `strainB_ref2sim.txt` - reference vs. simulated genome for SNPs and indels. 
+* `strainB_similarity.txt` - similarity % of each individual chromosome
 
 Log files of interest:
-* `$outdir/per_chrom/un_edited_chr.txt` - a list of chromosomes that weren't added to strainB because simuG had to be killed
-* `$outdir/per_chrom/scores_log.txt` - stats on the number of trials run per chromosome, including what the final score was (can adjust window accordingly)
+* `$outdir/$strainB/edit_genome_log.txt` - log file from edit_genome.py
 
 ## Step 2: Simulating reads
 
