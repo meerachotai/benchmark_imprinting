@@ -7,7 +7,7 @@
 * gffread (https://github.com/gpertea/gffread, should be on $PATH)
 * seqkit (https://bioinf.shenwei.me/seqkit/download/)
 * samtools
-* Python (> 3; argparse, scipy)
+* Python (> 3; argparse, scipy, random, numpy)
 * R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
