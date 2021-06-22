@@ -92,12 +92,12 @@ def add_indels(need_indel_score, sequence, length, window):
     
     while(indel_score < need_indel_score):
         
-        indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 1, scale = 9, size = 1, random_state = seed) # range - 1 - 10
+        indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 1, scale = 9, size = 1, random_state = numpy_randomGen) # range - 1 - 10
         indel_length = round(indel_length[0])
         new_indel_score = indel_score + ((indel_length - 1) * extend) + indel 
         
         while(new_indel_score > need_indel_score + window): # so the last one isn't WAY past the needed score
-            indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 2, scale = 10, size = 1, random_state = numpy_randomGen)
+            indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 1, scale = 9, size = 1, random_state = numpy_randomGen)
             indel_length = round(indel_length[0])
             new_indel_score = indel_score + ((indel_length - 1) * extend) + indel 
             
