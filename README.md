@@ -36,7 +36,6 @@
 -R SNP:Indel ratio (default: 1)
 -n number of 'chromosomes' to be simulated
 -v seed
--p time to pause between two simuG runs
 -W window to allow for rejection sampling (in %)
 -2 skip to step 2 (only need to rerun step 2 (simulate strainB) when changing similarity %)
 -g if there is an error in gffreads, try this option and rerun
@@ -46,7 +45,7 @@
 
 Sample command:
 ```
-simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome -y strainB_genome -X strainA_annot -Y strainB_annot -D $simuG_dir -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -R 1 -n 50 -p 5 -t 10 -T 20 -W 1 -v 5 -o outdir
+simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome -y strainB_genome -X strainA_annot -Y strainB_annot -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -R 1 -n 50 -T 20 -W 1 -v 5 -o outdir
 ```
 I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 196-200 and first run gffread directly as given below:
 ```
