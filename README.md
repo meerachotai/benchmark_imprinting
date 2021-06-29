@@ -27,7 +27,6 @@
 -Y outprefix for strainB annotation file
 -r original reference genome (from which strainA genome will be simulated)
 -a original annotation (from which strainA genome will be simulated)
--D simuG directory
 -d helper scripts directory
 -S similarity score (in %)
 -s SNP score (default: 2)
@@ -38,8 +37,6 @@
 -n number of 'chromosomes' to be simulated
 -v seed
 -p time to pause between two simuG runs
--t number of simuG trials to run for each chromosome before killing
--T number of trials of rejection sampling
 -W window to allow for rejection sampling (in %)
 -2 skip to step 2 (only need to rerun step 2 (simulate strainB) when changing similarity %)
 -g if there is an error in gffreads, try this option and rerun
