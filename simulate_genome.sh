@@ -55,7 +55,7 @@ workdir=$( pwd )
 skip1=false
 transcript_error=false
 
-while getopts "o:A:B:x:y:X:Y:r:a:d:S:s:i:e:m:r:n:v:W:2g" opt; do
+while getopts "o:A:B:x:y:X:Y:r:a:d:S:s:i:e:m:R:n:v:W:2g" opt; do
 	case $opt in
 		o)	outdir="$OPTARG"
 			;;
@@ -87,7 +87,7 @@ while getopts "o:A:B:x:y:X:Y:r:a:d:S:s:i:e:m:r:n:v:W:2g" opt; do
 			;;
 		m)	match_score="$OPTARG"
 			;;
-		r)	ratio="$OPTARG"
+		R)	ratio="$OPTARG"
 			;;
 		n)	total_n="$OPTARG"
 			;;
