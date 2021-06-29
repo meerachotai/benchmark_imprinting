@@ -33,7 +33,7 @@
 -i Indel score (default: 0)
 -e Gap extension score (default: 2.5)
 -m Match score (default: 1)
--r SNP:Indel ratio (default: 1)
+-R SNP:Indel ratio (default: 1)
 -n number of 'chromosomes' to be simulated
 -v seed
 -p time to pause between two simuG runs
