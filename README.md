@@ -1,11 +1,8 @@
 # Benchmarking Imprinting Data Analysis Pipelines
 ## Step 1: Simulating genomes
 
-### Run file: `simulate_genome.sh`
-
 ### Dependencies: 
-* gffread (https://github.com/gpertea/gffread, should be on $PATH)
-* seqkit (https://bioinf.shenwei.me/seqkit/download/)
+* gffread (https://github.com/gpertea/gffread)
 * samtools
 * Python (> 3; argparse, scipy, random, numpy)
 * R (argparse, tidyverse, Biostrings)
@@ -14,46 +11,17 @@
 (enter directory for helper scripts under option -d)
 * `edit_genome.py`
 * `make_annot.R`
-* `inv_transform_sampling.R`
 
-### Options:
-```
--o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--x outprefix for strainA FASTA file
--y outprefix for strainB FASTA file
--X outprefix for strainA annotation file
--Y outprefix for strainB annotation file
--r original reference genome (from which strainA genome will be simulated)
--a original annotation (from which strainA genome will be simulated)
--d helper scripts directory
--S similarity score (in %)
--s SNP score (default: 2)
--i Indel score (default: 0)
--e Gap extension score (default: 2.5)
--m Match score (default: 1)
--R SNP:Indel ratio (default: 1)
--n number of 'chromosomes' to be simulated
--v seed
--W window to allow for rejection sampling (in %)
--2 skip to step 2 (only need to rerun step 2 (simulate strainB) when changing similarity %)
--g if there is an error in gffreads, try this option and rerun
+### Run:
+Fill in `simulation_config.txt` as per your requirements.
 
-(Default score settings as on BLASTn)
-```
+Run the following scripts: 
+* `read_config_simul.py shell_env_simul.txt`
+* `simulate_genome.sh shell_env_simul.txt`
 
-Sample command:
-```
-simulate_genome.sh -r $ref -a $annot -A strainA -B strainB -x strainA_genome -y strainB_genome -X strainA_annot -Y strainB_annot -d $scripts_dir -S 70 -s 2 -m 1 -i 0 -e 2.5 -R 1 -n 50 -T 20 -W 1 -v 5 -o outdir
-```
-I'm currently having some difficulty with placing gffread on $PATH while the script is running. If that is an issue, comment out lines 196-200 and first run gffread directly as given below:
-```
-gffread -w outdir/strainA/strainA_transcripts.fa -g $ref $annot
-```
 ### Output:
 
-* annotations and FASTA files for both strainA and strainB (in outdir), named as required by -x -y -X -Y options.
+* annotations and FASTA files for both strainA and strainB in the out-directory.
 * `strainB_ref2sim.txt` - reference vs. simulated genome for SNPs and indels. 
 * `strainB_similarity.txt` - similarity % of each individual chromosome
 
@@ -62,38 +30,16 @@ Log files of interest:
 
 ## Step 2: Simulating reads
 
-### Run file: `simulate_reads.sh`
-
 ### Dependencies:
 * R (argparse, tidyverse, Biostrings)
 
 ### Helper scripts required: 
 (enter directory for helper scripts under option -d)
-* `simulated_read-counts.R`
+* `simulate_counts.R`
 * `reads_simul.R`
 
-### Options:
-```
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--x reference strainA FASTA file for read simulation
--y reference strainB FASTA file for read simulation
--d helper scripts directory
--m number of MEGs to be simulated
--p number of PEGs to be simulated
--u number of unbiased genes to be simulated
--M %maternal bias for MEGs
--P %maternal bias for PEGs
--r read length for FASTQ files
--R number of replicates to be simulated (needed for DESeq2 specifically)
--s seed
--o outdirectory (HAS to be relative to current directory, will store output files here)
-```
-
-Sample command:
- ```
-simulate_reads.sh -A strainA -B strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o outdir
-```
+### Run:
+`simulate_reads.sh shell_env_simul.txt`
 
 ### Output:
 
@@ -101,15 +47,13 @@ FASTQ (.fq) files that match counts simulated.
 
 Other relevant files: 
 * `$outdir/reads_simul/simul_counts+id_A.txt` and `$outdir/reads_simul/simul_counts+id_B.txt` - a summary of 'chromosome' ids alongside read counts
-* `$outdir/counts_simul_megs.txt` and `$outdir/counts_simul_pegs.txt` - true MEG and PEG lists to use in verifying imprinting calls
+* `$outdir/true_megs.txt` and `$outdir/true_pegs.txt` - true MEG and PEG lists to use in verifying imprinting calls
 
 ## Step 3: Calling Imprinting
 
 Steps 1 and 2 can be skipped in favor of providing real-data files for mapping and calling imprinting Step 3 onwards. However, there are some file name conventions that **must** be followed in order for these methods to work - refer to individual Method sections for more information.
 
 ## Method A: Anderson et al. 
-
-### Run file: `anderson_mapping.sh`
 
 Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 (need to add both forward and reverse reads, working on it)
@@ -136,75 +80,19 @@ For this particular step, a specific FASTQ file name is required in order to map
 
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
-Following the above convention, your input command should include: `-f $outdir/reads_simul/$strainA_$strainB_`
-
-If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+Following the above convention, your config file should read: `FASTQ_DIR = $outdir/reads_simul/$strainA_$strainB_`
 
 #### FASTA and annotation files
 
-For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTseqcount needs to know what this label is under its option -i. This script also has an option -i for you to provide this, with the default being set as ID. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format.
+For the annotation files, depending on your file's convention, the 'attributes' column will have a different label (ID, Parent etc.). HTSeqcount needs to know what this label is under its option -i. Use the HTSEQ_OPTION_I in the config file to provide this information. For more information on the conventions, refer: http://gmod.org/wiki/GFF3#GFF3_Format.
 
-If you followed with steps 1 and 2, enter the annotation with the `_anderson.gff3` suffix under the -X and -Y options. Additionally, there is no need to use the -i option, it uses the default.
+If you followed with steps 1 and 2, enter the annotation with the `_anderson.gff3` suffix under the Anderson annotation files in the config file and set `HTSEQ_OPTION_I = ID`.
 
-Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. 
+Since the Anderson method concatenates reference and annotation files before read mapping, you are required to make sure the chromosome names for different strains are different. For this, a function is set up within the script that renames the chromosome names in the files according to strain names, but note that this does NOT apply to all reference and annotation file conventions. To use the renaming function, set `RENAME_HEADERS = TRUE`.
 
-The renaming function is used automatically, but if you want to skip it, use the option -e. If you followed with steps 1 and 2, do not use -e, and it will work with your files reference and annotation files automatically if you provide the correct location for it under the -x -y -X and -Y options.
-
-Below is the function does with some comments and preview of what it does, which might help if you're trying to edit it beforehand.
-
-```
-# strain is the strain name for A/B strain (ex: cviA)
-# ref is the reference FASTA file that needs to be edited
-# annot is the annotation .gff3 file that needs to be edited
- 
-# for all lines the begin with >, replace > with >$strain_
-sed "s/^>/>${strain}_/g" $ref > ${strain}_genome.fa 
-
-# at the start of each line, it appends with prefix $strain
-sed "s/^/${strain}_/" $annot > map/${strain}_annot.gff3 # start of line	
-
-# since the previous command also applied on the 'gff-version 3' header in the annotation file, replace it	
-head="##gff-version 3"
-sed -i "1s/.*/$head/" map/${strain}_annot.gff3
-```
-
-**FASTA:** 
-
-Before:
-```
->ATCVI-1G19970
-ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
-ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
-CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC 
-```
-After:
-```
->cviA_ATCVI-1G19970
-ATGTTCATGTCTGTGTTTGAAATTGCATTCTGCCAAAACCAAACTCCTGAGCCAGAATCA
-ACACAAGTCTTGCAGCTACATTACCAAGATCGATATGTGGTAGTGGAGAATAGATTTTTA
-CAATTAACTTTATCAAATCCTGAGGGTTTCGTCACCGGAATCCAGTATAATGGTATCGAC
-```
-**Annotation:**
-
-Before:
-```
-##gff-version 3
-ATCVI-1G19970	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970cviA
-ATCVI-1G33940	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940cviA
-ATCVI-1G38040	.	exon	1	401	.	+	.	ID=ATCVI-1G38040cviA
-ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
-```
-After:
-```
-##gff-version 3
-cviA_ATCVI-1G19970	.	exon	1	1961	.	+	.	ID=ATCVI-1G19970cviA
-cviA_ATCVI-1G33940	.	exon	1	1544	.	+	.	ID=ATCVI-1G33940cviA
-cviA_ATCVI-1G38040	.	exon	1	401	.	+	.	ID=ATCVI-1G38040cviA
-cviA_ATCVI-1G42830	.	exon	1	1141	.	+	.	ID=ATCVI-1G42830cviA
-```
 #### Gene Key
 
-If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited .txt file with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under option -g. Under -a and -b, enter the substrings that uniquely belong to the A and B gene names respectively. 
+If steps 1 and 2 were not followed, a gene key is **required** for calling imprinting. It must be a tab-delimited .txt file with a header. It should consist of a list of syntelogs between strainA and strainB. Make sure that the syntelog names match with the 'attribute' column of the annotation files. It must have strainA as first column, and strainB as the second column. Enter gene key filename under `GENE_KEY`. Under `UNIQUE_ANNOT_ATTRIBUTE_ID_A/B`, enter the substrings that uniquely belong to the A and B gene names respectively. 
 
 **Example:** gene_key.txt (the header does not necessarily have to be the one given below:)
 ```
@@ -220,7 +108,12 @@ ATCVI-1G75310cviA ATCVI-1G75310cviB
 ATCVI-1G81680cviA ATCVI-1G81680cviB
 ```
 
-For the example above, enter: `-g gene_key -a cviA -b cviB`
+For the example above, enter: 
+```
+GENE_KEY = gene_key.txt
+UNIQUE_ANNOT_ATTRIBUTE_ID_A cviA
+UNIQUE_ANNOT_ATTRIBUTE_ID_B cviB
+```
 
 #### Counts Files
 
@@ -244,52 +137,29 @@ ATCVI-1G38040cviB    99   63    11   189    85   159
 
 Note that for Anderson/DESeq2 approach, > 1 replicates are required.
 
-### Options:
-```
--o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--x name for strainA FASTA file
--y name for strainB FASTA file
--X name for strainA annotation file
--Y name for strainB annotation file
--d helper scripts directory
--r number of replicates available
--i annotation gff3 attribute name (column 9) (default: ID)
--f represents the start of the FASTQ reads file name
--e boolean, use if you want to skip editing the files
--p p-value / alpha cutoff for calling imprinting (DESeq2's padj) (default: 0.05)
--l log2fc cutoff for calling imprinting (DESeq2's log2foldchange) (default: 1, recommended by authors)
--M maternal expression cutoff for calling imprinting (default: 0.8)
--P paternal expression cutoff for calling imprinting
--g gene key with syntelogs between strainA and strainB
--a attribute substring that is UNIQUE to strainA
--b attribute substring that is UNIQUE to strainB
--O outprefix for imprinting files
-```
+### Run:
 
-Sample command:
-```
-anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -e -i ID -r 3 -d $scripts_dir -f $fastq_dir -O $outdir/outprefix -a cviA -b cviB -M 0.8 -P 0.5 -l 1 -p 0.05 -g gene_key.txt
-```
+Fill in `imprinting_config.txt` as per your requirements.
+
+Run the following scripts: 
+* `read_config_imprint.py shell_env_imprint.txt`
+* `anderson_imprinting.sh shell_env_imprint.txt`
 
 ### Output:
 
-* `outprefix_anderson_MEGs.txt` and `outprefix_anderson_PEGs.txt` - imprinted MEGs/PEGs lists with both syntelog names given
-* `outprefix_anderson_stats.txt` - DESeq2 stats and imprinting status for all syntelogs
+* `anderson_MEGs.txt` and `anderson_PEGs.txt` - imprinted MEGs/PEGs lists with both syntelog names given
+* `anderson_stats.txt` - DESeq2 stats and imprinting status for all syntelogs
 
 Output from `get_counts_anderson.R` is in a similar format to the output from the Picard pipeline, so that the second half of the other pipelines (Picard, Wyder) can be used to call imprinting. The file names are as below:
-* `outprefix_cross_rep.txt`files have columns with gene-names, A counts, B counts.
-* `outprefix_cross_A_rep.txt` and `outprefix_cross_B_rep.txt` have the A and B counts separately as well.
+* `anderson_cross_rep.txt`files have columns with gene-names, A counts, B counts.
+* `anderson_cross_A_rep.txt` and `outprefix_cross_B_rep.txt` have the A and B counts separately as well.
 
 ## Method B: Picard and Gehring 
-
-### Run file: `picard_mapping.sh`
 
 Wrapper around the suite of scripts on: https://github.com/clp90/imprinting_analysis. For more control over parameters, use this suite directly. This wrapper script also has the added functionality of running all reciprocal replicate pairs or all combinations of pairs of reciprocal replicates to call imprinted genes, and then consensus calling to give a final list of imprinted genes.
 
 ### Dependencies:
-* Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under -D). Must also include all its dependencies, as outlined on their README file.
+* Picard and Gehring's Imprinting Analysis suite (https://github.com/clp90/imprinting_analysis, enter directory under `PICARD_SCRIPTS_DIRECTORY`). Must also include all its dependencies, as outlined on their README file.
 
 ### Helper scripts required:
 (enter directory for helper scripts under option -d)
@@ -309,9 +179,7 @@ For this particular step, a specific FASTQ file name is required in order to map
 
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
-Following the above convention, your input command should include: `-f $outdir/reads_simul/$strainA_$strainB_`
-
-If you followed with the steps 1 and 2, there's no need to use -f at all, it is done for you by default.
+Following the above convention, your config file should read: `FASTQ_DIR = $outdir/reads_simul/$strainA_$strainB_`
 
 #### For Picard and Gehring's suite
 Some conventions that need to be followed for the program to run correctly:
@@ -330,46 +198,27 @@ ATCVI-1G64390	.	exon	1	1524	.	+	.	gene_id=ATCVI-1G64390;transcript_id ATCVI-1G64
 ATCVI-1G64620	.	exon	1	1041	.	+	.	gene_id=ATCVI-1G64620;transcript_id ATCVI-1G64620cviA
 ```
 
-If you followed with steps 1 and 2, adjustments will be made automatically:
-* Use the annotation file with the suffix `_picard.gff3` under the -a option.
-* Leave the -s option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
+If you followed with steps 1 and 2:
+* Set `ANNOT_A = $annotA_picard.gff3`
+* Leave the SNPS_FILE option blank, a SNP file will be made from the vcf files under outdir/per_chrom. 
 
-If you have a different number of AxB and BxA replicates, specifically add these in under the -x and -y options respectively, and do not use the -p flag so that combinations of the two sets will be used to find consensus MEGs and PEGs.
+If you have a different number of AxB and BxA replicates, specifically add these in under AxB_REP and BxA_REP respectively, so that combinations of the two sets will be used to find consensus MEGs and PEGs.
 
-### Options:
-```
--o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--D Picard and Gehring's Imprinting analysis suite directory
--d helper scripts directory
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--a reference/strainA annotation file
--g reference/strainA genome FASTA file
--M MEGs cutoff for calling imprinting (default: 95)
--P PEGs cutoff for calling imprinting (default: 25)
--s SNPs file, in required format
--r number of replicates (optional, if left blank, MUST use -x and -y instead)
--x number of AxB replicates
--y number of BxA replicates
--f represents the start of the FASTQ reads file name
--p boolean, use if you want replicates to be treated as reciprocal pairs
--m number of majority votes needed for a gene to be considered imprinted. optional. (default: floor(number of combinations))
--O outprefix for imprinting files
-```
-Sample command:
+### Run:
 
-```
-picard_mapping.sh -A strainA -B strainB -g $refA -a $annotA -r 3 -M 95 -P 25 -D $picard -o $outdir -O out -d $scripts_dir -m 2 -
-```
+Fill in `imprinting_config.txt` as per your requirements.
+
+Run the following scripts: 
+* `read_config_imprint.py shell_env_imprint.txt`
+* `picard_imprinting.sh shell_env_imprint.txt`
+
 ### Output:
 
-* `outprefix_all_MEGs.txt` and `outprefix_all_PEGs.txt` - all MEGs/PEGs list, along with combination count from which it was called
-* `outprefix_picard_MEGs.txt` and `outprefix_picard_PEGs.txt` - consensus MEGs/PEGs list
+* `picard_all_MEGs.txt` and `picard_all_PEGs.txt` - all MEGs/PEGs list, along with combination count from which it was called
+* `picard_MEGs.txt` and `picard_PEGs.txt` - consensus MEGs/PEGs list
 * `${outdir}/picard_map/rep_${i}_${j}_imprinting/counts_per_gene` - directory with counts files generated (where i and j are AxB and BxA replicate numbers respectively)
 
 ## Method C: Wyder et al.
-
-### Run file: `wyder_imprinting.sh`
 
 Adapted from scripts on: https://github.com/swyder/Reanalysis_plant_imprinting
 
@@ -384,7 +233,7 @@ Adapted from scripts on: https://github.com/swyder/Reanalysis_plant_imprinting
 
 #### Counts Files
 
-Running `wyder_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `rep_${i}_${j}_imprinting/counts_per_gene/rep_${i}_${j}_${strainA}x${strainB}_counts_merged.txt` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under the option -c. Maintain the same settings for paired replicates. 
+Running `wyder_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `rep_${i}_${j}_imprinting/counts_per_gene/rep_${i}_${j}_${strainA}x${strainB}_counts_merged.txt` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under `COUNTS_DIRECTORY`. Maintain the same settings for paired replicates. 
 
 You can also instead run the mapping and counting steps recommended by Wyder et al. method at https://github.com/swyder/Reanalysis_plant_imprinting, and then directly use the call_imprinting_wyder.R script to run edgeR to call imprinted genes. Any alternate method for mapping and counting also works. However, this will mean that the counts files will need to be in one of two formats given below:
 * Name files exactly with the suffix **`cross_replicate.txt`**, provide the prefix under the option -c AND use option -C to indicate that the files need to be concatenated. Each file should have three columns: the gene name, strainA counts and strainB counts.
@@ -402,29 +251,17 @@ ATCVI-1G33940      48  299   110    65
 
 Note that for the Wyder/edgeR method, having only one replicate is also acceptable.
 
-### Options:
-```
--o outdirectory (all output will be stored here - HAS to be relative to current working directory)
--A strainA (for file and folder names)
--B strainB (for file and folder names)
--d helper scripts directory
--r number of replicates (optional, if left blank, MUST use -x and -y instead)
--x number of AxB replicates
--y number of BxA replicates
--p p-value / alpha cutoff for calling imprinting (edgeR's FDR) (default: 0.05)
--l log2fc cutoff for calling imprinting (edgeR's lfc) (default: 0, recommended by authors)
--p boolean, use if you want replicates to be treated as reciprocal pairs
--c directory for Picard's count files
--O outprefix for imprinting files
-```
-Sample command:
-```
-wyder_imprinting.sh -A strainA -B strainB -r 1 -p 0.05 -l 0 -O ${outdir}/wyder -d $scripts_dir -o $outdir -P
-```
+### Run:
+
+Fill in `imprinting_config.txt` as per your requirements.
+
+Run the following scripts: 
+* `read_config_imprint.py shell_env_imprint.txt`
+* `wyder_imprinting.sh shell_env_imprint.txt`
 
 ### Output:
 
-* `outprefix_wyder_MEGs.txt` and `outprefix_wyder_PEGs.txt` - imprinted genes called by Wyder/edgeR method
-* `outprefix_wyder_stats.txt` - edgeR stats for all genes
+* `wyder_MEGs.txt` and `wyder_PEGs.txt` - imprinted genes called by Wyder/edgeR method
+* `wyder_stats.txt` - edgeR stats for all genes
 
 
