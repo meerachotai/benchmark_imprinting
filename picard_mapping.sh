@@ -9,69 +9,11 @@
 # picard="/u/scratch/m/mchotai/imprinting/imprinting_analysis-master"
 # ${scripts_dir}/picard_mapping.sh -A cviA -B cviB -g $genome -a $annot -x 2 -y 3 -M 95 -P 25 -D $picard -o $outdir -O ${outdir}/picard -d $scripts_dir
 
-outdir=""
-picard=""
-scripts_dir=""
-
-strainA=""
-strainB=""
-
-snps=""
-genome=""
-annot=""
-
-mat_cutoff=95
-pat_cutoff=25
-
-rep=""
-AxB_rep=""
-BxA_rep=""
-
-majority=""
-
-paired=false
-outprefix="out"
-
-while getopts "A:B:a:g:r:o:M:P:m:D:d:s:f:x:y:O:p" opt; do
-	case $opt in
-		A)	strainA="$OPTARG"
-			;;
-		B)	strainB="$OPTARG"
-			;;
-		a)	annot="$OPTARG"
-			;;
-		g)	genome="$OPTARG"
-			;;
-		r)	rep="$OPTARG"
-			;;
-		o)	outdir="$OPTARG"
-			;;
-		M)	mat_cutoff="$OPTARG"
-			;;
-		P)	pat_cutoff="$OPTARG"
-			;;
-		m)	majority="$OPTARG"
-			;;
-		D)	picard="$OPTARG"
-			;;
-		d)	scripts_dir="$OPTARG"
-			;;
-		s)	snps="$OPTARG"
-			;;
-		f)	fastq_dir="$OPTARG"
-			;;
-		x)	AxB_rep="$OPTARG"
-			;;
-		y)	BxA_rep="$OPTARG"
-			;;
-		O)	outprefix="$OPTARG"
-			;;
-		p)	paired="true"
-			;;
-	esac
-done
-
 # https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
+
+source shell_env_imprint.txt
+outprefix="picard"
+
 displaytime () {
   local T=$1
   local D=$((T/60/60/24))
@@ -103,17 +45,11 @@ echo "Run start on: $time_start"
 # 	done
 # fi
 
+# special options for simulated files, otherwise cannot leave these blank
 if [ ${#snps} == 0 ]; then
 	rm $outdir/${strainA}_${strainB}_SNP.txt
-	# a BED file containing SNPs between AxB and BxA, where the SNP is given as [A allele]>[B allele]
-	for f in $outdir/per_chrom/*.refseq2simseq.SNP.vcf 
-	do 
-		sed -e '1,12d' $f > tmp.txt # trim top 12 lines
-		sed -e '$s/$//' tmp.txt >> $outdir/${strainA}_${strainB}_SNP.txt
-		rm tmp.txt
-	done  
-	cat $outdir/${strainA}_${strainB}_SNP.txt | awk '{print $1 "\t" $2-1 "\t" $2 "\t" $4 ">" $5}' > $outdir/${strainA}_${strainB}_SNP_fin.txt
-	snps="$outdir/${strainA}_${strainB}_SNP_fin.txt"
+	tail -n +2 $outdir/${strainB}/${strainB}_ref2sim.txt | grep SNP | awk '{print $1 "\t" $2-1 "\t" $2 "\t" $4 ">" $8}' > $outdir/${strainA}_${strainB}_SNP.txt
+	snps="$outdir/${strainA}_${strainB}_SNP.txt"
 fi
 
 if [ ${#fastq_dir} == 0 ]; then
@@ -121,7 +57,7 @@ if [ ${#fastq_dir} == 0 ]; then
 fi
 
 workdir=$( pwd )
-outdir=${workdir}/${outdir}
+outdir=${workdir}/${outdir}/picard
 
 mkdir -p $outdir
 
@@ -151,9 +87,9 @@ printf "using MEGs-cutoff: ${mat_cutoff}, PEGs-cutoff: ${pat_cutoff} for imprint
 # annot="$map/${strainA}_annot_fin.gff3"
 
 printf "Making metagenome...\n"
-${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB}_meta --GTF $annot
+${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB} --GTF $annot
 mkdir $map/${strainA}_${strainB}_meta_STAR
-STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}_meta.fa --sjdbGTFfile $map/${strainA}_${strainB}_meta_metagtf.gtf --sjdbOverhang 49
+STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49
 
 count=1
 
@@ -165,17 +101,25 @@ if [ "$paired" = "true" ]; then
 		if [ ${#AxB_rep} ==  ${#BxA_rep} ]; then
 			rep=$AxB_rep
 		else
-			printf "Number of AxB and BxA replicates given do not match, please re-check, or get combinations without using option -p\n"
+			printf "Number of AxB and BxA replicates given do not match, please re-check, or get combinations by setting config file option PAIRED_RECIPROCAL_CROSSES = FALSE\n"
 		fi
 	fi
 	
 	# mapping
 	for i in $(seq 1 1 $rep)
 	do
-		cross="AxB_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
-		cross="BxA_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
+		if [ "$paired_end" == "true" ]; then
+			# hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq
+			cross="AxB_${i}"
+			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			cross="BxA_${i}"
+			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+		else
+			cross="AxB_${i}"
+			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			cross="BxA_${i}"
+			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+		fi
 	done
 	
 	# counting and calling
@@ -208,17 +152,18 @@ else
 		fi
 	fi
 	
+	echo Mapping...
 	# mapping
 	for i in $(seq 1 1 $AxB_rep)
 	do
 		cross="AxB_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 	done
 	
 	for i in $(seq 1 1 $BxA_rep)
 	do
 		cross="BxA_${i}"
-		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_meta_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r >> $map/mapping_log.txt
+		${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 	done
 	
 	# counting and calling
@@ -232,7 +177,7 @@ else
 			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
 			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 			
-			${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r >> $map/call_imprint_log.txt
+			${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r # >> $map/call_imprint_log.txt
 			
 			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
 			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
@@ -245,12 +190,12 @@ fi
 printf "Total reciprocal pairs inspected: ${count}\n"
 
 if [ ${#majority} == 0 ]; then
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -t $count -o ${outprefix}_picard_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -t $count -o ${outprefix}_picard_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -t $count -o ${outdir}/${outprefix}_picard_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -t $count -o ${outdir}/${outprefix}_picard_PEGs.txt
 else
 	printf "Using majority voting of >= ${majority} for consensus calls\n"
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -m $majority -o ${outprefix}_picard_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -m $majority -o ${outprefix}_picard_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -m $majority -o ${outdir}/${outprefix}_picard_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -m $majority -o ${outdir}/${outprefix}_picard_PEGs.txt
 fi
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
