@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source shell_env_imprint.txt
+source $1
 outprefix="anderson"
 
 # ---------------------- step 7: rename annot and ref ------------------
