@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 import random
+import sys
+
+output_env = str(sys.argv[1])
+
 inputs = []
 complete = True
 input_file = "simulation_config.txt"
@@ -26,7 +30,7 @@ with open(input_file, 'r') as f:
             else:
                 inputs.append(next_in)
 
-file = open("shell_env.txt", "w")
+file = open(output_env, "w")
 
 file.write("outdir="+inputs[0] + "\n")
 file.write("scripts_dir="+inputs[1]+"\n")
