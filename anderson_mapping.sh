@@ -1,88 +1,7 @@
 #!/usr/bin/env bash
 
-# dependencies: htseqcount, hisat2
-# sample commands
-# module load hisat2
-# strainA="cviA"
-# strainB="cviB"
-# outdir="new_out"
-# scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-# refA="$( pwd )/$outdir/cviA_genome.fa"
-# refB="$( pwd )/$outdir/cviB_genome.fa" 
-# annotA="$( pwd )/$outdir/cviA_annot_anderson.gff3"
-# annotB="$( pwd )/$outdir/cviB_annot_anderson.gff3"
-# $scripts_dir/anderson_mapping.sh -A $strainA -B $strainB -x $refA -y $refB -X $annotA -Y $annotB -o $outdir -i ID -r 3 -d $scripts_dir -a cviA -b cviB
-
-# REQUIRED
-scripts_dir=""
-strainA=""
-strainB=""
-outdir=""
-refA=""
-refB=""
-annotA=""
-annotB=""
-fastq_dir=""
-
-# OPTIONAL
-gene_key=""
-
-htseq_i="ID"
-rep=3
-edited=false
-
-pval=0.05
-mat_cutoff=0.8
-pat_cutoff=0.5
-logfc=1
-a_annot="strainA"
-b_annot="strainB"
-outprefix="out"
-
-while getopts "A:B:x:y:X:Y:d:r:o:g:f:p:M:P:a:b:l:O:e" opt; do
-	case $opt in
-		A)	strainA="$OPTARG"
-			;;
-		B)	strainB="$OPTARG"
-			;;
-		x)	refA="$OPTARG"
-			;;
-		y)	refB="$OPTARG"
-			;;
-		X)	annotA="$OPTARG"
-			;;
-		Y)	annotB="$OPTARG"
-			;;	
-		d)	scripts_dir="$OPTARG"
-			;;
-		r)	rep="$OPTARG"
-			;;
-		o)	outdir="$OPTARG"
-			;;
-		i)	htseq_i="$OPTARG" # leave it to default if using simulated genome
-			;;
-		g) 	gene_key="$OPTARG"
-			;;
-		f)	fastq_dir="$OPTARG"
-			;;
-		p)	pval="$OPTARG"
-			;;
-		M)	mat_cutoff="$OPTARG"
-			;;
-		P)	pat_cutoff="$OPTARG"
-			;;
-		a)	a_annot="$OPTARG"
-			;;
-		b)	b_annot="OPTARG"
-			;;
-		l)	logfc="$OPTARG"
-			;;	
-		O) 	outprefix="$OPTARG"
-			;;
-		e)	edited=true # assumes it's not renamed, add -e to let us know you've already done it
-			;;
-	esac
-done
+source shell_env_imprint.txt
+outprefix="anderson"
 
 # ---------------------- step 7: rename annot and ref ------------------
 
@@ -108,11 +27,15 @@ map() {
 	cross=$3
 	map=$4	
 	fastq_dir=$5
+	paired_end=$6
 	
 	# concatenate reads files for A,B - moved to simulate_reads.sh
 	# cat ${fastq_dir}${cross}_A.fq ${fastq_dir}${cross}_B.fq > ${map}/${strainA}_${strainB}_${cross}.fq
-	
-	hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq_dir}${cross}.fq
+	if [ "$paired_end" == "true" ]; then
+		hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq # --phred33
+	else
+		hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq_dir}${cross}.fq # --phred33
+	fi
 }
 
 # -------------------- step 10: counting -------------------------
@@ -125,8 +48,7 @@ count() {
 	map=$4
 	htseq_i=$5
 	
-	# CURRENTLY BREAKING THE CODE - WHY??
-	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3 > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
+	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
 # # qsub -V -N counts -cwd -j y -o qsub_logs/counts.txt -m bae -b y -l h_rt=01:00:00,h_data=8G "$cmd"
@@ -163,6 +85,7 @@ printf "using reference genome files: ${refA}, ${refB}\n"
 printf "using annotation files: ${annotA}, ${annotB}\n"
 printf "outdirectory: ${outdir}\n"
 printf "using FASTQ directory: ${fastq_dir}\n\n"
+printf "Using HTSeq -i option as: ${htseq_i}"
 
 workdir=$( pwd )
 outdir=${workdir}/${outdir}
@@ -174,20 +97,22 @@ map="${outdir}/map" # where intermediate files will be stored
 # preparing for concatenating:
 # renames the ids to give strain names, adds A or B as needed for HTseq count
 
-if [ "$edited" == "false" ]; then
+# if [ "$rename" == "true" ]; then
 	printf "Renaming chromosomes to match strainA/B...\n"
 	rename_chr $strainA $refA $annotA $map
 	refA="$map/${strainA}_genome.fa"
 	annotA="$map/${strainA}_annot.gff3"
-	
+
 	rename_chr $strainB $refB $annotB $map
 	refB="$map/${strainB}_genome.fa"
 	annotB="$map/${strainB}_annot.gff3"
-fi
+# fi
 
 # concatenates annot, ref + builds index for hisat2 (note: indexing takes long, possibly should qsub)
 # NOTE: these annotations / refs need to be RENAMED with strainA and strainB names.
 cat $refA $refB > $map/concat_${strainA}_${strainB}.fa
+# { cat $refA; sed '1d' $refB; } > $map/concat_${strainA}_${strainB}.fa
+
 hisat2-build $map/concat_${strainA}_${strainB}.fa $map/concat_${strainA}_${strainB} # build index
 cat $annotA $annotB > $map/concat_${strainA}_${strainB}.gff3
 
@@ -218,7 +143,9 @@ done
 if [ ${#gene_key} == 0 ]; then
 	printf "Creating gene key list...\n"
 	printf "A\tB\n" > ${map}/${strainA}_${strainB}_gene_key.txt # for later
-	paste <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotA}) <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotB}) >> ${map}/${strainA}_${strainB}_gene_key.txt
+# 	paste <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotA}) <(awk 'BEGIN { FS="="} NR>1 { print $2 }' ${annotB}) >> ${map}/${strainA}_${strainB}_gene_key.txt
+	paste <(cat $annotA | rev | cut -f 1 | rev | cut -d "=" -f 2-) <(cat $annotB | rev | cut -f 1 | rev | cut -d "=" -f 2-) >> ${map}/${strainA}_${strainB}_gene_key.txt
+	sed -i -e "2d" ${map}/${strainA}_${strainB}_gene_key.txt
 	gene_key="${map}/${strainA}_${strainB}_gene_key.txt"
 fi
 
@@ -226,6 +153,6 @@ printf "Calling imprinting...\n"
 # ${scripts_dir}/call_imprinting_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB -a $a_annot -b $b_annot -C $outprefix
 
 ${scripts_dir}/get_counts_anderson.R -c ${map}/counts_${strainA}_${strainB}_ -k $gene_key -r $rep -A $strainA -B $strainB -a $a_annot -b $b_annot -C ${map}/${outprefix}
-${scripts_dir}/call_imprinting_anderson.R -c ${map}/${outprefix}_ -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB ${outprefix}
+${scripts_dir}/call_imprinting_anderson.R -c ${map}/${outprefix}_ -p $pval -u $mat_cutoff -l $pat_cutoff -r $rep -f $logfc -A $strainA -B $strainB ${outdir}/${outprefix}
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
