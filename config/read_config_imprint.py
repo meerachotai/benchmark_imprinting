@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-# if(split_line[0].strip() == "SNP_FILE" or split_line[0].strip() == "FASTQ_DIR" or split_line[0].strip() == "AxB_REP" or split_line[0].strip() == "BxA_REP" or split_line[0].strip() == "REP"): # for PICARD
-# 	inputs.append("")
-
 import random
+import sys
+
+output_env = str(sys.argv[1])
+
 inputs = []
 complete = True
 input_file = "imprinting_config.txt"
@@ -24,7 +25,7 @@ with open(input_file, 'r') as f:
 				next_in.lower()
 			inputs.append(next_in)
 
-file = open("shell_env_imprint.txt", "w")
+file = open(output_env, "w")
 
 file.write("outdir="+inputs[0] + "\n")
 file.write("scripts_dir="+inputs[1]+"\n")
@@ -46,19 +47,23 @@ file.write("AxB_rep="+inputs[14]+"\n")
 file.write("BxA_rep="+inputs[15]+"\n")
 file.write("majority="+inputs[16]+"\n")
 
-file.write("refA="+inputs[17]+"\n")
-file.write("annotA="+inputs[18]+"\n")
-file.write("refB="+inputs[19]+"\n")
-file.write("annotB="+inputs[20]+"\n")
-file.write("gene_key="+inputs[21]+"\n")
-file.write("htseq_i="+inputs[22]+"\n")
-file.write("pval="+inputs[23]+"\n")
-file.write("mat_cutoff="+inputs[24]+"\n")
-file.write("pat_cutoff="+inputs[25]+"\n")
-file.write("logfc="+inputs[26]+"\n")
-file.write("rep="+inputs[27]+"\n")
-file.write("rename="+inputs[28]+"\n")
-file.write("a_annot="+inputs[29]+"\n")
-file.write("b_annot="+inputs[30]+"\n")
+file.write("counts_dir="+inputs[17]+"\n")
+file.write("pval_wyder="+inputs[18]+"\n")
+file.write("logfc_wyder="+inputs[19]+"\n")
+
+file.write("refA="+inputs[20]+"\n")
+file.write("annotA="+inputs[21]+"\n")
+file.write("refB="+inputs[22]+"\n")
+file.write("annotB="+inputs[23]+"\n")
+file.write("gene_key="+inputs[24]+"\n")
+file.write("htseq_i="+inputs[25]+"\n")
+file.write("pval="+inputs[26]+"\n")
+file.write("mat_cutoff="+inputs[27]+"\n")
+file.write("pat_cutoff="+inputs[28]+"\n")
+file.write("logfc="+inputs[29]+"\n")
+file.write("rep="+inputs[30]+"\n")
+file.write("rename="+inputs[31]+"\n")
+file.write("a_annot="+inputs[32]+"\n")
+file.write("b_annot="+inputs[33]+"\n")
 
 file.close()
