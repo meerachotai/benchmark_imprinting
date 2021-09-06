@@ -186,12 +186,12 @@ cat("paternally-biased: ",length(imprinted_PEGs), "\n")
 cat("-----------------------------------\n")
 
 cat("\nWriting imprinting lists...\n")
-write.table(imprinted_MEGs, paste0(outprefix, "_anderson_MEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
-write.table(imprinted_PEGs, paste0(outprefix, "_anderson_PEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
+write.table(imprinted_MEGs, paste0(outprefix, "_MEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
+write.table(imprinted_PEGs, paste0(outprefix, "_PEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
 
 syntelogs_AB = syntelogs_AB[-1]
 # either_imprinted = syntelogs_AB[syntelogs_AB[imprint_A] != "no.imprint" | syntelogs_AB[imprint_B] != "no.imprint",]
-write.table(syntelogs_AB, paste0(outprefix, "_anderson_stats.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
+write.table(syntelogs_AB, paste0(outprefix, "_stats.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
 
 
 cat("Done.\n")
