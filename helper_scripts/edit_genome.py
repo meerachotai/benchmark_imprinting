@@ -66,20 +66,22 @@ else:
 
 def add_snps(snp_count, sequence, length):
     
-    random.seed(a = seed) # set seed
-    bases = ["A", "T", "G", "C"]
-    snps = []
+	random.seed(a = seed) # set seed
+	bases = ["A", "T", "G", "C"]
+	snps = []
+	pos_chosen = []
 
-    for i in range(snp_count):
-        ref_pos = random.randint(1,length)
-        ref_allele = sequence[ref_pos-1]
-        pos = random.randint(0,2)
-        sim_allele = [base for base in bases if base != ref_allele][pos]
+	for i in range(snp_count):
+		ref_pos = random.choice([i for i in range(1,length) if i not in pos_chosen])
+		pos_chosen.append(ref_pos)
+		ref_allele = sequence[ref_pos-1]
+		pos = random.randint(0,2)
+		sim_allele = [base for base in bases if base != ref_allele][pos]
+
+		added_snp = [ref_pos, ref_pos, ref_allele, ref_pos, ref_pos, sim_allele, "SNP",0]
+		snps.append(added_snp)
         
-        added_snp = [ref_pos, ref_pos, ref_allele, ref_pos, ref_pos, sim_allele, "SNP",0]
-        snps.append(added_snp)
-        
-    return snps
+	return snps
 
 def add_indels(need_indel_score, sequence, length, window):
     
@@ -94,11 +96,13 @@ def add_indels(need_indel_score, sequence, length, window):
         
         indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 1, scale = 9, size = 1, random_state = numpy_randomGen) # range - 1 - 10
         indel_length = round(indel_length[0])
+        indel_length = int(indel_length)
         new_indel_score = indel_score + ((indel_length - 1) * extend) + indel 
         
         while(new_indel_score > need_indel_score + window): # so the last one isn't WAY past the needed score
             indel_length = scipy.stats.powerlaw.rvs(a = alpha, loc = 1, scale = 9, size = 1, random_state = numpy_randomGen)
             indel_length = round(indel_length[0])
+            indel_length = int(indel_length)
             new_indel_score = indel_score + ((indel_length - 1) * extend) + indel 
             
         indel_score = new_indel_score
@@ -183,6 +187,7 @@ def edit_genome(header, chrom, write_seq, write_txt, write_sim, score_percent, w
         print("required score:", score_percent, "% or", score, "/", perfect_score)
         
         snp_count = round((perfect_score - score) / (match + snp + (snp/si_ratio)))
+        snp_count = int(snp_count)
         snp_score = snp_count * snp
         need_indel_score = round((snp_count * snp) / si_ratio)
         print("number of SNPs needed:", snp_count)
@@ -197,13 +202,13 @@ def edit_genome(header, chrom, write_seq, write_txt, write_sim, score_percent, w
         snps = add_snps(snp_count, chrom, length)
         new_seq, variants = ref_to_sim(snps, indels, chrom)
         
-        header = header.split(" ")[0]
+        header = header.split(" ")[0].strip()
         write_seq.write(header)
         write_seq.write("\n")
         write_seq.write(new_seq)
         write_seq.write("\n")
         
-        header = header[1:] + "\t"
+        header = header[1:].strip() + "\t"
         for variant in variants:
             variant = variant[:-1]
             str_variant = [str(x) for x in variant]
@@ -222,13 +227,13 @@ def conserved_genome(header, chrom, write_seq, write_sim):
     print("--------------------------------")
     print("Chromosome", counter, ": conserved!")
 
-    header = header.split(" ")[0]
+    header = header.split(" ")[0].strip()
     write_seq.write(header)
     write_seq.write("\n")
     write_seq.write(chrom)
     write_seq.write("\n")
 
-    header = header[1:] + "\t"
+    header = header[1:].strip() + "\t"
     write_sim.write(header)
     write_sim.write("100")
     write_sim.write("\n")
