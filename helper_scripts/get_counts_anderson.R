@@ -81,7 +81,7 @@ B.col = 2
 A.colname = colnames(gene_key)[A.col] 
 B.colname = colnames(gene_key)[B.col]
 
-cat("Using gene key to calcaulted AxB_A, AxB_B, BxA_A and BxA_B counts for all replicates")
+cat("Using gene key to calculated AxB_A, AxB_B, BxA_A and BxA_B counts for all replicates\n")
 counts_syntelogs$syntelog <- ifelse(counts_syntelogs$feature %in% gene_key[,A.col] | 
                                       counts_syntelogs$feature %in% gene_key[,B.col], "syntelog","non.syntelog")
 
@@ -114,7 +114,7 @@ BxA_cols = seq(2, rep*4, by = 2) # 2,4,6...
 BxA_A_cols = BxA_cols[1:rep]
 BxA_B_cols = BxA_cols[rep+1:(rep*2)]
 
-cat("Writing counts files in form", outprefix, "_cross_rep.txt...\n")
+cat(paste0("Writing counts files in form ", outprefix, "_cross_rep.txt...\n"))
 # want AxB_A, AxB_B | BxA_A, BxA_B
 for (i in 1:rep) {
   AxB = syntelogs_AB[,c(AxB_A_cols[i],AxB_B_cols[i])]
