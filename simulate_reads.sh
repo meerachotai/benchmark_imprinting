@@ -1,40 +1,6 @@
 #!/usr/bin/env bash
 
-# sample command:
-# scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-# strainA="cviA"
-# strainB="cviB"
-# outdir="new_out"
-# refA="$outdir/cviA_genome.fa"
-# refB="$outdir/cviB_genome.fa" 
-# 
-# $scripts_dir/simulate_reads.sh -A $strainA -B $strainB -x $refA -y $refB -d $scripts_dir -s 5 -u 30 -m 10 -p 10 -r 50 -R 3 -M 95 -P 25 -o $outdir
-
-# Required arguments ------------------------
-scripts_dir=""
-strainA=""
-strainB=""
-outdir=""
-refA=""
-refB=""
-
-# Defaults ------------------------------
-unbiased=30
-meg=10
-peg=10
-seed=5
-read_length=50
-rep=3
-megs_bias=95
-pegs_bias=25
-
-# made-up genome
-# refA="${strainA}_Stranscripts.fa"
-# annotA="${refA}_annot.gff3"
-# 
-# made-up genome + introduced mutations
-# refB="${strainB}_genome.fa"
-# annotB="${refB}_annot.gff3"
+source $1
 
 # https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
 displaytime () {
@@ -59,40 +25,6 @@ ts=$(date +%s)	# time run was started (in seconds)
 
 echo "Run start on: $time_start"
 
-
-while getopts "A:B:x:y:d:m:p:u:s:r:R:M:P:o:" opt; do
-	case $opt in
-		A)	strainA="$OPTARG"
-			;;
-		B)	strainB="$OPTARG"
-			;;
-		x)	refA="$OPTARG"
-			;;
-		y)	refB="$OPTARG"
-			;;
-		d)	scripts_dir="$OPTARG"
-			;;
-		m)	meg="$OPTARG"
-			;;
-		p)	peg="$OPTARG"
-			;;
-		u)	unbiased="$OPTARG"
-			;;
-		s)	seed="$OPTARG"
-			;;
-		r)	read_length="$OPTARG"
-			;;
-		R)	rep="$OPTARG"
-			;;
-		M) 	megs_bias="$OPTARG"
-			;;
-		P)	pegs_bias="$OPTARG"
-			;;
-		o)	outdir="$OPTARG"
-			;;
-	esac
-done
-
 workdir=$( pwd )
 outdir=${workdir}/${outdir}
 
@@ -105,7 +37,7 @@ printf "for reproducibility, using seed = ${seed} \n"
 printf "outdirectory: ${outdir}\n\n"
 
 printf "Simulating counts...\n"
-$scripts_dir/simulated_read-counts.R --seed $seed --disp med --n $unbiased --nMEG $meg --nPEG $peg --MEGbias $megs_bias --PEGbias $pegs_bias --rep $rep "${outdir}/count_simul"
+$scripts_dir/simulate_counts.R --seed $seed --disp med --n $unbiased --nMEG $meg --nPEG $peg --MEGbias $megs_bias --PEGbias $pegs_bias --rep $rep "${outdir}/count_simul"
 
 # DO NOT CHANGE -----------------------------------
 AxB="${outdir}/count_simul_AxB.txt"
@@ -113,7 +45,7 @@ BxA="${outdir}/count_simul_BxA.txt"
 
 printf "Simulating reads...\n"
 mkdir ${outdir}/reads_simul
-${scripts_dir}/reads_simul.R -a $AxB -b $BxA -A $refA -B $refB -p I -r $read_length -s $seed -R $rep ${outdir}/reads_simul/simul
+${scripts_dir}/reads_simul.R -a $AxB -b $BxA -A $outdir/${refA}.fa -B $outdir/${refB}.fa -p I -r $read_length -s $seed -R $rep ${outdir}/reads_simul/simul
 
 # remove spaces for mapping
 for f in $(ls -v ${outdir}/reads_simul/simul_AxB_*) ; do echo "$(awk '{$1=$1};1' $f)" > $f ; done
@@ -125,5 +57,18 @@ do
 	cat ${outdir}/reads_simul/simul_AxB_${i}_A.fq ${outdir}/reads_simul/simul_AxB_${i}_B.fq > ${outdir}/reads_simul/${strainA}_${strainB}_AxB_${i}.fq
 	cat ${outdir}/reads_simul/simul_BxA_${i}_A.fq ${outdir}/reads_simul/simul_BxA_${i}_B.fq > ${outdir}/reads_simul/${strainA}_${strainB}_BxA_${i}.fq
 done
+
+echo Preparing true MEGs and PEGs files...
+while IFS= read -r line; do
+sed -n "${line}p" ${outdir}/${strainA}/${strainA}_genes.txt >> ${outdir}/true_pegs.txt 
+done < ${outdir}/count_simul_pegs.txt
+sed -i 's/^.//' ${outdir}/true_pegs.txt
+rm ${outdir}/count_simul_pegs.txt
+
+while IFS= read -r line; do
+sed -n "${line}p" ${outdir}/${strainA}/${strainA}_genes.txt >> ${outdir}/true_megs.txt 
+done < ${outdir}/count_simul_megs.txt
+sed -i 's/^.//' ${outdir}/true_megs.txt
+rm ${outdir}/count_simul_megs.txt
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
