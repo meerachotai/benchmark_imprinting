@@ -1,17 +1,6 @@
 #!/usr/bin/env bash
-# 
-# strainA="cviA"
-# strainB="cviB"
-# outdir="june12_6pm"
-# scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-# genome="$( pwd )/$outdir/cviA_genome.fa"
-# annot="$( pwd )/$outdir/cviA_annot_picard.gff3"
-# picard="/u/scratch/m/mchotai/imprinting/imprinting_analysis-master"
-# ${scripts_dir}/picard_mapping.sh -A cviA -B cviB -g $genome -a $annot -x 2 -y 3 -M 95 -P 25 -D $picard -o $outdir -O ${outdir}/picard -d $scripts_dir
 
-# https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
-
-source shell_env_imprint.txt
+source $1
 outprefix="picard"
 
 displaytime () {
@@ -190,12 +179,12 @@ fi
 printf "Total reciprocal pairs inspected: ${count}\n"
 
 if [ ${#majority} == 0 ]; then
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -t $count -o ${outdir}/${outprefix}_picard_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -t $count -o ${outdir}/${outprefix}_picard_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -t $count -o ${outdir}/${outprefix}_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -t $count -o ${outdir}/${outprefix}_PEGs.txt
 else
 	printf "Using majority voting of >= ${majority} for consensus calls\n"
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -m $majority -o ${outdir}/${outprefix}_picard_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -m $majority -o ${outdir}/${outprefix}_picard_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -m $majority -o ${outdir}/${outprefix}_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -m $majority -o ${outdir}/${outprefix}_PEGs.txt
 fi
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
