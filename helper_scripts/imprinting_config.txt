@@ -1,0 +1,71 @@
+# This configuration file sets up options for the simulate_genome.sh and simulate_reads.sh files
+# Please change the variable settings below if necessary
+# Alternately, run make_simulation_config.sh to be guided through specific instructions to build this config file
+
+#########################################################################
+## PATHS - MUST FILL
+#########################################################################
+
+OUTDIR = aug_20_config
+# should also contain helper scripts for Anderson, Wyder pipelines
+HELPER_SCRIPTS_DIR = /u/scratch/m/mchotai/rnaseq_simul/scripts_import
+
+#########################################################################
+## GENERAL SETTINGS 
+#########################################################################
+
+STRAIN_A_NAME = strainA
+STRAIN_B_NAME = strainB
+
+FASTQ_DIR = "/u/scratch/m/mchotai/rnaseq_simul/aug_20_config/reads_simul/strainA_strainB_"
+
+PAIRED_END = FALSE
+
+#########################################################################
+## PICARD MAPPING SETTINGS
+#########################################################################
+
+PICARD_SCRIPTS_DIR = /u/scratch/m/mchotai/imprinting/imprinting_analysis-master
+
+REF_A = aug_20_config/ref_A.fa
+ANNOT_A = aug_20_config/annot_A_picard.gff3
+SNPS_FILE = 
+
+MEGS_CUTOFF = 90
+PEGS_CUTOFF = 25
+
+# if the reciprocal crosses are paired, true else false
+PAIRED_RECIPROCAL_CROSSES = TRUE
+BOTH_CROSS_REP = 3
+AxB_REP = 
+BxA_REP = 
+
+VOTES_NEEDED_TO_CALL_IMPRINTED = 
+
+#########################################################################
+## ANDERSON MAPPING SETTINGS
+#########################################################################
+
+REF_A = aug_20_config/ref_A.fa
+ANNOT_A = aug_20_config/annot_A_anderson.gff3
+
+REF_B = aug_20_config/ref_B.fa
+ANNOT_B = aug_20_config/annot_B_anderson.gff3
+
+GENE_KEY = 
+
+HTSEQ_OPTION_I = ID
+P_VALUE = 0.05
+MEGS_CUTOFF = 0.8
+PEGS_CUTOFF = 0.5
+LOGFC_CUTOFF = 1
+
+REPLICATES = 3
+
+RENAME_HEADERS_CONCAT = TRUE
+
+UNIQUE_ANNOT_ATTRIBUTE_ID_A = strainA
+UNIQUE_ANNOT_ATTRIBUTE_ID_B = strainB
+
+
+

@@ -1,0 +1,48 @@
+# This configuration file sets up options for the simulate_genome.sh and simulate_reads.sh files
+# Please change the variable settings below if necessary
+# Alternately, run make_simulation_config.sh to be guided through specific instructions to build this config file
+
+#########################################################################
+## PATHS
+#########################################################################
+
+OUTDIR = aug_20_config
+HELPER_SCRIPTS_DIR = $( pwd )/scripts_import
+
+#########################################################################
+## GENOME SIMULATION SETTINGS
+#########################################################################
+
+REF_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/fasta_and_bismark/TAIR10.fa
+ANNOT_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/annotations/araport11/Araport11_GFF3_genes_transposons.201606.gtf
+STRAIN_A_NAME = strainA
+STRAIN_B_NAME = strainB
+REFERENCE_A = ref_A
+REFERENCE_B = ref_B
+ANNOT_A = annot_A
+ANNOT_B = annot_B
+SEED = 5
+
+SIMILARITY_PERCENT_SCORE = 95
+SCORING_WINDOW = 5
+SNP_SCORE = 1 
+INDEL_SCORE = 3
+EXTEND_SCORE = 2
+MATCH_SCORE = 1
+SNP_INDEL_RATIO = 1
+
+#########################################################################
+## READ SIMULATION SETTINGS
+#########################################################################
+
+TOTAL_GENES = 50
+UNBIASED_GENES = 20 
+MEGS = 15
+PEGS = 15
+MEGS_BIAS = 90
+PEGS_BIAS = 25
+
+REPLICATES = 3
+READ_LENGTH = 50
+
+
