@@ -87,20 +87,20 @@ cat("-----------------------------------\n")
 # -(logfc) --> PEGs
 # +(logfc) --> MEGs
 cat("\nWriting Wyder-edgeR MEG and PEG lists...")
-write.table(row.names(counts_summed)[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==-1], file=paste0(outprefix,"_wyder_PEGs.txt"), row.names=F, quote=F, col.names=F)
-write.table(row.names(counts_summed)[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==1], file=paste0(outprefix,"_wyder_MEGs.txt"), row.names=F, quote=F, col.names=F)
+write.table(row.names(counts_summed)[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==-1], file=paste0(outprefix,"_PEGs.txt"), row.names=F, quote=F, col.names=F)
+write.table(row.names(counts_summed)[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==1], file=paste0(outprefix,"_MEGs.txt"), row.names=F, quote=F, col.names=F)
 cat(" Done.\n")
 
 all_stats = topTags(edgeR.tr, n=nrow(edgeR.tr))
 
 cat("Writing Wyder-edgeR all-stats file...")
-write.table(all_stats, paste0(outprefix,"_wyder_stats.txt"), row.names=T, quote=F, col.names=NA)
+write.table(all_stats, paste0(outprefix,"_stats.txt"), row.names=T, quote=F, col.names=NA)
 cat(" Done.\n")
 
 megs_counts = counts_summed[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==1, ]
 pegs_counts = counts_summed[decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")==-1, ]
 
 cat("Writing MEG/PEG + counts file...")
-write.table(megs_counts,paste0(outprefix,"_wyder_MEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
-write.table(pegs_counts,paste0(outprefix,"_wyder_PEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
+write.table(megs_counts,paste0(outprefix,"_MEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
+write.table(pegs_counts,paste0(outprefix,"_PEGs_counts.txt"), row.names=T, quote=F, col.names=NA, sep = "\t")
 cat(" Done.\n\n")
