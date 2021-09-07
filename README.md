@@ -17,7 +17,7 @@ Fill in `benchmark_imprinting/config/simulation_config.txt` as per your requirem
 
 Run the following scripts: 
 * `benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_imprinting/config/shell_env_simul.txt`
-* `simulate_genome.sh benchmark_imprinting/config/shell_env_simul.txt`
+* `benchmark_imprinting/simulate_genome.sh benchmark_imprinting/config/shell_env_simul.txt`
 
 ### Output:
 
