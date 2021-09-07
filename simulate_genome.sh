@@ -25,7 +25,24 @@ printf "working in directory: ${outdir} \n\n"
 printf "using original reference genome FASTA: ${ref} \n"
 printf "using original annotation .gtf/.gff file: ${annot} \n" 
 
-mkdir $outdir
+redo=false
+if [ "$2" = "overwrite" ]; then
+	redo=true	
+fi
+	
+if [ ! -d "$outdir" ]; then
+	mkdir "$outdir"
+else
+	if [ "$(ls -A $outdir)" ]; then
+		if [ "$redo" = "true" ]; then
+			echo "Overwriting previous contents of output dir $outdir"
+			rm -rf "$outdir"/*	
+		else
+			echo "Error: provided output directory is not empty. To allow overwrite of non-empty dir, add 'overwrite' as the second argument. WARNING: all existing files in -outdir- will be deleted. Seriously."
+			exit 1
+		fi
+	fi
+fi
 
 #################
 ### functions ###
