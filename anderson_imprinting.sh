@@ -2,6 +2,8 @@
 
 source $1
 outprefix="anderson"
+mat_cutoff=${mat_cutoff_anderson}
+pat_cutoff=${pat_cutoff_anderson}
 
 # ---------------------- step 7: rename annot and ref ------------------
 
