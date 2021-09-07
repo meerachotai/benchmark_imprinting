@@ -2,6 +2,8 @@
 
 source $1
 outprefix="picard"
+mat_cutoff=${mat_cutoff_picard}
+pat_cutoff=${pat_cutoff_picard}
 
 displaytime () {
   local T=$1
