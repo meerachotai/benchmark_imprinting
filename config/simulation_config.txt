@@ -6,8 +6,8 @@
 ## PATHS
 #########################################################################
 
-OUTDIR = aug_20_config
-HELPER_SCRIPTS_DIR = $( pwd )/scripts_import
+OUTDIR = outdir
+HELPER_SCRIPTS_DIR = benchmark_imprinting/helper_scripts
 
 #########################################################################
 ## GENOME SIMULATION SETTINGS
