@@ -39,7 +39,7 @@ Log files of interest:
 * `reads_simul.R`
 
 ### Run:
-`simulate_reads.sh shell_env_simul.txt`
+`benchmark_imprinting/simulate_reads.sh benchmark_imprinting/config/shell_env_simul.txt`
 
 ### Output:
 
@@ -143,7 +143,7 @@ Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirem
 
 Run the following scripts: 
 * `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
-* `anderson_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
+* `benchmark_imprinting/anderson_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
