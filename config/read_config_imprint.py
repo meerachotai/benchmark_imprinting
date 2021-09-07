@@ -23,7 +23,7 @@ with open(input_file, 'r') as f:
 			if(next_in.isspace()):
 				next_in = ""
 			if(next_in.lower() == "true" or next_in.lower() == "false"):
-				next_in.lower()
+				next_in = next_in.lower()
 			inputs.append(next_in)
 
 file = open(output_env, "w")
