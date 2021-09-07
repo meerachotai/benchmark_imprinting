@@ -17,7 +17,7 @@ HELPER_SCRIPTS_DIR = benchmark_imprinting/helper_scripts
 STRAIN_A_NAME = strainA
 STRAIN_B_NAME = strainB
 
-FASTQ_DIR = "benchmark_imprinting/outdir/reads_simul/strainA_strainB_"
+FASTQ_DIR = "outdir/reads_simul/strainA_strainB_"
 
 PAIRED_END = FALSE
 
@@ -43,6 +43,16 @@ BxA_REP =
 VOTES_NEEDED_TO_CALL_IMPRINTED = 
 
 #########################################################################
+## WYDER MAPPING SETTINGS
+#########################################################################
+
+# using Picard counts files
+COUNTS_DIRECTORY = 
+
+P_VALUE = 0.05
+LOGFC_CUTOFF = 0
+
+#########################################################################
 ## ANDERSON MAPPING SETTINGS
 #########################################################################
 
@@ -66,6 +76,3 @@ RENAME_HEADERS_CONCAT = TRUE
 
 UNIQUE_ANNOT_ATTRIBUTE_ID_A = strainA
 UNIQUE_ANNOT_ATTRIBUTE_ID_B = strainB
-
-
-
