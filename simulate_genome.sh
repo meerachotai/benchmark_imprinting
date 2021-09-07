@@ -133,13 +133,14 @@ else
 	cat single.fa | awk 'BEGIN{FS="[.|\t]"} {print $1,$NF}' > singled.fa
 	rm single.fa
 	
-	awk -v seed=$RANDOM 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' singled.fa > prefixed.fa
+	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' singled.fa > prefixed.fa
 	rm singled.fa
 	
 	cat prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > downsampled.fa
 	rm prefixed.fa
 	
-	awk '{print $1}' downsampled.fa > ${outdir}/${strainA}/${strainA}_genes.txt
+	awk '{print $1}' downsampled.fa > ${outdir}/all_genes.txt
+	sed -i 's/^.//' ${outdir}/all_genes.txt
 	awk '{printf "%s\n%s\n",$1,$2}' downsampled.fa > ${outdir}/${refA}.fa
 	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
 	
