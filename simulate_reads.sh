@@ -60,13 +60,13 @@ done
 
 echo Preparing true MEGs and PEGs files...
 while IFS= read -r line; do
-sed -n "${line}p" ${outdir}/all_genes.txt >> ${outdir}/true_pegs.txt 
+sed -n "${line}p" ${outdir}/all_genes.txt >> ${outdir}/true_PEGs.txt 
 done < ${outdir}/count_simul_pegs.txt
 # sed -i 's/^.//' ${outdir}/true_pegs.txt
 rm ${outdir}/count_simul_pegs.txt
 
 while IFS= read -r line; do
-sed -n "${line}p" ${outdir}/all_genes.txt >> ${outdir}/true_megs.txt 
+sed -n "${line}p" ${outdir}/all_genes.txt >> ${outdir}/true_MEGs.txt 
 done < ${outdir}/count_simul_megs.txt
 # sed -i 's/^.//' ${outdir}/true_megs.txt
 rm ${outdir}/count_simul_megs.txt
