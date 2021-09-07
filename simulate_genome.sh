@@ -2,7 +2,7 @@
 
 # SIMULATING GENOMES with given similarity score
 
-source shell_env.txt
+source $1
 
 RANDOM=seed
 
