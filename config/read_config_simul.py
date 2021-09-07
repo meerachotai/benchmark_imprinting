@@ -3,11 +3,13 @@
 import random
 import sys
 
-output_env = str(sys.argv[1])
+input_file = str(sys.argv[1])
+output_env = str(sys.argv[2])
 
 inputs = []
 complete = True
-input_file = "simulation_config.txt"
+# input_file = "simulation_config.txt"
+
 with open(input_file, 'r') as f:
      
     for line in f:
