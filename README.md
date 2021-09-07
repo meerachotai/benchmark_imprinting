@@ -210,7 +210,7 @@ Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirem
 
 Run the following scripts: 
 * `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
-* `picard_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
+* `benchmark_imprinting/picard_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
@@ -257,7 +257,7 @@ Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirem
 
 Run the following scripts: 
 * `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
-* `wyder_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
+* `benchmark_imprinting/wyder_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
