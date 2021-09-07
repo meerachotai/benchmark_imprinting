@@ -1,65 +1,10 @@
 #!/usr/bin/env bash
 
+source $1
 
-# strainA="cviA"
-# strainB="cviB"
-# outdir="june12_6pm"
-# scripts_dir="/u/scratch/m/mchotai/rnaseq_simul/scripts_import"
-# ${scripts_dir}/wyder_imprinting.sh -A cviA -B cviB -r 1 -p 0.05 -l 0 -O ${outdir}/wyder -d $scripts_dir -o $outdir -P
-
-outdir=""
-
-# number of Picard AxB / BxA replicates
-AxB_rep="" 
-BxA_rep=""
-
-# if paired, only this is okay
-rep=""
-
-# directory+prefix of Picard counts file
-counts_dir="" 
-# note: if you have your own counts, use wyder_imprinting.R directly
-
-scripts_dir=""
-
-strainA=""
-strainB=""
-
-outprefix="out"
-
-pval=0.05
-logfc=0
-
-paired=false
-
-while getopts "A:B:x:y:d:r:o:p:l:O:c:P" opt; do
-	case $opt in
-		A)	strainA="$OPTARG"
-			;;
-		B)	strainB="$OPTARG"
-			;;
-		x)	AxB_rep="$OPTARG"
-			;;
-		y)	BxA_rep="$OPTARG"
-			;;
-		d)	scripts_dir="$OPTARG"
-			;;
-		r)	rep="$OPTARG"
-			;;
-		o)	outdir="$OPTARG"
-			;;
-		p)	pval="$OPTARG"
-			;;
-		l)	logfc="$OPTARG"
-			;;	
-		O) 	outprefix="$OPTARG"
-			;;
-		c)	counts_dir="$OPTARG" # counts from Picard. if you have your own counts, use wyder_imprinting.R directly
-			;;
-		P)	paired=true
-			;;
-	esac
-done
+logfc=${logfc_wyder}
+pval=${pval_wyder}
+outprefix="wyder"
 
 displaytime () {
   local T=$1
@@ -99,7 +44,7 @@ wyder="$outdir/wyder"
 
 	
 if [ ${#counts_dir} == 0 ]; then
-	counts_dir=$outdir/picard_map
+	counts_dir=$outdir/picard/picard_map
 fi
 
 count=1
@@ -147,8 +92,9 @@ else
 	done
 fi
 
+((count--))
 printf "Calling imprinted genes...\n"
-$scripts_dir/call_imprinting_wyder.R -c "${wyder}/wyder_" -r $count -p $pval -l $logfc -C $outprefix
+$scripts_dir/call_imprinting_wyder.R -C -c "${wyder}/wyder_" -r $count -p $pval -l $logfc ${outdir}/$outprefix
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
 
