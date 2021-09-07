@@ -13,11 +13,11 @@
 * `make_annot.R`
 
 ### Run:
-Fill in `simulation_config.txt` as per your requirements.
+Fill in `benchmark_imprinting/config/simulation_config.txt` as per your requirements.
 
 Run the following scripts: 
-* `read_config_simul.py shell_env_simul.txt`
-* `simulate_genome.sh shell_env_simul.txt`
+* `benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_imprinting/config/shell_env_simul.txt`
+* `simulate_genome.sh benchmark_imprinting/config/shell_env_simul.txt`
 
 ### Output:
 
@@ -139,11 +139,11 @@ Note that for Anderson/DESeq2 approach, > 1 replicates are required.
 
 ### Run:
 
-Fill in `imprinting_config.txt` as per your requirements.
+Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirements.
 
 Run the following scripts: 
-* `read_config_imprint.py shell_env_imprint.txt`
-* `anderson_imprinting.sh shell_env_imprint.txt`
+* `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
+* `anderson_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
@@ -206,11 +206,11 @@ If you have a different number of AxB and BxA replicates, specifically add these
 
 ### Run:
 
-Fill in `imprinting_config.txt` as per your requirements.
+Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirements.
 
 Run the following scripts: 
-* `read_config_imprint.py shell_env_imprint.txt`
-* `picard_imprinting.sh shell_env_imprint.txt`
+* `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
+* `picard_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
@@ -253,11 +253,11 @@ Note that for the Wyder/edgeR method, having only one replicate is also acceptab
 
 ### Run:
 
-Fill in `imprinting_config.txt` as per your requirements.
+Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirements.
 
 Run the following scripts: 
-* `read_config_imprint.py shell_env_imprint.txt`
-* `wyder_imprinting.sh shell_env_imprint.txt`
+* `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
+* `wyder_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
 
 ### Output:
 
