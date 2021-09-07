@@ -25,7 +25,7 @@ PAIRED_END = FALSE
 ## PICARD MAPPING SETTINGS
 #########################################################################
 
-PICARD_SCRIPTS_DIR = imprinting_analysis-master
+PICARD_SCRIPTS_DIR = imprinting_analysis
 
 REF_A = outdir/ref_A.fa
 ANNOT_A = outdir/annot_A_picard.gff3
