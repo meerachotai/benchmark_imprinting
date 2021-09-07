@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source $1
-outprefix="picard"
+outprefix="${outdir}/picard"
 mat_cutoff=${mat_cutoff_picard}
 pat_cutoff=${pat_cutoff_picard}
 
@@ -181,12 +181,12 @@ fi
 printf "Total reciprocal pairs inspected: ${count}\n"
 
 if [ ${#majority} == 0 ]; then
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -t $count -o ${outdir}/${outprefix}_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -t $count -o ${outdir}/${outprefix}_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -t $count -o ${outprefix}_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -t $count -o ${outprefix}_PEGs.txt
 else
 	printf "Using majority voting of >= ${majority} for consensus calls\n"
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_MEGs.txt -m $majority -o ${outdir}/${outprefix}_MEGs.txt
-	$scripts_dir/find_consensus.py -i ${outdir}/${outprefix}_all_PEGs.txt -m $majority -o ${outdir}/${outprefix}_PEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -m $majority -o ${outprefix}_MEGs.txt
+	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -m $majority -o ${outprefix}_PEGs.txt
 fi
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
