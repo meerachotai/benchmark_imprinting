@@ -22,11 +22,9 @@ Run the following scripts:
 ### Output:
 
 * annotations and FASTA files for both strainA and strainB in the out-directory.
-* `strainB_ref2sim.txt` - reference vs. simulated genome for SNPs and indels. 
-* `strainB_similarity.txt` - similarity % of each individual chromosome
-
-Log files of interest:
-* `$outdir/$strainB/edit_genome_log.txt` - log file from edit_genome.py
+* `$outdir/all_genes.txt` - list of genes selected from gffread-transcripts generated
+* `$strainB/$strainB_ref2sim.txt` - reference vs. simulated genome for SNPs and indels. 
+* `$strainB/$strainB_similarity.txt` - similarity % of each individual chromosome
 
 ## Step 2: Simulating reads
 
@@ -46,8 +44,8 @@ Log files of interest:
 FASTQ (.fq) files that match counts simulated.
 
 Other relevant files: 
-* `$outdir/reads_simul/simul_counts+id_A.txt` and `$outdir/reads_simul/simul_counts+id_B.txt` - a summary of 'chromosome' ids alongside read counts
-* `$outdir/true_megs.txt` and `$outdir/true_pegs.txt` - true MEG and PEG lists to use in verifying imprinting calls
+* `$outdir/reads_simul/simul_counts+id_A.txt` and `$outdir/reads_simul/simul_counts+id_B.txt` - a summary of gene ids alongside read counts
+* `$outdir/true_MEGs.txt` and `$outdir/true_PEGs.txt` - MEGs and PEGs lists to use in verifying imprinting calls
 
 ## Step 3: Calling Imprinting
 
