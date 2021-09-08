@@ -72,7 +72,7 @@ Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
 For this particular step, a specific FASTQ file name is required in order to map the reads correctly.
 
 * The file name MUST end with the suffix **`cross_replicate.fq`**
-* The address and the prefix of the file names should be placed under the option -f
+* The address and the prefix of the file names should be placed under FASTQ_DIR
 
 **Example:** 
 
