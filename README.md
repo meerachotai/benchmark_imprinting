@@ -54,7 +54,6 @@ Steps 1 and 2 can be skipped in favor of providing real-data files for mapping a
 ## Method A: Anderson et al. 
 
 Adapted from scripts on: https://github.com/SNAnderson/Imprinting2020
-(need to add both forward and reverse reads, working on it)
 
 ### Dependencies:
 * hisat2
@@ -73,7 +72,8 @@ For this particular step, a specific FASTQ file name is required in order to map
 
 * The file name MUST end with the suffix **`cross_replicate.fq`**
 * The address and the prefix of the file names should be placed under FASTQ_DIR
-
+* If the reads are paired-ended, the end of the file's name should be `_1.fq` and `_2.fq`
+* 
 **Example:** 
 
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
