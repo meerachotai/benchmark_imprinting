@@ -17,9 +17,14 @@ HELPER_SCRIPTS_DIR = benchmark_imprinting/helper_scripts
 STRAIN_A_NAME = strainA
 STRAIN_B_NAME = strainB
 
-FASTQ_DIR = "outdir/reads_simul/strainA_strainB_"
+# two options: (1) follow naming requirements and use FASTQ_DIR and let us know about paired-end = TRUE/FALSE
+# 				(2) give a tab-delimited file with FASTQ filenames with forward/reverse + replicate information and name under FASTQ_CONFIG_FILE
 
+FASTQ_DIR = outdir/reads_simul/strainA_strainB_
 PAIRED_END = FALSE
+
+# (use benchmarking_imprinting/config/single-end_fastq.txt or benchmarking_imprinting/config/paired-end_fastq.txt for reference)
+FASTQ_CONFIG_FILE = single-end_fastq.txt
 
 #########################################################################
 ## PICARD MAPPING SETTINGS
