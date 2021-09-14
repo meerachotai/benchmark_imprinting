@@ -4,7 +4,7 @@ source $1
 outprefix="anderson"
 mat_cutoff=${mat_cutoff_anderson}
 pat_cutoff=${pat_cutoff_anderson}
-
+	 	
 # ---------------------- step 7: rename annot and ref ------------------
 
 # strain_name ref annot strain_type(A/B)
@@ -75,10 +75,6 @@ displaytime () {
 time_start=$(date)	# time run was started
 ts=$(date +%s)	# time run was started (in seconds)
 
-if [ ${#fastq_dir} == 0 ]; then
-	fastq_dir="$( pwd )/$outdir/reads_simul/${strainA}_${strainB}_"
-fi
-
 echo "Run start on: $time_start"
 
 printf "\nMake sure the following dependencies are loaded: hisat2, htseqcount\n"
@@ -125,12 +121,35 @@ cat $annotA $annotB > $map/concat_${strainA}_${strainB}.gff3
 # give a 'fastq_dir' variable name that represents the start of the file name (including address to that file)
 # the file HAS TO END with _$cross_$rep_A.fq or _$cross_$rep_B.fq, example: simul_AxB_1_A.fq
 
-printf "Mapping...\n"
-for i in $(seq 1 1 $rep)
-do
-	map $strainA $strainB AxB_${i} $map $fastq_dir
-	map $strainA $strainB BxA_${i} $map $fastq_dir
-done
+if [ ${#fastq_dir} == 0 ]; then
+	fastq=()
+	while IFS= read -r line; do
+	  fastq+=("$line")
+	done < $config
+	printf "Mapping...\n"
+	for i in $(seq 0 1 $(($rep - 1))); do
+		if [ "$paired_end" == "true" ]; then
+			start=$(($i * 4))
+			cross=AxB_$(( $i + 1 ))
+			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
+			cross=BxA_$(( $i + 1 ))
+			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
+		else
+			start=$(($i * 2))
+			cross=AxB_$(( $i + 1 ))
+			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} # --phred33
+			cross=BxA_$(( $i + 1 ))
+			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} # --phred33
+		fi
+	done
+else
+	printf "Mapping...\n"
+	for i in $(seq 1 1 $rep)
+	do
+		map $strainA $strainB AxB_${i} $map $fastq_dir
+		map $strainA $strainB BxA_${i} $map $fastq_dir
+	done
+fi
 
 printf "Counting...\n"
 # produces file strainA_strainB_cross_edit.sam (for igv)
