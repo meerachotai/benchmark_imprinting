@@ -97,21 +97,42 @@ if [ "$paired" = "true" ]; then
 	fi
 	
 	# mapping
-	for i in $(seq 1 1 $rep)
-	do
-		if [ "$paired_end" == "true" ]; then
-			# hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq
-			cross="AxB_${i}"
-			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
-			cross="BxA_${i}"
-			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
-		else
-			cross="AxB_${i}"
-			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
-			cross="BxA_${i}"
-			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
-		fi
-	done
+	if [ ${#fastq_dir} == 0 ]; then
+		fastq=()
+		while IFS= read -r line; do
+		  fastq+=("$line")
+		done < $config
+		
+		for i in $(seq 0 1 $(($rep - 1))); do
+			if [ "$paired_end" == "true" ]; then
+				start=$(($i * 4))
+				cross=AxB_$(( $i + 1 ))
+				${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+				cross=BxA_$(( $i + 1 ))
+				${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			else
+				start=$(($i * 2))
+				cross=AxB_$(( $i + 1 ))
+				${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+				cross=BxA_$(( $i + 1 ))
+				${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			fi
+		done
+	else
+		for i in $(seq 1 1 $rep); do
+			if [ "$paired_end" == "true" ]; then
+				cross="AxB_${i}"
+				${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+				cross="BxA_${i}"
+				${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			else
+				cross="AxB_${i}"
+				${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+				cross="BxA_${i}"
+				${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+			fi	
+		done	
+	fi
 	
 	# counting and calling
 	rm ${outprefix}_all_MEGs.txt
