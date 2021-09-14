@@ -24,7 +24,7 @@ FASTQ_DIR = outdir/reads_simul/strainA_strainB_
 PAIRED_END = FALSE
 
 # (use benchmarking_imprinting/config/single-end_fastq.txt or benchmarking_imprinting/config/paired-end_fastq.txt for reference)
-FASTQ_CONFIG_FILE = single-end_fastq.txt
+FASTQ_CONFIG_FILE = single-end_config.txt
 
 #########################################################################
 ## PICARD MAPPING SETTINGS
