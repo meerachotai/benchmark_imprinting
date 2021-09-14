@@ -73,12 +73,20 @@ For this particular step, a specific FASTQ file name is required in order to map
 * The file name MUST end with the suffix **`cross_replicate.fq`**
 * The address and the prefix of the file names should be placed under FASTQ_DIR
 * If the reads are paired-ended, the end of the file's name should be `_1.fq` and `_2.fq`
-* 
+
 **Example:** 
 
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
 Following the above convention, your config file should read: `FASTQ_DIR = $outdir/reads_simul/$strainA_$strainB_`
+
+Alternately - provide a tab-delimited file with columns in the following order:
+1. Filename (must be FASTQ format, must have extension \*.txt, \*.fastq, or \*.fq)
+2. Sample's replicate number (should only go up to $rep)
+3. 'F' if single-end reads / forward-paired end reads or 'R' if reverse paired-end reads
+4. Sample's reciprocal cross - 'AxB' or 'BxA'
+
+**Example:** see `config/single-end_config.txt` or `config/paired-end_config.txt`
 
 #### FASTA and annotation files
 
@@ -178,6 +186,14 @@ For this particular step, a specific FASTQ file name is required in order to map
 The simulation steps above have the following file for the first (1) replicate, for the replicate cross AxB with the prefix being `$strainA_$strainB_`. Adding the file's location to the prefix, the file is called: `$outdir/reads_simul/$strainA_$strainB_AxB_1.fq`.
 
 Following the above convention, your config file should read: `FASTQ_DIR = $outdir/reads_simul/$strainA_$strainB_`
+
+Alternately - provide a tab-delimited file with columns in the following order:
+1. Filename (must be FASTQ format, must have extension \*.txt, \*.fastq, or \*.fq)
+2. Sample's replicate number (should only go up to $rep)
+3. 'F' if single-end reads / forward-paired end reads or 'R' if reverse paired-end reads
+4. Sample's reciprocal cross - 'AxB' or 'BxA'
+
+**Example:** see `config/single-end_config.txt` or `config/paired-end_config.txt`
 
 #### For Picard and Gehring's suite
 Some conventions that need to be followed for the program to run correctly:
