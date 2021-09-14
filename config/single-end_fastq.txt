@@ -1,6 +1,0 @@
-outdir/reads_simul/strainA_strainB_AxB_1.fq	1	F	AxB
-outdir/reads_simul/strainA_strainB_BxA_1.fq	1	F	BxA
-outdir/reads_simul/strainA_strainB_AxB_2.fq	2	F	AxB
-outdir/reads_simul/strainA_strainB_BxA_2.fq	2	F	BxA
-outdir/reads_simul/strainA_strainB_AxB_3.fq	3	F	AxB
-outdir/reads_simul/strainA_strainB_BxA_3.fq	3	F	BxA
