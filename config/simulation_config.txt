@@ -13,6 +13,8 @@ HELPER_SCRIPTS_DIR = benchmark_imprinting/helper_scripts
 ## GENOME SIMULATION SETTINGS
 #########################################################################
 
+TOTAL_GENES = 50
+
 REF_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/fasta_and_bismark/TAIR10.fa
 ANNOT_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/annotations/araport11/Araport11_GFF3_genes_transposons.201606.gtf
 STRAIN_A_NAME = strainA
@@ -35,10 +37,11 @@ SNP_INDEL_RATIO = 1
 ## READ SIMULATION SETTINGS
 #########################################################################
 
-TOTAL_GENES = 50
+# required: unbiased + MEGs + PEGs = total_genes
 UNBIASED_GENES = 20 
 MEGS = 15
 PEGS = 15
+
 MEGS_BIAS = 90
 PEGS_BIAS = 25
 
