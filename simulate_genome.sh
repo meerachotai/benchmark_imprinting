@@ -117,47 +117,27 @@ else
 	
 	# produces strainA_genome.fa - which is our new genome
 	
-# 	if [ "$transcript_error" == "false" ]; then
-# 		gffread -w ${outdir}/${strainA}/${strainA}_transcripts.fa -g $ref $annot
-# 	else
-# 		transcript_maker $strainA $ref $annot $outdir
-# 	fi
-	
 	echo Running gffread...
 	gffread -w ${outdir}/${strainA}/${strainA}_transcripts.fa -g $ref $annot
 
 	echo transcripts made, downsampling...
-# 	sed -i 's/ /_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa
+	sed -i 's/ /_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa
+	sed -i 's/\./_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa # for picard_imprinting error
 	
 	awk '/^>/ {printf("\n%s\t",$0); next; } { printf ("%s", $0);} END {printf("\n");}' ${outdir}/${strainA}/${strainA}_transcripts.fa | tail -n +2 > single.fa
-# 	cat single.fa | awk 'BEGIN{FS="[.|\t]"} {print $1,$NF}' > singled.fa
-# 	rm single.fa
-	
 	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' single.fa > prefixed.fa
 	rm single.fa
-	
 	cat prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > downsampled.fa
 	rm prefixed.fa
 	
-	awk '{print $1}' downsampled.fa > ${outdir}/all_genes.txt
+	awk 'BEGIN{FS="\t"} {print $1}' downsampled.fa > outdir/all_genes.txt
 	sed -i 's/^.//' ${outdir}/all_genes.txt
-	awk '{printf "%s\n%s\n",$1,$2}' downsampled.fa > ${outdir}/${refA}.fa
+	awk 'BEGIN{FS="\t"} {printf "%s\n%s\n",$1,$2}' downsampled.fa > ${outdir}/${refA}.fa
 	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
 	
 	# remove temp files
 	rm downsampled.fa
-
-	# grep '^>' ${outdir}/${strainA}/${strainA}_transcripts.fa | awk '{print $0}' | sed 's/^>//' | cut -d "." -f 1 > ${outdir}/${strainA}/${strainA}_seq_ids.txt
-# 
-# 	sed -i 's/\..*//' ${outdir}/${strainA}/${strainA}_transcripts.fa
-# 
-# 	# choose genes randomly
-# 	${scripts_dir}/inv_transform_sampling.R ${outdir}/${strainA}/${strainA}_seq_ids.txt -n $total_n -o ${outdir}/${strainA}/${strainA}_genes.txt -s $seed
-# 
-# 	# find sequences for sampled genes
-# 	seqkit grep -n -f ${outdir}/${strainA}/${strainA}_genes.txt ${outdir}/${strainA}/${strainA}_transcripts.fa -o ${outdir}/${refA}.fa
-# 	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
-
+	
 	# makes annotation for smaller genome
 	make_annot $strainA ${outdir}/${refA}.fa ${scripts_dir} ${outdir}/$annotA $outdir
 
