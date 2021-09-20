@@ -130,11 +130,11 @@ else
 # 	sed -i 's/ /_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa
 	
 	awk '/^>/ {printf("\n%s\t",$0); next; } { printf ("%s", $0);} END {printf("\n");}' ${outdir}/${strainA}/${strainA}_transcripts.fa | tail -n +2 > single.fa
-	cat single.fa | awk 'BEGIN{FS="[.|\t]"} {print $1,$NF}' > singled.fa
-	rm single.fa
+# 	cat single.fa | awk 'BEGIN{FS="[.|\t]"} {print $1,$NF}' > singled.fa
+# 	rm single.fa
 	
-	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' singled.fa > prefixed.fa
-	rm singled.fa
+	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' single.fa > prefixed.fa
+	rm single.fa
 	
 	cat prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > downsampled.fa
 	rm prefixed.fa
