@@ -38,6 +38,7 @@ SNPS_FILE =
 
 MEGS_CUTOFF = 90
 PEGS_CUTOFF = 25
+P_VALUE = 0.05
 
 # if the reciprocal crosses are paired, true else false
 PAIRED_RECIPROCAL_CROSSES = TRUE
