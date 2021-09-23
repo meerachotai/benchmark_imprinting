@@ -7,30 +7,29 @@ input_file = str(sys.argv[1])
 output_env = str(sys.argv[2])
 
 inputs = []
-complete = True
 # input_file = "simulation_config.txt"
 
 with open(input_file, 'r') as f:
      
-    for line in f:
-        if line.startswith("#"):
-            continue
-        elif line.startswith("\n") or line.isspace():
-            continue
-        else:
-            split_line = line.split('=')
-            next_in = split_line[1].strip()
-            if(next_in.isspace() or next_in == ''):
-                if(split_line[0].strip() == "SEED"): # for simulating
-                    seed = random.randint(1, 1234567)
-                    inputs.append(seed)
-                    print("Using randomly-generated seed", seed)
-                else:
-                    print(split_line[0], "is empty, fill in config file and try again")
-                    complete = False
-                    break
-            else:
-                inputs.append(next_in)
+	for line in f:
+		if line.startswith("#"):
+			continue
+		elif line.startswith("\n") or line.isspace():
+			continue
+		else:
+			split_line = line.split('=')
+			next_in = split_line[1].strip()
+		if(next_in.isspace() or next_in == ''):
+			if(split_line[0].strip() == "SEED"): # for simulating
+				seed = random.randint(1, 1234567)
+				inputs.append(seed)
+				print("Using randomly-generated seed", seed)
+			else:
+				print(split_line[0], "is empty, fill in config file and try again")
+				quit()
+		if(split_line[0].strip() == "DISPERSION"):
+			next_in = next_in.lower()
+		inputs.append(next_in)
 
 file = open(output_env, "w")
 
@@ -58,7 +57,9 @@ file.write("meg="+inputs[20]+"\n")
 file.write("peg="+inputs[21]+"\n")
 file.write("megs_bias="+inputs[22]+"\n")
 file.write("pegs_bias="+inputs[23]+"\n")
-file.write("rep="+inputs[24]+"\n")
-file.write("read_length="+inputs[25]+"\n")
+file.write("disp="+inputs[24]+"\n")
+file.write("rep="+inputs[25]+"\n")
+file.write("read_length="+inputs[26]+"\n")
 
-file.close()
+
+file.close()v
