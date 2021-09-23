@@ -52,22 +52,7 @@ workdir=$( pwd )
 outdir=${workdir}/${outdir}/picard
 
 mkdir -p $outdir
-
-if [ ! -d "$outdir/picard_map" ]; then
-	mkdir "$outdir/picard_map"
-else
-	if [ "$(ls -A $outdir/picard_map)" ]; then
-		if [ "$redo" = "true" ]; then
-			echo "Overwriting previous contents of output dir $outdir"
-			rm -rf "$outdir"/*	
-		else
-			echo "Error: provided output directory is not empty. To allow overwrite of non-empty dir, add 'overwrite' as the second argument. WARNING: all existing files in -outdir- will be deleted. Seriously."
-			exit 1
-		fi
-	fi
-fi
-
-# mkdir $outdir/picard_map
+mkdir $outdir/picard_map
 map="$outdir/picard_map"
 
 printf "\nSummary of calls:\n"
