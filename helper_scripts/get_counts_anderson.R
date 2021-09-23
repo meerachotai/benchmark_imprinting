@@ -2,6 +2,8 @@
 
 if (is.element('argparse', installed.packages()[,1])==FALSE) { stop("Error: R package argparse could not be loaded") }
 suppressPackageStartupMessages(library(argparse))
+if (is.element('stringr', installed.packages()[,1])==FALSE) { stop("Error: R package stringr could not be loaded") }
+suppressPackageStartupMessages(library(stringr))
 
 parser = ArgumentParser()
 
@@ -108,21 +110,23 @@ syntelogs_AB = syntelogs_AB[,-1]
 
 AxB_cols = seq(1,rep*4, by = 2) # 1,3,5...
 AxB_A_cols = AxB_cols[1:rep]
-AxB_B_cols = AxB_cols[rep+1:(rep*2)]
+AxB_B_cols = AxB_cols[rep+1:(rep)]
 
 BxA_cols = seq(2, rep*4, by = 2) # 2,4,6...
 BxA_A_cols = BxA_cols[1:rep]
-BxA_B_cols = BxA_cols[rep+1:(rep*2)]
+BxA_B_cols = BxA_cols[rep+1:(rep)]
 
 cat(paste0("Writing counts files in form ", outprefix, "_cross_rep.txt...\n"))
 # want AxB_A, AxB_B | BxA_A, BxA_B
 for (i in 1:rep) {
   AxB = syntelogs_AB[,c(AxB_A_cols[i],AxB_B_cols[i])]
+  row.names(AxB) = str_replace_all(row.names(AxB), A_ID, "")
   write.table(AxB, paste0(outprefix,"_AxB_", i, ".txt"), sep = "\t", col.names = F, row.names = T, quote = F) # merged counts
   write.table(cbind(row.names(AxB), AxB[,1]), paste0(outprefix,"_AxB_A_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F) # only A
   write.table(cbind(row.names(AxB), AxB[,2]), paste0(outprefix,"_AxB_B_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F) # only B
   
   BxA = syntelogs_AB[,c(BxA_A_cols[i],BxA_B_cols[i])]
+  row.names(BxA) = str_replace_all(row.names(AxB), A_ID, "")
   write.table(BxA, paste0(outprefix,"_BxA_", i, ".txt"), sep = "\t", col.names = F, row.names = T, quote = F) 
   write.table(cbind(row.names(BxA), BxA[,1]), paste0(outprefix,"_BxA_A_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F)
   write.table(cbind(row.names(BxA), BxA[,2]), paste0(outprefix,"_BxA_B_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F)
