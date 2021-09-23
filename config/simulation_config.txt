@@ -13,7 +13,7 @@ HELPER_SCRIPTS_DIR = benchmark_imprinting/helper_scripts
 ## GENOME SIMULATION SETTINGS
 #########################################################################
 
-TOTAL_GENES = 50
+TOTAL_GENES = 1000
 
 REF_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/fasta_and_bismark/TAIR10.fa
 ANNOT_TO_START = /u/project/jacobsen/resources/genomes/A_thaliana/annotations/araport11/Araport11_GFF3_genes_transposons.201606.gtf
