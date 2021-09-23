@@ -45,6 +45,9 @@ PEGS = 15
 MEGS_BIAS = 90
 PEGS_BIAS = 25
 
+# dispersion: low/med/high
+DISPERSION = MED
+
 REPLICATES = 3
 READ_LENGTH = 50
 
