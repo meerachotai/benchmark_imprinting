@@ -278,7 +278,7 @@ Run the following scripts:
 * `wyder_MEGs.txt` and `wyder_PEGs.txt` - imprinted genes called by Wyder/edgeR method
 * `wyder_stats.txt` - edgeR stats for all genes
 
-### References:
+## References:
 1.	Picard, C. L. & Gehring, M. Identification and Comparison of Imprinted Genes Across Plant Species. in Plant Epigenetics and Epigenomics 173–201 (Humana, New York, NY, 2020). doi:10.1007/978-1-0716-0179-2_13.
 
 2.	Wyder, S., Raissig, M. T. & Grossniklaus, U. Consistent Reanalysis of Genome-wide Imprinting Studies in Plants Using Generalized Linear Models Increases Concordance across Datasets. Sci. Rep. 9, 1–13 (2019).
