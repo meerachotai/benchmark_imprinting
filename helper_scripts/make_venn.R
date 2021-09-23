@@ -42,19 +42,19 @@ draw.triple.venn(length(wyder_pegs), length(anderson_pegs),length(picard_pegs),
 dev.off()
 # ----------------------------------------------------------
 
-true_megs = scan(paste0(outdir,"/true_MEGs.txt"), character())
-true_pegs = scan(paste0(outdir,"/true_PEGs.txt"), character())
-all_genes = scan(paste0(outdir,"/all_genes.txt"), character())
+# true_megs = scan(paste0(outdir,"/true_MEGs.txt"), character())
+# true_pegs = scan(paste0(outdir,"/true_PEGs.txt"), character())
+# all_genes = scan(paste0(outdir,"/all_genes.txt"), character())
 
-# for MEGs
-true_pos = intersect(true_megs, wyder_megs)
-false_pos = wyder_megs[!wyder_megs %in% true_megs]
-false_neg = true_megs[!true_megs %in% wyder_megs]
-true_neg = intersect(all_genes[!all_genes %in% true_megs], all_genes[!all_genes %in% wyder_megs])
+# # for MEGs
+# true_pos = intersect(true_megs, wyder_megs)
+# false_pos = wyder_megs[!wyder_megs %in% true_megs]
+# false_neg = true_megs[!true_megs %in% wyder_megs]
+# true_neg = intersect(all_genes[!all_genes %in% true_megs], all_genes[!all_genes %in% wyder_megs])
 
-# for PEGs
-true_pos = intersect(true_pegs, wyder_pegs)
-false_pos = wyder_pegs[!wyder_pegs %in% true_pegs]
-false_neg = true_pegs[!true_pegs %in% wyder_pegs]
-true_neg = intersect(all_genes[!all_genes %in% true_pegs], all_genes[!all_genes %in% wyder_pegs])
+# # for PEGs
+# true_pos = intersect(true_pegs, wyder_pegs)
+# false_pos = wyder_pegs[!wyder_pegs %in% true_pegs]
+# false_neg = true_pegs[!true_pegs %in% wyder_pegs]
+# true_neg = intersect(all_genes[!all_genes %in% true_pegs], all_genes[!all_genes %in% wyder_pegs])
 
