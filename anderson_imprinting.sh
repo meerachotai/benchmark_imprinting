@@ -96,7 +96,7 @@ map="${outdir}/map" # where intermediate files will be stored
 # preparing for concatenating:
 # renames the ids to give strain names, adds A or B as needed for HTseq count
 
-# if [ "$rename" == "true" ]; then
+if [ "$rename" == "true" ]; then
 	printf "Renaming chromosomes to match strainA/B...\n"
 	rename_chr $strainA $refA $annotA $map
 	refA="$map/${strainA}_genome.fa"
@@ -105,7 +105,7 @@ map="${outdir}/map" # where intermediate files will be stored
 	rename_chr $strainB $refB $annotB $map
 	refB="$map/${strainB}_genome.fa"
 	annotB="$map/${strainB}_annot.gff3"
-# fi
+fi
 
 # concatenates annot, ref + builds index for hisat2 (note: indexing takes long, possibly should qsub)
 # NOTE: these annotations / refs need to be RENAMED with strainA and strainB names.
