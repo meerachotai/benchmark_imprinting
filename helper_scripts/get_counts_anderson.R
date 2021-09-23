@@ -120,13 +120,13 @@ cat(paste0("Writing counts files in form ", outprefix, "_cross_rep.txt...\n"))
 # want AxB_A, AxB_B | BxA_A, BxA_B
 for (i in 1:rep) {
   AxB = syntelogs_AB[,c(AxB_A_cols[i],AxB_B_cols[i])]
-  row.names(AxB) = str_replace_all(row.names(AxB), A_ID, "")
+#   row.names(AxB) = str_replace_all(row.names(AxB), A_ID, "")
   write.table(AxB, paste0(outprefix,"_AxB_", i, ".txt"), sep = "\t", col.names = F, row.names = T, quote = F) # merged counts
   write.table(cbind(row.names(AxB), AxB[,1]), paste0(outprefix,"_AxB_A_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F) # only A
   write.table(cbind(row.names(AxB), AxB[,2]), paste0(outprefix,"_AxB_B_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F) # only B
   
   BxA = syntelogs_AB[,c(BxA_A_cols[i],BxA_B_cols[i])]
-  row.names(BxA) = str_replace_all(row.names(AxB), A_ID, "")
+#   row.names(BxA) = str_replace_all(row.names(AxB), A_ID, "")
   write.table(BxA, paste0(outprefix,"_BxA_", i, ".txt"), sep = "\t", col.names = F, row.names = T, quote = F) 
   write.table(cbind(row.names(BxA), BxA[,1]), paste0(outprefix,"_BxA_A_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F)
   write.table(cbind(row.names(BxA), BxA[,2]), paste0(outprefix,"_BxA_B_", i, ".txt"), sep = "\t", col.names = F, row.names = F, quote = F)
