@@ -62,4 +62,4 @@ file.write("rep="+inputs[25]+"\n")
 file.write("read_length="+inputs[26]+"\n")
 
 
-file.close()v
+file.close()
