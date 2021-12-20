@@ -44,9 +44,9 @@ if [ ${#snps} == 0 ]; then
 	snps="$outdir/${strainA}_${strainB}_SNP.txt"
 fi
 
-if [ ${#fastq_dir} == 0 ]; then
-	fastq_dir="$( pwd )/$outdir/reads_simul/${strainA}_${strainB}_"
-fi
+# if [ ${#fastq_dir} == 0 ]; then
+# 	fastq_dir="$( pwd )/$outdir/reads_simul/${strainA}_${strainB}_"
+# fi
 
 workdir=$( pwd )
 outdir=${workdir}/${outdir}/picard
