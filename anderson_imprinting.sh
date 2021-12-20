@@ -51,7 +51,7 @@ count() {
 	map=$4
 	htseq_i=$5
 	
-	python -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
+	python3 -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
 # # qsub -V -N counts -cwd -j y -o qsub_logs/counts.txt -m bae -b y -l h_rt=01:00:00,h_data=8G "$cmd"
