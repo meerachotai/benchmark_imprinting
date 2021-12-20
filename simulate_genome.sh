@@ -4,6 +4,7 @@
 
 source $1
 
+score=${sim_score}
 RANDOM=seed
 
 workdir=$( pwd )
