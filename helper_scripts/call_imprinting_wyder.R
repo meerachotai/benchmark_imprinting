@@ -53,9 +53,9 @@ if(need_concat == TRUE) { # concatenate in the order AxB_1_A AxB_1_B AxB_2_A ...
 counts[is.na(counts)] = 0
 counts_summed = counts[rowSums(counts) >= 10, ] # <10 removed
 
-mother = c(rep("A",rep), rep("B", rep))
+mother = c(rep("A",rep*2), rep("B", rep*2))
 type = c(rep(c("mother","father"),rep), rep(c("father","mother"), rep)) # for BxA, the order of parents switches
-cross = c(rep("1", rep), rep("2", rep))
+cross = c(rep("1", rep*2), rep("2", rep*2))
 
 # design <- data.frame(row.names=colnames(counts_summed), mother=ifelse(is_AxB_Sample, A, B), type=ifelse(grepl("mat_", colnames(counts_summed)),"mother","father"), cross=ifelse(is_AxB_Sample, "1","2"))
 design <- data.frame(row.names=colnames(counts_summed), mother, type, cross)
@@ -75,13 +75,13 @@ edgeR <- estimateGLMTagwiseDisp(edgeR, edgeR.design)
 
 edgeR.fit <- glmFit(edgeR, edgeR.design)
 edgeR.tr <- glmTreat(edgeR.fit, coef="design$typemother", lfc=logfc)
-biased = decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH")
+biased = as.data.frame(decideTestsDGE(edgeR.tr, p=fdr_cutoff, adjust="BH"))
 
 cat("\n-----------------------------------\n")
 cat("Wyder edgeR summary:\nlogFC:", logfc, ", FDR-cutoff",fdr_cutoff, "\n")
-cat("maternally-biased: ",length(biased[biased==1]), "\n") 
-cat("paternally-biased: ",length(biased[biased==-1]), "\n")
-cat("insignificant: ",length(biased[biased==0]), "\n")
+cat("maternally-biased: ",length(row.names(biased)[biased==1]), "\n") 
+cat("paternally-biased: ",length(row.names(biased)[biased==-1]), "\n")
+cat("insignificant: ",length(row.names(biased)[biased==0]), "\n")
 cat("-----------------------------------\n")
 
 # -(logfc) --> PEGs
