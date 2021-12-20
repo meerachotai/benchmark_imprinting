@@ -20,7 +20,7 @@ STRAIN_B_NAME = strainB
 # two options: (1) follow naming requirements and use FASTQ_DIR and let us know about paired-end = TRUE/FALSE
 # 				(2) give a tab-delimited file with FASTQ filenames with forward/reverse + replicate information and name under FASTQ_CONFIG_FILE
 
-FASTQ_DIR = outdir/reads_simul/strainA_strainB_
+# FASTQ_DIR = outdir/reads_simul/strainA_strainB_
 PAIRED_END = FALSE
 
 # (use benchmarking_imprinting/config/single-end_fastq.txt or benchmarking_imprinting/config/paired-end_fastq.txt for reference)
@@ -32,8 +32,8 @@ FASTQ_CONFIG_FILE = single-end_config.txt
 
 PICARD_SCRIPTS_DIR = imprinting_analysis
 
-REF_A = outdir/ref_A.fa
-ANNOT_A = outdir/annot_A_picard.gff3
+REF_A = $outdir/ref_A.fa
+ANNOT_A = $outdir/annot_A_picard.gff3
 SNPS_FILE = 
 
 MEGS_CUTOFF = 90
@@ -62,11 +62,11 @@ LOGFC_CUTOFF = 0
 ## ANDERSON MAPPING SETTINGS
 #########################################################################
 
-REF_A = outdir/ref_A.fa
-ANNOT_A = outdir/annot_A_anderson.gff3
+REF_A = $outdir/ref_A.fa
+ANNOT_A = $outdir/annot_A_anderson.gff3
 
-REF_B = outdir/ref_B.fa
-ANNOT_B = outdir/annot_B_anderson.gff3
+REF_B = $outdir/ref_B.fa
+ANNOT_B = $outdir/annot_B_anderson.gff3
 
 GENE_KEY = 
 
