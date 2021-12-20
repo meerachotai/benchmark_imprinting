@@ -2,6 +2,9 @@
 
 source $1
 
+peg=$npeg
+meg=$nmeg
+
 # https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
 displaytime () {
   local T=$1
