@@ -130,7 +130,7 @@ else
 	cat prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > downsampled.fa
 	rm prefixed.fa
 	
-	awk 'BEGIN{FS="\t"} {print $1}' downsampled.fa > outdir/all_genes.txt
+	awk 'BEGIN{FS="\t"} {print $1}' downsampled.fa > ${outdir}/all_genes.txt
 	sed -i 's/^.//' ${outdir}/all_genes.txt
 	awk 'BEGIN{FS="\t"} {printf "%s\n%s\n",$1,$2}' downsampled.fa > ${outdir}/${refA}.fa
 	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
