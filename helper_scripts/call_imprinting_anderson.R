@@ -37,6 +37,9 @@ log2fc = opt$f
 A = opt$A
 B = opt$B
 
+upper_lim = upper_lim / 100
+lower_lim = lower_lim / 100
+
 # infile = "counts_"
 # A = "cviA"
 # B = "cviB"
