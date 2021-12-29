@@ -3,8 +3,14 @@
 # Defaults: -------------
 
 disp="med"
-mat=95
-pat=25
+
+# FOR IMPRINTING
+mat_bias=85
+pat_bias=25
+# FOR SIMULATING
+meg_bias=90
+peg_bias=20
+
 nmeg=200
 npeg=200
 n=1000
@@ -43,6 +49,9 @@ done
 
 mkdir benchmark_files
 mkdir benchmark_files/log
+
+echo "outdir: ${outdir}"
+
 ################
 ### function ###
 ################
@@ -87,60 +96,120 @@ run_imprint() {
 	printf "$j\t$meg\t$peg\t$true_mat\t$true_pat\n" >> benchmark_files/wyder_${parameter}.txt
 }
 
+# if [ "$fmat" == "true" ]; then
+# 	echo "Changing %maternal for maternally-biased (for imprinting)"
+# 	param="matbias"
+# 	array=(75 80 85 90 95 100)
+# 
+# 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+# 	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
+# 	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+# 
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
+# 
+# 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
+# 	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+# 
+# 	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
+# 	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+# 
+# 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
+# 
+# 	for i in "${array[@]}"; do
+# 		# re-set up config files
+# 		benchmark_imprinting/benchmark/config_changer.sh -m $i -p $pat -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+# 		cat benchmark_files/benchmark_imprint_${param}.txt
+# 		# call imprinting
+# 		run_imprint $param $i
+# 	done
+# fi
+# 
+# if [ "$fpat" == "true" ]; then
+# 	echo "Changing %maternal for paternally-biased (for imprinting)"
+# 	param="patbias"
+# 	array=(0 10 20 30 40 45 50)
+# 
+# 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+# 	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+# 	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
+# 	
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
+# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
+# 	
+# 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
+# 	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+# 
+# 	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
+# 	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+# 
+# 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
+# 
+# 	for i in "${array[@]}"; do
+# 		benchmark_imprinting/benchmark/config_changer.sh -m $mat -p $i -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+# 		cat benchmark_files/benchmark_imprint_${param}.txt
+# 		run_imprint $param $i
+# 	done
+# fi
+
 if [ "$fmat" == "true" ]; then
-	echo "Changing %maternal for maternally-biased"
+	echo "Changing %maternal for maternally-biased (for simulating)"
 	param="matbias"
 	array=(75 80 85 90 95 100)
 
-	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
-	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
-	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
+	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
 
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
-
+	
 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
-
-	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
-	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
 
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-
+	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+	
 	for i in "${array[@]}"; do
-		# re-set up config files
-		benchmark_imprinting/benchmark/config_changer.sh -m $i -p $pat -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
-		cat benchmark_files/benchmark_imprint_${param}.txt
+	
+		benchmark_imprinting/benchmark/config_changer.sh -n $n -m $i -p $peg_bias -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+
+		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
+		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+	
 		# call imprinting
 		run_imprint $param $i
 	done
 fi
 
 if [ "$fpat" == "true" ]; then
-	echo "Changing %maternal for paternally-biased"
+	echo "Changing %maternal for paternally-biased (for simulating)"
 	param="patbias"
-	array=(0 10 20 30 40 50)
+	array=(0 10 20 30 40 45 50)
 
-	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
-	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
-	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
+	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
 	
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
 	
 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
-
-	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
-	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
 
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-
+	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+	
 	for i in "${array[@]}"; do
-		benchmark_imprinting/benchmark/config_changer.sh -m $mat -p $i -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
-		cat benchmark_files/benchmark_imprint_${param}.txt
+	
+		benchmark_imprinting/benchmark/config_changer.sh -n $n -m $meg_bias -p $i -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+
+		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
+		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+	
+		# call imprinting
 		run_imprint $param $i
 	done
 fi
@@ -148,27 +217,26 @@ fi
 if [ "$falpha" == "true" ]; then
 	echo "Changing alpha cutoffs"
 	param="alpha"
-	array=(0.07 0.1 0.13 0.15)
-# 	array=(0.001 0.005 0.01 0.05)
-	
-# 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
-# 	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
-# 	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
-	
-# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
-# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
-# 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
-	
-# 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-# 	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+	array=(0.001 0.005 0.01 0.05)
 
-# 	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
-# 	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
 
-# 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
+	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
+	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
+	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
+
+	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
+	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d -m $meg_bias -p $peg_bias $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+
+	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
+	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
+
+	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
 
 	for i in "${array[@]}"; do
-		benchmark_imprinting/benchmark/config_changer.sh -m $mat -p $pat -a $i -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+		benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $i -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
 		run_imprint $param $i
 	done
 fi
@@ -178,9 +246,9 @@ if [ "$fsim" == "true" ]; then
 	param="sim_score"
 	array=(80 83 85 87 90 93 95)
 	
-	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} alpha: ${alpha}\n" > benchmark_files/wyder_$param.txt
-	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} alpha: ${alpha}\n" > benchmark_files/anderson_$param.txt
-	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${mat} patbias: ${pat} alpha: ${alpha}\n" > benchmark_files/picard_$param.txt
+	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha}\n" > benchmark_files/wyder_$param.txt
+	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha}\n" > benchmark_files/anderson_$param.txt
+	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha}\n" > benchmark_files/picard_$param.txt
 
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
@@ -189,26 +257,27 @@ if [ "$fsim" == "true" ]; then
 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
 
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -m $mat -p $pat -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
 
 	for i in "${array[@]}"; do
 	
-		benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -s $i -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+		benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -m $meg_bias -p $peg_bias -d $disp -s $i -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
 		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
 
 		run_imprint $param $i
 	done
+fi
 
 if [ "$fdisp" == "true" ]; then
 	echo "Changing dispersion levels"
 	param="disp"
 	array=("low" "med" "high")
 	
-	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${mat} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
-	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${mat} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
-	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${mat} patbias: ${pat} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
+	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/wyder_$param.txt
+	printf "Anderson method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/anderson_$param.txt
+	printf "Picard method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/picard_$param.txt
 
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/anderson_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
@@ -217,11 +286,11 @@ if [ "$fdisp" == "true" ]; then
 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
 
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -m $mat -p $pat -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
+	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
 	
 	for i in "${array[@]}"; do
 	
-		benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $i -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+		benchmark_imprinting/benchmark/config_changer.sh -n $n -m $meg_bias -p $peg_bias -M $nmeg -P $npeg -d $i -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
 		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
