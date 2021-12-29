@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:" opt; do
+while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:" opt; do
 	case $opt in
 		m)	# maternal bias simulated
 			megs_bias="$OPTARG"
@@ -40,6 +40,12 @@ while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:" opt; do
 			;;
 		o)	# outdir
 			outdir="$OPTARG"
+			;;
+		b)	# maternal bias for IMPRINTING
+			mat_bias="$OPTARG"
+			;;
+		B)	# paternal bias for IMPRINTING
+			pat_bias="$OPTARG"
 			;;
 	esac
 done
@@ -130,20 +136,32 @@ if [ ${#alpha} != 0 ]; then
 	}" $config_imprint
 fi
 
-if [ ${#megs_bias} != 0 ]; then
+if [ ${#mat_bias} != 0 ]; then
 	sed -i "/mat_cutoff_picard/ { c \
-	mat_cutoff_picard=$megs_bias
+	mat_cutoff_picard=$mat_bias
 	}" $config_imprint
 	sed -i "/mat_cutoff_anderson/ { c \
-	mat_cutoff_anderson=$megs_bias
+	mat_cutoff_anderson=$mat_bias
 	}" $config_imprint
 fi
 
-if [ ${#pegs_bias} != 0 ]; then
+if [ ${#pat_bias} != 0 ]; then
 	sed -i "/pat_cutoff_picard/ { c \
-	pat_cutoff_picard=$pegs_bias
+	pat_cutoff_picard=$pat_bias
 	}" $config_imprint
 	sed -i "/pat_cutoff_anderson/ { c \
-	pat_cutoff_anderson=$pegs_bias
+	pat_cutoff_anderson=$pat_bias
 	}" $config_imprint
+fi
+
+if [ ${#megs_bias} != 0 ]; then
+	sed -i "/megs_bias/ { c \
+	megs_bias=$megs_bias
+	}" $config_simul
+fi
+
+if [ ${#pegs_bias} != 0 ]; then
+	sed -i "/pegs_bias/ { c \
+	pegs_bias=$pegs_bias
+	}" $config_simul
 fi
