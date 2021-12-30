@@ -283,13 +283,12 @@ if [ "$fdisp" == "true" ]; then
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/picard_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
 	
-	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
 	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -C benchmark_files/benchmark_imprint_${param}.txt
 	
 	for i in "${array[@]}"; do
 	
+		benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
 		benchmark_imprinting/benchmark/config_changer.sh -n $n -m $meg_bias -p $peg_bias -M $nmeg -P $npeg -d $i -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
