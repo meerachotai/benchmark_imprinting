@@ -40,7 +40,7 @@ printf "for reproducibility, using seed = ${seed} \n"
 printf "outdirectory: ${outdir}\n\n"
 
 printf "Simulating counts...\n"
-$scripts_dir/simulate_counts.R --seed $seed --disp med --n $unbiased --nMEG $meg --nPEG $peg --MEGbias $megs_bias --PEGbias $pegs_bias --rep $rep "${outdir}/count_simul"
+$scripts_dir/simulate_counts.R --seed $seed --disp $disp --n $unbiased --nMEG $meg --nPEG $peg --MEGbias $megs_bias --PEGbias $pegs_bias --rep $rep "${outdir}/count_simul"
 
 # DO NOT CHANGE -----------------------------------
 AxB="${outdir}/count_simul_AxB.txt"
