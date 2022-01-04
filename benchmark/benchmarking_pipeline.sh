@@ -228,7 +228,7 @@ if [ "$falpha" == "true" ]; then
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/wyder_${param}.txt
 
 	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d -m $meg_bias -p $peg_bias $disp -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
+	benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -d $disp -m $meg_bias -p $peg_bias -s $similarity -o $outdir -c benchmark_files/benchmark_simul_${param}.txt
 
 	benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
 	benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
