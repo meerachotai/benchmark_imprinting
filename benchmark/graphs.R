@@ -153,6 +153,7 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table) {
 true_neg = TRUE
 see_table = TRUE
 
+# note: need individual directories for each parameter for these functions to work
 setwd("~/Documents/SJ_Lab/Imprinting/benchmark_files/patbias")
 parameter = "%paternal bias"
 parent = "father"
