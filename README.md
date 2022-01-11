@@ -1,5 +1,5 @@
 # Benchmarking Imprinting Data Analysis Pipelines
-## Step 1: Simulating genomes
+## Step 1: Simulating transcriptome
 
 ### Dependencies: 
 * gffread (https://github.com/gpertea/gffread)
@@ -23,7 +23,7 @@ Run the following scripts:
 
 * annotations and FASTA files for both strainA and strainB in the out-directory.
 * `$outdir/all_genes.txt` - list of genes selected from gffread-transcripts generated
-* `$strainB/$strainB_ref2sim.txt` - reference vs. simulated genome for SNPs and indels. 
+* `$strainB/$strainB_ref2sim.txt` - reference vs. simulated transcriptome for SNPs and indels. 
 * `$strainB/$strainB_similarity.txt` - similarity % of each individual chromosome
 
 ## Step 2: Simulating reads
