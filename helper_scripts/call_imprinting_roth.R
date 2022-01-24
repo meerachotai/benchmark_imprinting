@@ -1,13 +1,45 @@
-library(edgeR)
+#!/usr/bin/env Rscript
 
-infile = "roth_counts.txt"
-need_concat = FALSE
-rep = 3
-logfc = 1
-fdr_cutoff = 0.05
-labels = "rename.txt"
-cutoff = 0.3
-outprefix = "roth"
+if (is.element('argparse', installed.packages()[,1])==FALSE) { stop("Error: R package argparse could not be loaded") }
+suppressPackageStartupMessages(library(argparse))
+if (is.element('edgeR', installed.packages()[,1])==FALSE) { stop("Error: R package edgeR could not be loaded") }
+suppressPackageStartupMessages(library(edgeR))
+
+parser = ArgumentParser()
+
+parser$add_argument("-c", type = "character", default = "", help = "concatenated counts filename (only one contrast at a time) / prefix if you need to concatenate first")
+parser$add_argument("-i", type="character", default = "", help = "inprefix for rename file from get_counts_roth.R file")
+parser$add_argument("-r", type="double", default = "", help = "number of reciprocal cross pairs")
+parser$add_argument("-p", type = "double", default = 0.05, help = "edgeR pvalue/FDR-cutoff, default = 0.05")
+parser$add_argument("-l", type="double", default = 0, help = "edgeR log2fc-cutoff (based on ratio), default = 0")
+parser$add_argument("-C", default = FALSE, action="store_true", help = "need to concatenate files?")
+parser$add_argument("-t", type = "double", default = 0.5, help = "threshold/cutoff for consensus of SNPs, default = 0.5")
+parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
+
+args <- commandArgs(trailingOnly = TRUE)
+
+opt <- parser$parse_args()
+
+outprefix = opt$outprefix
+
+logfc = opt$l
+fdr_cutoff = opt$p
+infile = opt$c
+rep = opt$r
+inprefix = opt$i
+need_concat = opt$C
+cutoff = opt$t
+
+need_concat = opt$C
+
+# infile = "roth_counts.txt"
+# need_concat = FALSE
+# rep = 3
+# logfc = 1
+# fdr_cutoff = 0.05
+# labels = "rename.txt"
+# cutoff = 0.3
+# outprefix = "roth"
 
 if(need_concat == TRUE) { # concatenate in the order AxB_1_A AxB_1_B AxB_2_A ... BxA_1_A BxA_1_B BxA_2_A ...
   cat("Concatenating files...\n")
@@ -35,6 +67,7 @@ counts[is.na(counts)] = 0
 counts_summed = counts[rowSums(counts) >= 10, ] # <10 removed
 
 
+cat("Preparing design...\n")
 mother = c(rep("A",rep*2), rep("B", rep*2))
 type = c(rep(c("mother","father"),rep), rep(c("father","mother"), rep)) # for BxA, the order of parents switches
 cross = c(rep("1", rep*2), rep("2", rep*2))
@@ -50,6 +83,8 @@ edgeR <- DGEList(counts=counts_summed, genes=row.names(counts_summed))
 
 edgeR <- calcNormFactors(edgeR)
 #print(edgeR$samples$norm.factors)
+
+cat("Running edgeR...\n")
 
 edgeR <- estimateGLMCommonDisp(edgeR, edgeR.design)
 edgeR <- estimateGLMTrendedDisp(edgeR, edgeR.design)
@@ -76,7 +111,9 @@ status = data.frame(cbind(row.names(counts), imprinted))
 names(status) = c("labels", "imprint")
 write.table(status, paste0(outprefix, "_imprint.txt"), sep = "\t", col.names = FALSE, quote = FALSE, row.names = FALSE)
 
-names = read.table(labels, sep = "\t")
+# --------------------- PART 2 ----------------------------------------
+
+names = read.table(paste0(inprefix,"_rename.txt"), sep = "\t")
 names(names) = c("genes", "labels", "start", "end")
 
 imprint = merge(names, status, by = "labels")
@@ -92,8 +129,14 @@ for (i in 1:length(genes)) {
   patCount[i] = (nrow(selectPat) / nrow(selectGene))
 }
 
-megs = genes[matCount > cutoff]
-pegs = genes[patCount > cutoff]
+megs = genes[matCount >= cutoff]
+pegs = genes[patCount >= cutoff]
+
+cat("\n-----------------------------------\n")
+cat("Roth edgeR summary:\nlogFC:", logfc, ", FDR-cutoff",fdr_cutoff, ", cutoff", cutoff,"\n")
+cat("maternally-biased: ",length(megs), "\n")
+cat("paternally-biased: ",length(pegs), "\n")
+cat("-----------------------------------\n")
 
 write.table(megs, paste0(outprefix, "_MEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
 write.table(pegs, paste0(outprefix, "_PEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
