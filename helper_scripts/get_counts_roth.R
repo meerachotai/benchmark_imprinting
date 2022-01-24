@@ -1,10 +1,32 @@
-outcounts = "roth_counts.txt"
-labels = "rename.txt"
-A = "strainA"
-B = "strainB"
-rep = 3
+#!/usr/bin/env Rscript
+
+if (is.element('argparse', installed.packages()[,1])==FALSE) { stop("Error: R package argparse could not be loaded") }
+suppressPackageStartupMessages(library(argparse))
+
+parser = ArgumentParser()
+
+parser$add_argument("-r", type="double", default = "", help = "number of reciprocal cross pairs")
+parser$add_argument("-A", type = "character", default = "", help = "strain A name")
+parser$add_argument("-B", type = "character", default = "", help = "strain B name")
+
+parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
+
+args <- commandArgs(trailingOnly = TRUE)
+
+opt <- parser$parse_args()
+
+outprefix = opt$outprefix
+A = opt$A
+B = opt$B
+rep = opt$r
+
+# outprefix = "roth"
+# A = "strainA"
+# B = "strainB"
+# rep = 3
 # paired = TRUE
 
+cat("Reading replicate _snp_report.bed files...\n")
 i = 1
 infile = paste0("rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
 
@@ -25,8 +47,8 @@ data$Labels = newNames
 
 rename = cbind(data$genes, data$Labels,data$start, data$end)
 
-write.table(rename, labels, sep = "\t", col.names = FALSE, quote = FALSE, row.names = FALSE)
-
+cat("Writing renamed file...\n")
+write.table(rename, paste0(outprefix, "_rename.txt"), sep = "\t", col.names = FALSE, quote = FALSE, row.names = FALSE)
 
 allData = data
 
@@ -48,11 +70,11 @@ for (i in 1:rep) {
   allData = merge(allData, data, by = c("start", "end", "genes"), all.x = TRUE, all.y = TRUE)
 }
 
-
+cat("Writing concatenated renamed + counts file...\n")
 saveData = allData[,!(names(allData) %in% c("start", "end", "genes"))] 
 rownames(saveData) = saveData$Labels
 saveData = saveData[,!(names(saveData) %in% c("Labels"))] 
-write.table(saveData,outcounts, sep = "\t", quote = FALSE)
+write.table(saveData,paste0(outprefix, "_counts.txt"), sep = "\t", quote = FALSE)
 
 # dataAlt = data[,5:6]
 # rownames(dataAlt) = data$Labels
