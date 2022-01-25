@@ -31,7 +31,7 @@ inprefix = opt$i
 cat("Reading replicate _snp_report.bed files...\n")
 i = 1
 # infile = paste0(dir,"/rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
-infile = paste0(inprefix, i, "_AxB.bed")
+infile = paste0(inprefix, "AxB_", i, ".bed")
 
 
 data = read.table(infile, sep = "\t")
@@ -58,7 +58,7 @@ allData = data
 
 for (i in 2:rep) {
   # infile = paste0("rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
-  infile = paste0(inprefix, i, "_AxB.bed")
+  infile = paste0(inprefix, "AxB_", i, ".bed")
   data = read.table(infile, sep = "\t")
   data = subset(data, select = -c(V4))
   names(data) = c("genes", "start", "end", paste0('AxB_',i,'_A'), paste0('AxB_',i,'_B'))
@@ -68,7 +68,7 @@ for (i in 2:rep) {
 
 for (i in 1:rep) {
   # infile = paste0("rep_", i, "_", i, "_", B, "x", A, "_snp_report.bed") 
-  infile = paste0(inprefix, i, "_BxA.bed")
+  infile = paste0(inprefix, "BxA_", i, ".bed")
   data = read.table(infile, sep = "\t")
   data = subset(data, select = -c(V4))
   names(data) = c("genes", "start", "end", paste0('BxA_',i,'_A'), paste0('BxA_',i,'_B'))
