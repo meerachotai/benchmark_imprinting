@@ -74,7 +74,7 @@ file.write("AxB_rep="+inputs[16]+"\n")
 file.write("BxA_rep="+inputs[17]+"\n")
 file.write("majority="+inputs[18]+"\n")
 
-file.write("counts_dir="+inputs[19]+"\n")
+file.write("counts_dir_wyder="+inputs[19]+"\n")
 file.write("pval_wyder="+inputs[20]+"\n")
 file.write("logfc_wyder="+inputs[21]+"\n")
 
@@ -92,5 +92,10 @@ file.write("rep="+inputs[32]+"\n")
 file.write("rename="+inputs[33]+"\n")
 file.write("a_annot="+inputs[34]+"\n")
 file.write("b_annot="+inputs[35]+"\n")
+
+file.write("counts_dir_roth="+inputs[36]+"\n")
+file.write("pval_roth="+inputs[37]+"\n")
+file.write("logfc_roth="+inputs[38]+"\n")
+file.write("cutoff="+inputs[39]+"\n")
 
 file.close()
