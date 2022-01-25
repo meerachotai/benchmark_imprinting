@@ -5,6 +5,7 @@ source $1
 logfc=${logfc_wyder}
 pval=${pval_wyder}
 outprefix="wyder"
+counts_dir=${counts_dir_wyder}
 
 displaytime () {
   local T=$1
