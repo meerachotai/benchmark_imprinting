@@ -39,7 +39,7 @@ outdir=${workdir}/${outdir}
 mkdir -p $outdir
 
 mkdir $outdir/roth
-wyder="$outdir/roth"
+roth="$outdir/roth"
 
 	
 if [ ${#counts_dir} == 0 ]; then
@@ -93,8 +93,8 @@ fi
 
 
 printf "Preparing counts files...\n"
-$scripts_dir/get_counts_roth.R -i ${roth}/roth_ -r $rep -A $strainA -B $strainB ${outdir}/$outprefix
+$scripts_dir/get_counts_roth.R -i ${roth}/roth_ -r $rep -A $strainA -B $strainB ${roth}/$outprefix
 printf "Calling imprinted genes...\n"
-$scripts_dir/call_imprinting_roth.R -c ${outdir}/${outprefix}_counts.txt -i ${outdir}/$outprefix -p $pval -l $logfc -t $cutoff -r $rep ${outprefix}/$outprefix
+$scripts_dir/call_imprinting_roth.R -c ${roth}/${outprefix}_counts.txt -i ${roth}/$outprefix -p $pval -l $logfc -t $cutoff -r $rep ${outdir}/$outprefix
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
