@@ -68,9 +68,9 @@ if(file.exists(paste0(outdir,"/roth_MEGs.txt"))) {
 	true_roth_pegs = intersect(tolower(true_pegs), pegs)
 
 	cat("-----------------------------------\n")
-	cat("total Anderson maternally-biased:", length(roth_megs), "\n")
-	cat("true Anderson maternally-biased: ",length(true_roth_megs), "\n") 
-	cat("total Anderson paternally-biased:", length(roth_pegs), "\n")
-	cat("true Anderson paternally-biased: ",length(true_roth_pegs), "\n")
+	cat("total Roth maternally-biased:", length(roth_megs), "\n")
+	cat("true Roth maternally-biased: ",length(true_roth_megs), "\n") 
+	cat("total Roth paternally-biased:", length(roth_pegs), "\n")
+	cat("true Roth paternally-biased: ",length(true_roth_pegs), "\n")
 	cat("-----------------------------------\n")
 }
