@@ -33,6 +33,8 @@ with open(input_file, 'r') as f:
 
 file = open(output_env, "w")
 
+assert inputs[19] + inputs[20] + inputs[21] ==  inputs[2]
+
 file.write("outdir="+inputs[0] + "\n")
 file.write("scripts_dir="+inputs[1]+"\n")
 file.write("total_n="+inputs[2]+"\n")
