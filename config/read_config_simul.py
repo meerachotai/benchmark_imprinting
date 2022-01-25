@@ -31,7 +31,7 @@ with open(input_file, 'r') as f:
 			next_in = next_in.lower()
 		inputs.append(next_in)
 
-		
+print(inputs[19] + inputs[20] + inputs[21], inputs[2])	
 assert inputs[19] + inputs[20] + inputs[21] ==  inputs[2]
 
 file = open(output_env, "w")
