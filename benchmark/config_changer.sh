@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:" opt; do
+while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:D:" opt; do
 	case $opt in
 		m)	# maternal bias simulated
 			megs_bias="$OPTARG"
@@ -46,6 +46,9 @@ while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:" opt; do
 			;;
 		B)	# paternal bias for IMPRINTING
 			pat_bias="$OPTARG"
+			;;
+		D)	# sequencing depth
+			seq_depth="$OPTARG"
 			;;
 	esac
 done
@@ -134,6 +137,9 @@ if [ ${#alpha} != 0 ]; then
 	sed -i "/pval_wyder/ { c \
 	pval_wyder=$alpha
 	}" $config_imprint
+	sed -i "/pval_roth/ { c \
+	pval_roth=$alpha
+	}" $config_imprint
 fi
 
 if [ ${#mat_bias} != 0 ]; then
@@ -163,5 +169,11 @@ fi
 if [ ${#pegs_bias} != 0 ]; then
 	sed -i "/pegs_bias/ { c \
 	pegs_bias=$pegs_bias
+	}" $config_simul
+fi
+
+if [ ${#seq_depth} != 0 ]; then
+	sed -i "/seq_depth/ { c \
+	seq_depth=$seq_depth
 	}" $config_simul
 fi
