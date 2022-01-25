@@ -13,6 +13,7 @@ parser$add_argument("--PEGbias", type = "double", default = 50, help = "% matern
 parser$add_argument("--nMEG", type = "integer", default = 200, help = "number of maternally-biased 'genes' to generate, default = 200")
 parser$add_argument("--nPEG", type = "integer", default = 200, help = "number of paternally-biased 'genes' to generate, default = 200")
 parser$add_argument("--rep", type = "integer", default = 1, help = "number of replicates, default = 1")
+parser$add_argument("--seqDepth", type = "integer", default = 1, help = "sequencing depth, default = 1")
 
 parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
 
@@ -130,12 +131,14 @@ n_megs = opt$nMEG
 n_pegs = opt$nPEG
 disp_type = opt$disp
 rep = opt$rep
+seqDepth = opt$seqDepth
 
 # size.m        mu.m      size.p        mu.p      size.t        mu.t       ratio 
 # 0.1805655 239.3698305   0.1821203 119.7124271   0.1799987 336.5474092   2.1142447
 
-mu_mat = 239.37
-mu_pat = 119.71
+cat("Sequencing Depth:", seqDepth, "\n")
+mu_mat = 239.37 * seqDepth
+mu_pat = 119.71 * seqDepth
 
 cat("\nRunning script type 3: total expression generated  \non a negative binomial dist. for each gene\n")
 
