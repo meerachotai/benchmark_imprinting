@@ -1,6 +1,5 @@
-# This configuration file sets up options for the simulate_genome.sh and simulate_reads.sh files
+# This configuration file sets up options for the imprinting files
 # Please change the variable settings below if necessary
-# Alternately, run make_simulation_config.sh to be guided through specific instructions to build this config file
 
 #########################################################################
 ## PATHS - MUST FILL
@@ -49,10 +48,10 @@ BxA_REP =
 VOTES_NEEDED_TO_CALL_IMPRINTED = 
 
 #########################################################################
-## WYDER MAPPING SETTINGS
+## WYDER IMPRINTING SETTINGS
 #########################################################################
 
-# using Picard counts files
+# using Picard mapping files
 COUNTS_DIRECTORY = 
 
 P_VALUE = 0.05
@@ -82,3 +81,14 @@ RENAME_HEADERS_CONCAT = TRUE
 
 UNIQUE_ANNOT_ATTRIBUTE_ID_A = strainA
 UNIQUE_ANNOT_ATTRIBUTE_ID_B = strainB
+
+#########################################################################
+## ROTH IMPRINTING SETTINGS
+#########################################################################
+
+# using Picard mapping files
+COUNTS_DIRECTORY = 
+
+P_VALUE = 0.05
+LOGFC_CUTOFF = 0
+CUTOFF = 0.2
