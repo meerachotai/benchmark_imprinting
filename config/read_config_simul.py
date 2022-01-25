@@ -31,9 +31,10 @@ with open(input_file, 'r') as f:
 			next_in = next_in.lower()
 		inputs.append(next_in)
 
-file = open(output_env, "w")
-
+		
 assert inputs[19] + inputs[20] + inputs[21] ==  inputs[2]
+
+file = open(output_env, "w")
 
 file.write("outdir="+inputs[0] + "\n")
 file.write("scripts_dir="+inputs[1]+"\n")
