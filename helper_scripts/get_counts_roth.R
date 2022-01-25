@@ -5,6 +5,7 @@ suppressPackageStartupMessages(library(argparse))
 
 parser = ArgumentParser()
 
+parser$add_argument("-i", type = "character", default = "", help = "inprefix of *_snp_report files")
 parser$add_argument("-r", type="double", default = "", help = "number of reciprocal cross pairs")
 parser$add_argument("-A", type = "character", default = "", help = "strain A name")
 parser$add_argument("-B", type = "character", default = "", help = "strain B name")
@@ -19,6 +20,7 @@ outprefix = opt$outprefix
 A = opt$A
 B = opt$B
 rep = opt$r
+inprefix = opt$i
 
 # outprefix = "roth"
 # A = "strainA"
@@ -28,7 +30,9 @@ rep = opt$r
 
 cat("Reading replicate _snp_report.bed files...\n")
 i = 1
-infile = paste0("rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
+# infile = paste0(dir,"/rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
+infile = paste0(inprefix, i, "_AxB.bed")
+
 
 data = read.table(infile, sep = "\t")
 data = subset(data, select = -c(V4))
@@ -53,7 +57,8 @@ write.table(rename, paste0(outprefix, "_rename.txt"), sep = "\t", col.names = FA
 allData = data
 
 for (i in 2:rep) {
-  infile = paste0("rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
+  # infile = paste0("rep_", i, "_", i, "_", A, "x", B, "_snp_report.bed") 
+  infile = paste0(inprefix, i, "_AxB.bed")
   data = read.table(infile, sep = "\t")
   data = subset(data, select = -c(V4))
   names(data) = c("genes", "start", "end", paste0('AxB_',i,'_A'), paste0('AxB_',i,'_B'))
@@ -62,7 +67,8 @@ for (i in 2:rep) {
 }
 
 for (i in 1:rep) {
-  infile = paste0("rep_", i, "_", i, "_", B, "x", A, "_snp_report.bed") 
+  # infile = paste0("rep_", i, "_", i, "_", B, "x", A, "_snp_report.bed") 
+  infile = paste0(inprefix, i, "_BxA.bed")
   data = read.table(infile, sep = "\t")
   data = subset(data, select = -c(V4))
   names(data) = c("genes", "start", "end", paste0('BxA_',i,'_A'), paste0('BxA_',i,'_B'))
