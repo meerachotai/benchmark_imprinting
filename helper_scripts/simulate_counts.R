@@ -13,7 +13,7 @@ parser$add_argument("--PEGbias", type = "double", default = 50, help = "% matern
 parser$add_argument("--nMEG", type = "integer", default = 200, help = "number of maternally-biased 'genes' to generate, default = 200")
 parser$add_argument("--nPEG", type = "integer", default = 200, help = "number of paternally-biased 'genes' to generate, default = 200")
 parser$add_argument("--rep", type = "integer", default = 1, help = "number of replicates, default = 1")
-parser$add_argument("--seqDepth", type = "integer", default = 1, help = "sequencing depth, default = 1")
+parser$add_argument("--seqDepth", type = "double", default = 1, help = "sequencing depth, default = 1")
 
 parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
 
