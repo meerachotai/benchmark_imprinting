@@ -64,8 +64,8 @@ if(file.exists(paste0(outdir,"/roth_MEGs.txt"))) {
 	roth_megs = scan(paste0(outdir,"/roth_MEGs.txt"), character())
 	roth_pegs = scan(paste0(outdir,"/roth_PEGs.txt"), character())
 	
-	true_roth_megs = intersect(tolower(true_megs), megs)
-	true_roth_pegs = intersect(tolower(true_pegs), pegs)
+	true_roth_megs = intersect(tolower(true_megs), roth_megs)
+	true_roth_pegs = intersect(tolower(true_pegs), roth_pegs)
 
 	cat("-----------------------------------\n")
 	cat("total Roth maternally-biased:", length(roth_megs), "\n")
