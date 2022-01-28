@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:D:" opt; do
+while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:D:l:" opt; do
 	case $opt in
 		m)	# maternal bias simulated
 			megs_bias="$OPTARG"
@@ -49,6 +49,8 @@ while getopts "m:p:M:P:n:r:s:S:d:a:c:C:o:b:B:D:" opt; do
 			;;
 		D)	# sequencing depth
 			seq_depth="$OPTARG"
+			;;
+		l)	logfc="$OPTARG"
 			;;
 	esac
 done
@@ -176,4 +178,16 @@ if [ ${#seq_depth} != 0 ]; then
 	sed -i "/seq_depth/ { c \
 	seq_depth=$seq_depth
 	}" $config_simul
+fi
+
+if [ ${#logfc} != 0 ]; then
+	sed -i "/logfc_anderson/ { c \
+	logfc_anderson=$logfc
+	}" $config_imprint
+	sed -i "/logfc_wyder/ { c \
+	logfc_wyder=$logfc
+	}" $config_imprint
+	sed -i "/logfc_roth/ { c \
+	logfc_roth=$logfc
+	}" $config_imprint
 fi
