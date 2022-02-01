@@ -51,8 +51,9 @@ count() {
 	cross=$3
 	map=$4
 	htseq_i=$5
+	stranded=$6
 	
-	python3 -m HTSeq.scripts.count -s no -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
+	python3 -m HTSeq.scripts.count -s $stranded -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
 # # qsub -V -N counts -cwd -j y -o qsub_logs/counts.txt -m bae -b y -l h_rt=01:00:00,h_data=8G "$cmd"
@@ -93,6 +94,16 @@ outdir=${workdir}/${outdir}
 mkdir -p $outdir
 mkdir ${outdir}/map
 map="${outdir}/map" # where intermediate files will be stored
+
+if [ "$stranded" == "false" ]; then
+	stranded="no"
+else
+	stranded="yes"
+fi
+
+if [ ${#stranded} == 0 ]; then
+	stranded="no"
+fi
 
 # preparing for concatenating:
 # renames the ids to give strain names, adds A or B as needed for HTseq count
@@ -158,8 +169,8 @@ printf "Counting...\n"
 # produces counts file strainA_strainB_cross.txt
 for i in $(seq 1 1 $rep)
 do
-	count $strainA $strainB AxB_${i} $map $htseq_i
-	count $strainA $strainB BxA_${i} $map $htseq_i
+	count $strainA $strainB AxB_${i} $map $htseq_i $stranded
+	count $strainA $strainB BxA_${i} $map $htseq_i $stranded
 done
 
 # gene key format MUST BE A | B, tab-delimited, syntelogs side-by-side, if user-provided
