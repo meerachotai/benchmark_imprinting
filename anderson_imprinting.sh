@@ -6,7 +6,10 @@ mat_cutoff=${mat_cutoff_anderson}
 pat_cutoff=${pat_cutoff_anderson}
 pval=${pval_anderson}	
 logfc=${logfc_anderson}
-	 	
+if [ ${#stranded} == 0 ]; then
+	stranded=false
+fi
+
 # ---------------------- step 7: rename annot and ref ------------------
 
 # strain_name ref annot strain_type(A/B)
@@ -142,17 +145,34 @@ if [ ${#fastq_dir} == 0 ]; then
 	printf "Mapping...\n"
 	for i in $(seq 0 1 $(($rep - 1))); do
 		if [ "$paired_end" == "true" ]; then
-			start=$(($i * 4))
-			cross=AxB_$(( $i + 1 ))
-			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
-			cross=BxA_$(( $i + 1 ))
-			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
+			if [ "$stranded" == "true" ]; then
+			do
+				start=$(($i * 4))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} --rna-strandedness FR # --phred33
+			else
+				start=$(($i * 4))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
+
 		else
-			start=$(($i * 2))
-			cross=AxB_$(( $i + 1 ))
-			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} # --phred33
-			cross=BxA_$(( $i + 1 ))
-			hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} # --phred33
+			if [ "$stranded" == "true" ]; then
+			do
+				start=$(($i * 2))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} --rna-strandedness FR # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
+			else
+				start=$(($i * 2))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} # --phred33
 		fi
 	done
 else
