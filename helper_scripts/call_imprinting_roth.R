@@ -12,8 +12,8 @@ parser$add_argument("-i", type="character", default = "", help = "inprefix for r
 parser$add_argument("-r", type="double", default = "", help = "number of reciprocal cross pairs")
 parser$add_argument("-f", type = "double", default = 0.05, help = "edgeR pvalue/FDR-cutoff, default = 0.05")
 parser$add_argument("-C", default = FALSE, action="store_true", help = "need to concatenate files?")
-parser$add_argument("-m", type = "double", default = 0.833, help = "maternal cutoff (default = 0.833)")
-parser$add_argument("-p", type = "double", default = 0.333, help = "paternal cutoff (default = 0.333)")
+parser$add_argument("-m", type = "double", default = 83.3, help = "maternal cutoff (default = 83.3)")
+parser$add_argument("-p", type = "double", default = 33.3, help = "paternal cutoff (default = 33.3)")
 
 parser$add_argument("outprefix", nargs=1, help = "prefix to use for all output files")
 
@@ -32,6 +32,9 @@ cutoff = opt$t
 PEG_bound = opt$p
 MEG_bound = opt$m
 need_concat = opt$C
+
+PEG_bound = PEG_bound/100
+MEG_bound = MEG_bound/100
 
 # setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/roth_imprinting")
 # infile = "roth_counts.txt"
