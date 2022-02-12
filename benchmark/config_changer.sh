@@ -151,6 +151,9 @@ if [ ${#mat_bias} != 0 ]; then
 	sed -i "/mat_cutoff_anderson/ { c \
 	mat_cutoff_anderson=$mat_bias
 	}" $config_imprint
+	sed -i "/mat_cutoff_roth/ { c \
+	mat_cutoff_roth=$mat_bias
+	}" $config_imprint
 fi
 
 if [ ${#pat_bias} != 0 ]; then
@@ -159,6 +162,9 @@ if [ ${#pat_bias} != 0 ]; then
 	}" $config_imprint
 	sed -i "/pat_cutoff_anderson/ { c \
 	pat_cutoff_anderson=$pat_bias
+	}" $config_imprint
+	sed -i "/pat_cutoff_roth/ { c \
+	pat_cutoff_roth=$pat_bias
 	}" $config_imprint
 fi
 
@@ -187,7 +193,7 @@ if [ ${#logfc} != 0 ]; then
 	sed -i "/logfc_wyder/ { c \
 	logfc_wyder=$logfc
 	}" $config_imprint
-	sed -i "/logfc_roth/ { c \
-	logfc_roth=$logfc
-	}" $config_imprint
+# 	sed -i "/logfc_roth/ { c \
+# 	logfc_roth=$logfc
+# 	}" $config_imprint
 fi
