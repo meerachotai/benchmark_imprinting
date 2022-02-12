@@ -91,5 +91,16 @@ UNIQUE_ANNOT_ATTRIBUTE_ID_B = strainB
 COUNTS_DIRECTORY = 
 
 P_VALUE = 0.05
-LOGFC_CUTOFF = 0
-CUTOFF = 0.2
+MEGS_CUTOFF = 80
+PEGS_CUTOFF = 30
+
+# #########################################################################
+# ## ROTH+WYDER IMPRINTING SETTINGS
+# #########################################################################
+# 
+# # using Picard mapping files
+# COUNTS_DIRECTORY = 
+# 
+# P_VALUE = 0.05
+# LOGFC_CUTOFF = 0
+# CUTOFF = 0.2
