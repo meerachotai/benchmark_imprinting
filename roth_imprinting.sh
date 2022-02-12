@@ -2,10 +2,12 @@
 
 source $1
 
-logfc=${logfc_roth}
-pval=${pval_roth}
+# logfc=${logfc_roth}
+# pval=${pval_roth}
 outprefix="roth"
 counts_dir=${counts_dir_roth}
+mat_cutoff=${mat_cutoff_roth}
+pat_cutoff=${pat_cutoff_roth}
 
 displaytime () {
   local T=$1
@@ -22,7 +24,7 @@ displaytime () {
 
 
 printf "note: if you want to use your own counts, use call_imprinting_roth.R directly\n"
-printf "		you need the *_snp_report.bed files from the Picard pipeline for this script\n"
+printf "otherwise: you need the *_snp_report.bed files from the Picard pipeline for this script\n"
 
 #################
 ### pipeline ####
@@ -95,6 +97,7 @@ fi
 printf "Preparing counts files...\n"
 $scripts_dir/get_counts_roth.R -i ${roth}/roth_ -r $rep -A $strainA -B $strainB ${roth}/$outprefix
 printf "Calling imprinted genes...\n"
-$scripts_dir/call_imprinting_roth.R -c ${roth}/${outprefix}_counts.txt -i ${roth}/$outprefix -p $pval -l $logfc -t $cutoff -r $rep ${outdir}/$outprefix
+# $scripts_dir/call_imprinting_roth.R -c ${roth}/${outprefix}_counts.txt -i ${roth}/$outprefix -p $pval -l $logfc -t $cutoff -r $rep ${outdir}/$outprefix
+$scripts_dir/call_imprinting_roth.R -c ${roth}/${outprefix}_counts.txt -i ${roth}/$outprefix -f $pval -r $rep -m $mat_cutoff -p $pat_cutoff ${outdir}/$outprefix
 
 te=$(date +%s); echo "Done. Time elapsed: $( displaytime $(($te - $ts)) )"
