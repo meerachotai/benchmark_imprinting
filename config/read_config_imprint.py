@@ -96,7 +96,7 @@ file.write("b_annot="+inputs[36]+"\n")
 
 file.write("counts_dir_roth="+inputs[37]+"\n")
 file.write("pval_roth="+inputs[38]+"\n")
-file.write("logfc_roth="+inputs[39]+"\n")
-file.write("cutoff="+inputs[40]+"\n")
+file.write("mat_cutoff_roth="+inputs[39]+"\n")
+file.write("pat_cutoff_roth="+inputs[40]+"\n")
 
 file.close()
