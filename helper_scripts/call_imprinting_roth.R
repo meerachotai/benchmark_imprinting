@@ -48,6 +48,9 @@ MEG_bound = MEG_bound/100
 # PEG_bound = 0.333
 # MEG_bound = 0.833
 
+MEG_bound = MEG_bound/100
+PEG_bound = PEG_bound/100
+
 if(need_concat == TRUE) { # concatenate in the order AxB_1_A AxB_1_B AxB_2_A ... BxA_1_A BxA_1_B BxA_2_A ...
   cat("Concatenating files...\n")
   counts = read.table(paste0(infile, "AxB_", 1, ".txt"), sep = "\t")
