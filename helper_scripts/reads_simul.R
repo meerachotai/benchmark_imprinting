@@ -82,11 +82,13 @@ reads_simul = function(counts, seq_table, out, read_length, phred_vec) {
       index_range = length(seq) - read_length # so that the end is not too short
       reads = vector()
       labels = rep(gsub(" ", "", seq_table[i,1]),counts[i]) # adds gene label (no spaces)
-      for(j in 1:counts[i]) {
-        # TODO: improve this random sampling, for now it's uniform dist, rounded down
-        index = floor(runif(1,1,index_range))
-        read = paste(seq[index:(index+(read_length-1))], collapse ="") # updated it so that it does not give (read-length + 1) bp
-        reads = c(reads, read)
+      if(counts[i] != 0) { # skip if counts are zero
+        for(j in 1:counts[i]) {
+          # TODO: improve this random sampling, for now it's uniform dist, rounded down
+          index = floor(runif(1,1,index_range))
+          read = paste(seq[index:(index+(read_length-1))], collapse ="") # updated it so that it does not give (read-length + 1) bp
+          reads = c(reads, read)
+        }
       }
       all_reads = c(all_reads, reads)
       all_labels = c(all_labels, labels)
