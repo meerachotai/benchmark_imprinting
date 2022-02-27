@@ -278,11 +278,38 @@ Run the following scripts:
 * `wyder_MEGs.txt` and `wyder_PEGs.txt` - imprinted genes called by Wyder/edgeR method
 * `wyder_stats.txt` - edgeR stats for all genes
 
+## Method D: Florez-Rueda and Roth et al.
+
+Adapted from scripts on: https://github.com/anaflo/tomato
+
+### Dependencies:
+* R (argparse)
+
+### Helper scripts required:
+(enter directory for helper scripts under option -d)
+* `call_imprinting_roth.R`
+
+### Required Conventions:
+
+#### Counts Files
+
+Running `roth_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `rep_${i}_${j}_imprinting/counts_per_gene/rep_${i}_${j}_${strainA}x${strainB}_counts_merged.txt` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under `COUNTS_DIRECTORY`. Maintain the same settings for paired replicates. 
+
+### Run:
+
+Fill in `benchmark_imprinting/config/imprinting_config.txt` as per your requirements.
+
+Run the following scripts: 
+* `benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_imprinting/config/shell_env_imprint.txt`
+* `benchmark_imprinting/roth_imprinting.sh benchmark_imprinting/config/shell_env_imprint.txt`
+
 ## References:
 1.	Picard, C. L. & Gehring, M. Identification and Comparison of Imprinted Genes Across Plant Species. in Plant Epigenetics and Epigenomics 173–201 (Humana, New York, NY, 2020). doi:10.1007/978-1-0716-0179-2_13.
 
 2.	Wyder, S., Raissig, M. T. & Grossniklaus, U. Consistent Reanalysis of Genome-wide Imprinting Studies in Plants Using Generalized Linear Models Increases Concordance across Datasets. Sci. Rep. 9, 1–13 (2019).
 
 3.	Anderson, S. N., Zhou, P., Higgins, K., Brandvain, Y. & Springer, N. M. Widespread imprinting of transposable elements and young genes in the maize endosperm. Cold Spring Harbor Laboratory 2020.04.08.032573 (2020) doi:10.1101/2020.04.08.032573.
+
+4. Florez-Rueda A.M., Paris M., Schmidt A., Widmer A., Grossniklaus U., Städler, T., Genomic Imprinting in the Endosperm Is Systematically Perturbed in Abortive Hybrid Tomato Seeds, Molecular Biology and Evolution, Volume 33, Issue 11, November 2016. doi:10.1093/molbev/msw175	
 
 
