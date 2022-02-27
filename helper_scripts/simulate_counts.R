@@ -194,7 +194,7 @@ write.table(all_counts_BxA,paste0(outprefix,"_BxA.txt"), row.names=T, quote=F, c
 cat(" Done.\n\n")
 
 cat("\nWriting MEG and PEG 'true' lists from simulated counts file...")
-megs = row.names(counts_AxB[(n+1):(n+1+n_megs),])
+megs = row.names(counts_AxB[(n+1):(n+n_megs),])
 pegs = row.names(counts_AxB[(n+n_megs+1):(n+n_megs+n_pegs),])
 write.table(megs, paste0(outprefix,"_megs.txt"), row.names=F, quote=F, col.names=F)
 write.table(pegs, paste0(outprefix,"_pegs.txt"), row.names=F, quote=F, col.names=F)
