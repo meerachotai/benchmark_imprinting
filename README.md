@@ -293,7 +293,7 @@ Adapted from scripts on: https://github.com/anaflo/tomato
 
 #### Counts Files
 
-Running `roth_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `rep_${i}_${j}_imprinting/counts_per_gene/rep_${i}_${j}_${strainA}x${strainB}_counts_merged.txt` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under `COUNTS_DIRECTORY`. Maintain the same settings for paired replicates. 
+Running `roth_imprinting.sh` assumes that you have first run `picard_mapping.sh` and have acquired the `${counts_dir}/rep_${i}_${i}_imprinting/assign_to_allele/rep_${i}_${i}_${strainA}x${strainB}_snp_report.bed` files already. By default it assumes that these counts files are under the directory: `$outdir/picard_map.` Provide an alternate prefix for these counts files under `COUNTS_DIRECTORY`. Maintain the same settings for paired replicates. 
 
 ### Run:
 
