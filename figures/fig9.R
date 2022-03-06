@@ -4,10 +4,8 @@ library(viridis)
 library(patchwork)
 library(stringr)
 
-getTPM = function(dir, seqDepth, rep) {
-  counts = list.files(path = dir,pattern = paste0( "_", seqDepth, "_1_counts.txt"))
-  counts = read.table(paste0(dir,"/",counts), sep = "\t")
-  tpm <- data.frame(matrix(ncol = rep, nrow = nrow(counts)))
+getDepth = function(dir, seqDepth, rep) {
+  depth = vector()
   for (j in 1:rep) {
     file = list.files(path = dir, pattern = paste0("_", seqDepth, "_",j,"_counts.txt"))
     counts = read.table(paste0(dir,"/",file), sep = "\t")
@@ -17,14 +15,13 @@ getTPM = function(dir, seqDepth, rep) {
     names(counts) = c("genes", "A", "B", "length")
     counts$sum = counts$A + counts$B
     
-    counts$rpk = counts$sum / (counts$length/1000)
-    total = sum(counts$rpk)
-    per_mil = total/1000000
-    tpm[j] = counts$rpk / per_mil
-    names(tpm)[j] = paste0("AxB_", seqDepth, "_", j)
+    counts$tot = counts$sum * read_length
+    depth_j = sum(counts$tot) / sum(counts$length)
+    depth = c(depth, depth_j)
+    # counts$depth = counts$tot/counts$length
+    # depth = c(depth, sum(counts$depth))
   }
-  tpm$avg = rowMeans(tpm[1:rep])
-  median(tpm$avg)
+  mean(depth)
 }
 
 # functions from benchmarking graphs
@@ -65,13 +62,13 @@ table_maker <- function(parent, params, method, parameter, dir, rep) {
   param_table = roc_stats(param_table, n, n_megs, n_pegs)
   param_table$method =  rep(method, nrow(param_table))
   
-  tpm = vector()
+  depth = vector()
   for (i in param_table$`sequencing depth`) {
-    x = getTPM(dir, i, rep)
-    tpm = c(tpm, x)
+    x = getDepth(dir, i, rep)
+    depth = c(depth, x)
   }
   
-  param_table$tpm = tpm
+  param_table$depth = depth
   param_table
 }
 
@@ -79,11 +76,13 @@ table_maker <- function(parent, params, method, parameter, dir, rep) {
 
 # DATA ANALYSIS -------------------------------------
 
-setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20/seq_depth")
-parameter = "sequencing depth (TPM)"
+indir = "~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20/seq_depth"
+setwd(indir)
+parameter = "sequencing depth"
 graph_header = "sequencing depth"
 file_label = "seq_depth"
 rep = 3
+read_length = 50
 dir = "~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20/seqDepth_counts"
 table <- data.frame()
 
@@ -95,37 +94,37 @@ table = rbind(table, param_table)
 
 method="Picard"
 param = list.files(pattern = paste0(method,"_", file_label), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
 method="Anderson"
 param = list.files(pattern = paste0(method,"_", file_label), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
 method="Anderson_Picard_Combined"
 param = list.files(pattern = paste0(method,"_"), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
 method="Anderson_Wyder_Combined"
 param = list.files(pattern = paste0(method,"_"), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
 method="Roth_Wyder_Combined"
 param = list.files(pattern = paste0(method,"_"), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
 method="Roth"
 param = list.files(pattern = paste0(method,"_", file_label), ignore.case = TRUE)
-param_table = table_maker(parent, param[i], method, parameter, dir, rep)
+param_table = table_maker(parent, param, method, parameter, dir, rep)
 param_table = param_table[1:(nrow(param_table))-1,]
 table = rbind(table, param_table)
 
@@ -136,8 +135,8 @@ stitle = "showing true-positive/false-positive rates for MEGs"
 
 linetype = c("true-pos" = "solid", "false-pos" = "dashed")
 graph1 = ggplot(table) +
-  geom_line(aes(x = tpm, y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
-  geom_line(aes(x = tpm, y = !!fp, color = method, linetype = "false-pos"), show.legend = TRUE) +  
+  geom_line(aes(x = depth, y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
+  geom_line(aes(x = depth, y = !!fp, color = method, linetype = "false-pos"), show.legend = TRUE) +  
   # scale_color_manual(name = "method", values = color) +
   scale_color_brewer(palette = "Paired") +
   scale_linetype_manual(name = "rates", values = linetype) +
@@ -153,8 +152,8 @@ stitle = "showing true-positive/false-positive rates for PEGs"
 
 linetype = c("true-pos" = "solid", "false-pos" = "dashed")
 graph2 = ggplot(table) +
-  geom_line(aes(x = tpm, y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
-  geom_line(aes(x = tpm, y = !!fp, color = method, linetype = "false-pos"), show.legend = TRUE) +  
+  geom_line(aes(x = depth, y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
+  geom_line(aes(x = depth, y = !!fp, color = method, linetype = "false-pos"), show.legend = TRUE) +  
   # scale_color_manual(name = "method", values = color) +
   scale_color_brewer(palette = "Paired") +
   scale_linetype_manual(name = "rates", values = linetype) +
@@ -164,6 +163,6 @@ graph2 = ggplot(table) +
   ggtitle(paste("varying", graph_header))
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_name, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
-write.table(table, "seq_depth.txt", quote = F, sep = "\t", row.names = F)
+write.table(table, paste0(indir,"/seq_depth.txt"), quote = F, sep = "\t", row.names = F)
