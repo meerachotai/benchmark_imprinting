@@ -1,51 +1,75 @@
 # note: matbias = 90, patbias = 20, disp = med, similarity = 90
-setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_sim_90")
-
-anderson= read.table("anderson_stats.txt", sep = "\t", header = T, row.names = 1)
-
-true_megs = scan("true_MEGs.txt", what = "character")
-true_pegs = scan("true_PEGs.txt", what = "character")
-
-# true_megs = true_megs[-1]
-true = c(true_megs, true_pegs)
-true = unique(true)
-
-
-library(stringr)
-row.names(anderson) = str_remove(row.names(anderson), "strainA")
-
-# both directional imprinted
-imprinted = anderson[(anderson$imprint.strainA == "MEG" & anderson$imprint.strainB == "MEG") | 
-                       (anderson$imprint.strainA == "PEG" & anderson$imprint.strainB == "PEG"),]
-
-not_imprint = anderson[((anderson$imprint.strainA == "no.imprint" | 
-                           anderson$imprint.strainB == "no.imprint") & row.names(anderson) %in% true),]
-
-
-print(nrow(not_imprint))
-log2fc = not_imprint[not_imprint$log2fc.strainA == FALSE | not_imprint$log2fc.strainB == FALSE,]
-print(nrow(log2fc))
-mat = not_imprint[which(not_imprint$matPref_met.strainA == FALSE | not_imprint$matPref_met.strainB == FALSE),]
-print(nrow(mat))
-fdr = not_imprint[which(not_imprint$fdr_met.strainA == FALSE | not_imprint$fdr_met.strainB == FALSE),]
-print(nrow(fdr))
-
-fdr_genes = row.names(fdr)
-mat_genes = row.names(mat)
-imprint_genes = row.names(imprinted)
-
 library(VennDiagram)
 library(RColorBrewer)
 library(ggplot2)
+library(stringr)
+
+setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_sim_90")
+
+anderson = read.table("anderson_stats.txt", sep = "\t", header = T, row.names = 1)
+row.names(anderson) = str_remove(row.names(anderson), "strainA")
+
+true_megs = scan("true_MEGs.txt", what = "character")
+true_megs = true_megs[-length(true_megs)]
+true_pegs = scan("true_PEGs.txt", what = "character")
+
+is_true_meg = row.names(anderson) %in% true_megs
+is_true_peg = row.names(anderson) %in% true_pegs
+
+anderson_megs = row.names(anderson[(anderson$imprint.strainA == "MEG" & anderson$imprint.strainB == "MEG"),])
+anderson_pegs = row.names(anderson[(anderson$imprint.strainA == "PEG" & anderson$imprint.strainB == "PEG"),])
+
+
+# find false negatives
+fn_megs = anderson[(anderson$imprint.strainA == "no.imprint" | 
+             anderson$imprint.strainB == "no.imprint") & is_true_meg,]
+
+fn_pegs = anderson[(anderson$imprint.strainA == "no.imprint" | 
+                      anderson$imprint.strainB == "no.imprint") & is_true_peg,]
+
+# MEGs --------------------------------------
+
+print(nrow(fn_megs))
+log2fc_megs = fn_megs[fn_megs$log2fc.strainA == FALSE | fn_megs$log2fc.strainB == FALSE,]
+print(nrow(log2fc_megs))
+mat_megs = fn_megs[which(fn_megs$matPref_met.strainA == FALSE | fn_megs$matPref_met.strainB == FALSE),]
+print(nrow(mat_megs))
+fdr_megs = fn_megs[which(fn_megs$fdr_met.strainA == FALSE | fn_megs$fdr_met.strainB == FALSE),]
+print(nrow(fdr_megs))
+
+fdr_megs = row.names(fdr_megs)
+mat_megs = row.names(mat_megs)
 
 myCol <- brewer.pal(4, "Pastel2")
 
-venn.plot = venn.diagram(x = list(true, imprint_genes,fdr_genes, mat_genes), 
-                         category.names = c("True", "Anderson","not met FDR", "not met\nm:p ratio"), fill = myCol,
-                         filename = NULL, cat.fontfamily = "sans", cat.cex = 1.5, cex = 1.75,  print.mode="percent",
+venn.plot = venn.diagram(x = list(true_megs, anderson_megs, fdr_megs, mat_megs), 
+                         category.names = c("True MEGs","Anderson MEGs","not met FDR", "not met\nm:p ratio"), fill = myCol,
+                         filename = NULL, cat.fontfamily = "sans", cat.cex = 1, cex = 1.5,#print.mode="percent",
                          fontfamily = "sans")
 
-ggsave("compare_calls.png", venn.plot, device = "png", width = 6.5)
+ggsave("~/Documents/SJ_Lab/Imprinting/Winter2022/examine_anderson/compare_calls_MEGs.png", venn.plot, device = "png", width = 7.5)
 # png("compare_calls.png");
 # grid.draw(venn.plot);
 # dev.off();
+
+# PEGs --------------------------------------
+
+print(nrow(fn_pegs))
+log2fc_pegs = fn_pegs[fn_pegs$log2fc.strainA == FALSE | fn_pegs$log2fc.strainB == FALSE,]
+print(nrow(log2fc_pegs))
+mat_pegs = fn_pegs[which(fn_pegs$matPref_met.strainA == FALSE | fn_pegs$matPref_met.strainB == FALSE),]
+print(nrow(mat_pegs))
+fdr_pegs = fn_pegs[which(fn_pegs$fdr_met.strainA == FALSE | fn_pegs$fdr_met.strainB == FALSE),]
+print(nrow(fdr_pegs))
+
+fdr_pegs = row.names(fdr_pegs)
+mat_pegs = row.names(mat_pegs)
+
+myCol <- brewer.pal(4, "Pastel2")
+
+venn.plot = venn.diagram(x = list(true_pegs, anderson_pegs, fdr_pegs, mat_pegs), 
+                         category.names = c("True PEGs","Anderson PEGs","not met FDR", "not met\nm:p ratio"), fill = myCol,
+                         filename = NULL, cat.fontfamily = "sans", cat.cex = 1, cex = 1.5, #print.mode="percent",
+                         fontfamily = "sans")
+
+ggsave("~/Documents/SJ_Lab/Imprinting/Winter2022/examine_anderson/compare_calls_PEGs.png", venn.plot, device = "png", width = 7.5)
