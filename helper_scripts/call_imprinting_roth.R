@@ -33,9 +33,6 @@ PEG_bound = opt$p
 MEG_bound = opt$m
 need_concat = opt$C
 
-PEG_bound = PEG_bound/100
-MEG_bound = MEG_bound/100
-
 # setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/roth_imprinting")
 # infile = "roth_counts.txt"
 # need_concat = FALSE
