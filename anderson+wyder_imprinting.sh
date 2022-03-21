@@ -12,5 +12,4 @@ map=$outdir/map
 count=$rep
 outprefix=anderson_wyder
 
-
 $scripts_dir/call_imprinting_wyder.R -C -c "${map}/anderson_" -r $count -p $pval -l $logfc ${outdir}/$outprefix
