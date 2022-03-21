@@ -10,7 +10,7 @@ parser = ArgumentParser()
 parser$add_argument("-c", type = "character", default = "", help = "concatenated counts filename (only one contrast at a time) / prefix if you need to concatenate first")
 parser$add_argument("-i", type="character", default = "", help = "inprefix for rename file from get_counts_roth.R file")
 parser$add_argument("-r", type="double", default = "", help = "number of reciprocal cross pairs")
-parser$add_argument("-f", type = "double", default = 0.05, help = "edgeR pvalue/FDR-cutoff, default = 0.05")
+parser$add_argument("-f", type = "double", default = 0.05, help = "FDR cutoff, default = 0.05")
 parser$add_argument("-C", default = FALSE, action="store_true", help = "need to concatenate files?")
 parser$add_argument("-m", type = "double", default = 83.3, help = "maternal cutoff (default = 83.3)")
 parser$add_argument("-p", type = "double", default = 33.3, help = "paternal cutoff (default = 33.3)")
@@ -91,16 +91,17 @@ genes = unique(perGene_AxB$genes)
 for (gene in genes) {
   matMean = perGene_AxB[which(gene == perGene_AxB$genes),]$mat_mean
   totMean = perGene_AxB[which(gene == perGene_AxB$genes),]$tot_mean
-  # matPref = perGene_AxB[which(gene == perGene_AxB$genes),]$maternal_preference
   
   matWeights = matMean / sum(matMean)
   totWeights = totMean / sum(totMean)
   
   matWeight = weighted.mean(matMean, matWeights)
-  totWeight = weighted.mean(totMean, totWeights)
-  # matPrefWeight = weighted.mean(matPref, weights)
+  if(is.na(matWeight)) { matWeight = 0 }
   
-  row = c(gene,matWeight, totWeight)#, matPrefWeight)
+  totWeight = weighted.mean(totMean, totWeights)
+  if(is.na(totWeight)) { totWeight = 0 }
+  
+  row = c(gene,matWeight, totWeight)
   table_AxB = rbind(table_AxB, row)
   names(table_AxB) = c("gene", "mat", "tot")#, "maternal_preference")
 }
@@ -134,7 +135,7 @@ counts_BxA = counts_summed[((rep*2) + 1):(rep*4)]
 counts_BxA$mat_mean = rowMeans(counts_BxA[,seq(2,rep*2, by = 2)])
 counts_BxA$pat_mean = rowMeans(counts_BxA[,seq(1,rep*2, by = 2)])
 counts_BxA$tot_mean = counts_BxA$mat_mean + counts_BxA$pat_mean
-counts_BxA$maternal_preference = counts_BxA$mat_mean / (counts_BxA$mat_mean + counts_BxA$pat_mean)
+# counts_BxA$maternal_preference = counts_BxA$mat_mean / (counts_BxA$mat_mean + counts_BxA$pat_mean)
 
 perGene_BxA = merge(names, counts_BxA, by.x = "labels", by.y = 0)
 
@@ -148,9 +149,12 @@ for (gene in genes) {
   totWeights = totMean / sum(totMean)
   
   matWeight = weighted.mean(matMean, matWeights)
-  totWeight = weighted.mean(totMean, totWeights)
+  if(is.na(matWeight)) { matWeight = 0 }
   
-  row = c(gene,matWeight, totWeight)#, matPrefWeight)
+  totWeight = weighted.mean(totMean, totWeights)
+  if(is.na(totWeight)) { totWeight = 0 }
+  
+  row = c(gene,matWeight, totWeight)
   table_BxA = rbind(table_BxA, row)
   names(table_BxA) = c("gene", "mat", "tot")
 }
@@ -205,9 +209,3 @@ write.table(megs, paste0(outprefix, "_MEGs.txt"), quote = F, row.names = F, col.
 write.table(pegs, paste0(outprefix, "_PEGs.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
 
 write.table(imprinted, paste0(outprefix, "_stats.txt"), quote = F, row.names = F, col.names = T, sep = "\t")
-
-# MEGs = imprinted[imprinted$gene %in% megs, ]
-# PEGs = imprinted[imprinted$gene %in% pegs, ]
-# write.table(MEGs, paste0(outprefix, "_MEGs_snp_report.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
-# write.table(PEGs, paste0(outprefix, "_PEGs_snp_report.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
-
