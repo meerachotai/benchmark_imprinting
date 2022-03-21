@@ -45,6 +45,35 @@ if(file.exists(paste0(outdir,"/wyder_MEGs.txt"))) {
 	cat("-----------------------------------\n")
 }
 
+if(file.exists(paste0(outdir,"/anderson_picard_MEGs.txt"))) {
+	anderson_picard_megs = scan(paste0(outdir,"/anderson_picard_MEGs.txt"), character())
+	anderson_picard_pegs = scan(paste0(outdir,"/anderson_picard_PEGs.txt"), character())
+	
+	true_anderson_picard_megs = intersect(true_megs, anderson_picard_megs)
+	true_anderson_picard_pegs = intersect(true_pegs, anderson_picard_pegs)
+	cat("-----------------------------------\n")
+	cat("total Anderson+Picard maternally-biased:", length(anderson_picard_megs), "\n")
+	cat("true Anderson+Picard maternally-biased: ",length(true_anderson_picard_megs), "\n") 
+	cat("total Anderson+Picard paternally-biased:", length(anderson_picard_pegs), "\n")
+	cat("true Anderson+Picard paternally-biased: ",length(true_anderson_picard_pegs), "\n")
+	cat("-----------------------------------\n")
+}
+
+if(file.exists(paste0(outdir,"/anderson_wyder_MEGs.txt"))) {
+	anderson_wyder_megs = scan(paste0(outdir,"/anderson_wyder_MEGs.txt"), character())
+	anderson_wyder_pegs = scan(paste0(outdir,"/anderson_wyder_PEGs.txt"), character())
+	
+	true_anderson_wyder_megs = intersect(true_megs, anderson_wyder_megs)
+	true_anderson_wyder_pegs = intersect(true_pegs, anderson_wyder_pegs)
+	cat("-----------------------------------\n")
+	cat("total Anderson+Wyder maternally-biased:", length(anderson_wyder_megs), "\n")
+	cat("true Anderson+Wyder maternally-biased: ",length(true_anderson_wyder_megs), "\n") 
+	cat("total Anderson+Wyder paternally-biased:", length(anderson_wyder_pegs), "\n")
+	cat("true Anderson+Wyder paternally-biased: ",length(true_anderson_wyder_pegs), "\n")
+	cat("-----------------------------------\n")
+}
+
+
 if(file.exists(paste0(outdir,"/anderson_MEGs.txt"))) {
 	anderson_megs = scan(paste0(outdir,"/anderson_MEGs.txt"), character())
 	anderson_pegs = scan(paste0(outdir,"/anderson_PEGs.txt"), character())
@@ -72,5 +101,20 @@ if(file.exists(paste0(outdir,"/roth_MEGs.txt"))) {
 	cat("true Roth maternally-biased: ",length(true_roth_megs), "\n") 
 	cat("total Roth paternally-biased:", length(roth_pegs), "\n")
 	cat("true Roth paternally-biased: ",length(true_roth_pegs), "\n")
+	cat("-----------------------------------\n")
+}
+
+if(file.exists(paste0(outdir,"/roth_wyder_MEGs.txt"))) {
+	roth_wyder_megs = scan(paste0(outdir,"/roth_wyder_MEGs.txt"), character())
+	roth_wyder_pegs = scan(paste0(outdir,"/roth_wyder_PEGs.txt"), character())
+	
+	true_roth_wyder_megs = intersect(tolower(true_megs), roth_wyder_megs)
+	true_roth_wyder_pegs = intersect(tolower(true_pegs), roth_wyder_pegs)
+
+	cat("-----------------------------------\n")
+	cat("total Roth+Wyder maternally-biased:", length(roth_wyder_megs), "\n")
+	cat("true Roth+Wyder maternally-biased: ",length(true_roth_wyder_megs), "\n") 
+	cat("total Roth+Wyder paternally-biased:", length(roth_wyder_pegs), "\n")
+	cat("true Roth+Wyder paternally-biased: ",length(true_roth_wyder_pegs), "\n")
 	cat("-----------------------------------\n")
 }
