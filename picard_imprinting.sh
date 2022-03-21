@@ -83,7 +83,7 @@ printf "using MEGs-cutoff: ${mat_cutoff}, PEGs-cutoff: ${pat_cutoff} for imprint
 printf "Making metagenome...\n"
 ${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB} --GTF $annot
 mkdir $map/${strainA}_${strainB}_meta_STAR
-STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49
+STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49 --genomeSAindexNbases 9 # could change these values
 
 count=1
 
