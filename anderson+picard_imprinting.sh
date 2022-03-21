@@ -34,3 +34,7 @@ else
 	$scripts_dir/find_consensus.py -i ${outprefix}_all_MEGs.txt -m $majority -o ${outprefix}_MEGs.txt
 	$scripts_dir/find_consensus.py -i ${outprefix}_all_PEGs.txt -m $majority -o ${outprefix}_PEGs.txt
 fi
+
+
+# awk '{ gsub("strainA", "", $1); print }' $outdir/anderson_picard_MEGs.txt > tmp && mv tmp $outdir/anderson_picard_MEGs.txt
+# awk '{ gsub("strainA", "", $1); print }' $outdir/anderson_picard_PEGs.txt > tmp && mv tmp $outdir/anderson_picard_PEGs.txt
