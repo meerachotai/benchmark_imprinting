@@ -76,14 +76,14 @@ table_maker <- function(parent, params, method, parameter, dir, rep) {
 
 # DATA ANALYSIS -------------------------------------
 
-indir = "~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20/seq_depth"
+indir = "benchmark_files/seq_depth"
 setwd(indir)
 parameter = "sequencing depth"
 graph_header = "sequencing depth"
 file_label = "seq_depth"
 rep = 3
 read_length = 50
-dir = "~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20/seqDepth_counts"
+dir = "../seqDepth_counts"
 table <- data.frame()
 
 method="Wyder"
@@ -163,6 +163,6 @@ graph2 = ggplot(table) +
   ggtitle(paste("varying", graph_header))
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
-write.table(table, paste0(indir,"/seq_depth.txt"), quote = F, sep = "\t", row.names = F)
+write.table(table, paste0("seq_depth_stats.txt"), quote = F, sep = "\t", row.names = F)
