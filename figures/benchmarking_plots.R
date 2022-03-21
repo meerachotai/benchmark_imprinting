@@ -210,7 +210,7 @@ graph_header = "%maternal bias"
 graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
 # ------------------------- SIMILARITY SCORES -----------------------------
 setwd(paste0(indir,"/sim_score"))
@@ -228,7 +228,7 @@ graph_header = "%similarity between strains"
 graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
 # -------------------------- P-VALUE ------------------------------------
 setwd(paste0(indir,"/alpha"))
@@ -246,7 +246,7 @@ graph_header = "p-value cutoffs"
 graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
 # ---------------------------- DISPERSION ------------------------------------------
 
@@ -265,4 +265,4 @@ graph_header = "dispersion"
 graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
