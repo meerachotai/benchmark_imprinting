@@ -130,6 +130,10 @@ res = as.data.frame(res)
 counts_res <- merge(counts,res,by.x="feature",by.y="row.names",all=F)
 counts_res <- subset(counts_res,!is.na(counts_res$padj))
 
+counts_res$fdr_met = ifelse(counts_res$padj < alpha, TRUE, FALSE)
+counts_res$log2fc = ifelse(counts_res$log2FoldChange < -(log2fc) | counts_res$log2FoldChange > log2fc, TRUE, FALSE)
+counts_res$matPref_met = ifelse(counts_res$maternal_preference < lower_lim | counts_res$maternal_preference > upper_lim, TRUE, FALSE)
+
 # up --> log2fc < -1, matpreference > 0.9 or matpreference < 0.1
 # down --> log2fc > 1, matpreference > 0.9 or matpreference < 0.1
 counts_res$category <- ifelse(counts_res$padj < alpha & counts_res$log2FoldChange < -(log2fc) & 
@@ -163,6 +167,7 @@ syntelogs_A <- merge(subset(counts_syntelogs,counts_syntelogs$syntelog == "synte
 syntelogs_B <- subset(counts_syntelogs,counts_syntelogs$syntelog == "syntelog" & counts_syntelogs$genome == B)
 
 syntelogs_AB <- merge(syntelogs_A,syntelogs_B,by.x = B.colname,by.y="feature",all=T)
+syntelogs_AB = syntelogs_AB[complete.cases(syntelogs_AB), ]
 
 names(syntelogs_AB) <- gsub(".x",paste0(".",A),names(syntelogs_AB),fixed = T)
 names(syntelogs_AB) <- gsub(".y",paste0(".",B),names(syntelogs_AB),fixed = T)
