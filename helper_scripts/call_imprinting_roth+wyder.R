@@ -133,7 +133,7 @@ megs = genes[matCount >= cutoff]
 pegs = genes[patCount >= cutoff]
 
 cat("\n-----------------------------------\n")
-cat("Roth edgeR summary:\nlogFC:", logfc, ", FDR-cutoff",fdr_cutoff, ", cutoff", cutoff,"\n")
+cat("Roth+Wyder edgeR summary:\nlogFC:", logfc, ", FDR-cutoff",fdr_cutoff, ", cutoff", cutoff,"\n")
 cat("maternally-biased: ",length(megs), "\n")
 cat("paternally-biased: ",length(pegs), "\n")
 cat("-----------------------------------\n")
@@ -148,4 +148,3 @@ PEGs = subset(PEGs, select = -c(labels, imprint))
 
 write.table(MEGs, paste0(outprefix, "_MEGs_snp_report.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
 write.table(PEGs, paste0(outprefix, "_PEGs_snp_report.txt"), quote = F, row.names = F, col.names = F, sep = "\t")
-
