@@ -312,4 +312,4 @@ Run the following scripts:
 
 4. Florez-Rueda A.M., Paris M., Schmidt A., Widmer A., Grossniklaus U., Städler, T., Genomic Imprinting in the Endosperm Is Systematically Perturbed in Abortive Hybrid Tomato Seeds, Molecular Biology and Evolution, Volume 33, Issue 11, November 2016. doi:10.1093/molbev/msw175	
 
-
+5. Roth, M., Florez‐Rueda, A. M., Paris, M., & Städler, T. (2018). Wild tomato endosperm transcriptomes reveal common roles of genomic imprinting in both nuclear and cellular endosperm. The Plant Journal, 95(6), 1084-1101.
