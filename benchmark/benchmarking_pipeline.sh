@@ -264,8 +264,6 @@ if [ "$fsim" == "true" ]; then
 	echo "Changing %similarity cutoffs"
 	param="sim_score"
 	array=(80 83 85 87 90 93 95)
-# 	param="sim_score_95"
-# 	array=(95)
 	mkdir benchmark_files/$param
 	
 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha}\n" > benchmark_files/$param/wyder_$param.txt
@@ -288,9 +286,13 @@ if [ "$fsim" == "true" ]; then
 
 	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
 	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
-
-	for i in "${array[@]}"; do
 	
+	old_outdir=$outdir
+	
+	for i in "${array[@]}"; do
+		
+		outdir=${old_outdir}_${i}
+		
 		benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -m $meg_bias -p $peg_bias -d $disp -s $i -o $outdir -D $seqDepth -c benchmark_files/benchmark_simul_${param}.txt
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
@@ -326,7 +328,7 @@ if [ "$fdisp" == "true" ]; then
 	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
 	
 	for i in "${array[@]}"; do
-	
+		
 		benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
 		benchmark_imprinting/benchmark/config_changer.sh -n $n -m $meg_bias -p $peg_bias -M $nmeg -P $npeg -d $i -s $similarity -o $outdir -D $seqDepth -c benchmark_files/benchmark_simul_${param}.txt
 
@@ -343,8 +345,6 @@ if [ "$fseq" == "true" ]; then
 	echo "Changing %sequencing depth"
 	param="seq_depth"
 	array=(0.2 0.25 0.5 1 2 4 5)
-# 	param="seq_depth_0.2"
-# 	array=(0.2)
 	
 	mkdir benchmark_files/$param
 	
@@ -367,6 +367,7 @@ if [ "$fseq" == "true" ]; then
 	old_outdir=$outdir
 	
 	for i in "${array[@]}"; do
+		
 		outdir=${old_outdir}_${i}
 		
 		benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
