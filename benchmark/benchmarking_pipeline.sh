@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# qsub -V -N benchmark_pat -cwd -j y -o benchmark_files/log/patbias.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -p -o benchmark_pat
-# qsub -V -N benchmark_mat -cwd -j y -o benchmark_files/log/matbias.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -m -o benchmark_mat
-# qsub -V -N benchmark_alpha -cwd -j y -o benchmark_files/log/alpha.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -a -o benchmark_alpha
-# qsub -V -N benchmark_sim -cwd -j y -o benchmark_files/log/similarity.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -s -o benchmark_sim
-# qsub -V -N benchmark_disp -cwd -j y -o benchmark_files/log/disp.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -d -o benchmark_disp
-# qsub -V -N benchmark_seqDepth -cwd -j y -o benchmark_files/log/seqDepth.txt -m bae -b y -l h_rt=10:00:00,h_data=32G,highp benchmark_imprinting/benchmark/benchmarking_pipeline.sh -D -o benchmark_seqDepth
-
 # Defaults: -------------
 
 disp="med"
@@ -153,7 +146,8 @@ if [ "$fmat" == "true" ]; then
 	echo "Changing %maternal for maternally-biased (for simulating)"
 	param="matbias"
 	array=(75 80 85 95 100 90)
-	
+# 	param="matbias_90"
+# 	array=(90)
 	mkdir benchmark_files/$param
 
 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} patbias: ${peg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/$param/wyder_$param.txt
@@ -193,6 +187,8 @@ if [ "$fpat" == "true" ]; then
 	echo "Changing %maternal for paternally-biased (for simulating)"
 	param="patbias"
 	array=(0 10 20 30 40 45 50)
+# 	param="patbias_0"
+# 	array=(0)
 	mkdir benchmark_files/$param
 	
 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} alpha: ${alpha} similarity: ${similarity}\n" > benchmark_files/$param/wyder_$param.txt
@@ -268,6 +264,8 @@ if [ "$fsim" == "true" ]; then
 	echo "Changing %similarity cutoffs"
 	param="sim_score"
 	array=(80 83 85 87 90 93 95)
+# 	param="sim_score_95"
+# 	array=(95)
 	mkdir benchmark_files/$param
 	
 	printf "Wyder method: n: ${n} nmegs: ${nmeg} npegs: ${npeg} disp: ${disp} matbias: ${meg_bias} patbias: ${peg_bias} alpha: ${alpha}\n" > benchmark_files/$param/wyder_$param.txt
@@ -345,6 +343,8 @@ if [ "$fseq" == "true" ]; then
 	echo "Changing %sequencing depth"
 	param="seq_depth"
 	array=(0.2 0.25 0.5 1 2 4 5)
+# 	param="seq_depth_0.2"
+# 	array=(0.2)
 	
 	mkdir benchmark_files/$param
 	
