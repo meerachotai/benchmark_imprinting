@@ -1,17 +1,15 @@
-# note: matbias = 90, patbias = 20, disp = med, similarity = 90
 library(VennDiagram)
 library(RColorBrewer)
 library(ggplot2)
 library(stringr)
 
-setwd("~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_sim_90")
+indir = "benchmark_sim_90"
 
-anderson = read.table("anderson_stats.txt", sep = "\t", header = T, row.names = 1)
+anderson = read.table(paste0(indir, "/anderson_stats.txt"), sep = "\t", header = T, row.names = 1)
 row.names(anderson) = str_remove(row.names(anderson), "strainA")
 
-true_megs = scan("true_MEGs.txt", what = "character")
-true_megs = true_megs[-length(true_megs)]
-true_pegs = scan("true_PEGs.txt", what = "character")
+true_megs = scan(paste0(indir,"/true_MEGs.txt"), what = "character")
+true_pegs = scan(paste0(indir,"/true_PEGs.txt"), what = "character")
 
 is_true_meg = row.names(anderson) %in% true_megs
 is_true_peg = row.names(anderson) %in% true_pegs
@@ -22,7 +20,7 @@ anderson_pegs = row.names(anderson[(anderson$imprint.strainA == "PEG" & anderson
 
 # find false negatives
 fn_megs = anderson[(anderson$imprint.strainA == "no.imprint" | 
-             anderson$imprint.strainB == "no.imprint") & is_true_meg,]
+                      anderson$imprint.strainB == "no.imprint") & is_true_meg,]
 
 fn_pegs = anderson[(anderson$imprint.strainA == "no.imprint" | 
                       anderson$imprint.strainB == "no.imprint") & is_true_peg,]
@@ -47,10 +45,7 @@ venn.plot = venn.diagram(x = list(true_megs, anderson_megs, fdr_megs, mat_megs),
                          filename = NULL, cat.fontfamily = "sans", cat.cex = 1, cex = 1.5,#print.mode="percent",
                          fontfamily = "sans")
 
-ggsave("~/Documents/SJ_Lab/Imprinting/Winter2022/examine_anderson/compare_calls_MEGs.png", venn.plot, device = "png", width = 7.5)
-# png("compare_calls.png");
-# grid.draw(venn.plot);
-# dev.off();
+ggsave("fig3_MEGs.png", venn.plot, device = "png", width = 7.5)
 
 # PEGs --------------------------------------
 
@@ -72,4 +67,4 @@ venn.plot = venn.diagram(x = list(true_pegs, anderson_pegs, fdr_pegs, mat_pegs),
                          filename = NULL, cat.fontfamily = "sans", cat.cex = 1, cex = 1.5, #print.mode="percent",
                          fontfamily = "sans")
 
-ggsave("~/Documents/SJ_Lab/Imprinting/Winter2022/examine_anderson/compare_calls_PEGs.png", venn.plot, device = "png", width = 7.5)
+ggsave("fig3_PEGs.png", venn.plot, device = "png", width = 7.5)
