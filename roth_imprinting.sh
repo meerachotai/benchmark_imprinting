@@ -2,9 +2,8 @@
 
 source $1
 
-# logfc=${logfc_roth}
-# pval=${pval_roth}
 outprefix="roth"
+pval=${pval_roth}
 counts_dir=${counts_dir_roth}
 mat_cutoff=${mat_cutoff_roth}
 pat_cutoff=${pat_cutoff_roth}
