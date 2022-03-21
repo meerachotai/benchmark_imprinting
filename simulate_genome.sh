@@ -61,10 +61,10 @@ make_annot() {
 	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}_anderson.gff3 -A
 	${scripts_dir}/make_annot.R ${outdir}/${strain}/${strain}_length+id.txt ${out}_picard.gff3 -P
 
-	awk -v var="$strain" '{if(NR==1){print $0} else{print $0var}}' ${out}_anderson.gff3 > temp # add strain name at the end for later mapping
-	mv temp ${out}_anderson.gff3
-	awk -v var="$strain" '{print $0var}' ${out}_picard.gff3 > temp
-	mv temp ${out}_picard.gff3
+	awk -v var="$strain" '{if(NR==1){print $0} else{print $0var}}' ${out}_anderson.gff3 > $outdir/temp # add strain name at the end for later mapping
+	mv $outdir/temp ${out}_anderson.gff3
+	awk -v var="$strain" '{print $0var}' ${out}_picard.gff3 > $outdir/temp
+	mv $outdir/temp ${out}_picard.gff3
 
 # 	${scripts_dir}/make_annot_alt.R -s ${strain} ${outdir}/${strain}/${strain}_length+id.txt ${out}.gff3 
 }
@@ -125,19 +125,19 @@ else
 	sed -i 's/ /_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa
 	sed -i 's/\./_/g' ${outdir}/${strainA}/${strainA}_transcripts.fa # for picard_imprinting error
 	
-	awk '/^>/ {printf("\n%s\t",$0); next; } { printf ("%s", $0);} END {printf("\n");}' ${outdir}/${strainA}/${strainA}_transcripts.fa | tail -n +2 > single.fa
-	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' single.fa > prefixed.fa
-	rm single.fa
-	cat prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > downsampled.fa
-	rm prefixed.fa
+	awk '/^>/ {printf("\n%s\t",$0); next; } { printf ("%s", $0);} END {printf("\n");}' ${outdir}/${strainA}/${strainA}_transcripts.fa | tail -n +2 > $outdir/single.fa
+	awk -v seed=$seed 'BEGIN{srand(seed)} {print int(rand() * 10^5 + 1) "-" $0}' $outdir/single.fa > $outdir/prefixed.fa
+	rm $outdir/single.fa
+	cat $outdir/prefixed.fa | sort -t '-' -k 1n | head -n $total_n | cut -d "-" -f 2- > $outdir/downsampled.fa
+	rm $outdir/prefixed.fa
 	
-	awk 'BEGIN{FS="\t"} {print $1}' downsampled.fa > ${outdir}/all_genes.txt
+	awk 'BEGIN{FS="\t"} {print $1}' $outdir/downsampled.fa > ${outdir}/all_genes.txt
 	sed -i 's/^.//' ${outdir}/all_genes.txt
-	awk 'BEGIN{FS="\t"} {printf "%s\n%s\n",$1,$2}' downsampled.fa > ${outdir}/${refA}.fa
+	awk 'BEGIN{FS="\t"} {printf "%s\n%s\n",$1,$2}' $outdir/downsampled.fa > ${outdir}/${refA}.fa
 	printf "\nsimulated FASTA file for strainA: ${refA}.fa"
 	
 	# remove temp files
-	rm downsampled.fa
+	rm $outdir/downsampled.fa
 	
 	# makes annotation for smaller genome
 	make_annot $strainA ${outdir}/${refA}.fa ${scripts_dir} ${outdir}/$annotA $outdir
