@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse, math
 
@@ -17,12 +17,12 @@ output_file = args.o
 
 if(total != 0):
 	majority = math.floor(total/2)
-	print "Using majority voting of >= ", majority, " for consensus calls"
+	print("Using majority voting of >= ", majority, " for consensus calls")
 	
 imprinted = {}
 consensus = []
 
-print "reading input MEGs/PEGs list..."
+print("reading input MEGs/PEGs list...")
 with open(input_file, 'r') as rFile:
 	for line in rFile:
 		line = line.split("\t")[0]
@@ -36,6 +36,6 @@ for gene in imprinted:
 	if imprinted[gene] >= majority:
 		consensus.append(gene)
 
-print "writing output consensus list..."
+print("writing output consensus list...")
 with open(output_file, 'w') as wFile:
 	wFile.write('\n'.join(consensus))
