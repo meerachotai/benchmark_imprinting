@@ -74,18 +74,18 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table, fi
   }
   
   method="Anderson_Picard_Combined"
-
+  
   param = list.files(pattern = paste0(method,"_"), ignore.case = TRUE)
-
+  
   for(i in 1:length(param)) {
     param_table = table_maker(parent, param[i], method, parameter)
     table = rbind(table, param_table)
   }
-
+  
   method="Anderson_Wyder_Combined"
-
+  
   param = list.files(pattern = paste0(method,"_"), ignore.case = TRUE)
-
+  
   for(i in 1:length(param)) {
     param_table = table_maker(parent, param[i], method, parameter)
     table = rbind(table, param_table)
@@ -129,16 +129,6 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table, fi
     }
   }
   
-  # colors = grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)]
-  # set.seed(40); col = sample(colors, 6) # else 13
-  # pie(rep(1,6), col=col)
-  # col = brewer.pal(9, "Set3")
-  # col = brewer.pal(n = 6, name = "Dark2")
-  
-  # linetype = c("Anderson" = "dotted", "Picard" = "dashed", "Wyder" = "solid", "Roth" = "longdash", "Anderson_Picard" = "1F")
-  # linetype = c("Anderson" = "a", "Picard" = "b", "Wyder" = "f", "Roth" = "g", "Anderson_Picard" = "k")
-  # color = c("Anderson" = col[1], "Picard" = col[3] , "Wyder" = col[4], "Roth" = col[5], "Anderson_Picard_Combined" = col[6], "Anderson_Wyder_Combined" = col[2])
-  
   table[is.na(table)] = 0
   
   if(see_table == TRUE) {
@@ -178,7 +168,6 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table, fi
       graph = ggplot(table) +
         geom_line(aes(x = !!sym(parameter), y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
         geom_line(aes(x = !!sym(parameter), y = !!tn, color = method, linetype = "true-neg"), show.legend = TRUE) +
-        # scale_color_manual(name = "method", values = color) +
         scale_color_brewer(palette = "Paired") +
         scale_linetype_manual(name = "rate", values = linetype) +
         ylab("rate") + xlab(parameter) +
@@ -190,7 +179,6 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table, fi
       graph = ggplot(table) +
         geom_line(aes(x = !!sym(parameter), y = !!tp, color = method, linetype = "true-pos"), show.legend = TRUE) +
         geom_line(aes(x = !!sym(parameter), y = !!fp, color = method, linetype = "false-pos"), show.legend = TRUE) +  
-        # scale_color_manual(name = "method", values = color) +
         scale_color_brewer(palette = "Paired") +
         scale_linetype_manual(name = "rates", values = linetype) +
         ylab("rate") + xlab(parameter) +
@@ -200,82 +188,81 @@ graph_maker <- function(parameter, parent, graph_header, true_neg, see_table, fi
     }
   }
   graph
-  # table
 }
 
 true_neg = FALSE
 see_table = TRUE
-indir = "~/Documents/SJ_Lab/Imprinting/Winter2022/benchmark_files/feb20"
+indir = "benchmark_files"
 
 # ------------------------ MATERNAL BIAS -----------------------------------
 setwd(paste0(indir,"/patbias"))
-file_name = "patbias"
+file_label = "patbias"
 parameter = "%maternal bias"
 parent = "father"
 graph_header = "%maternal bias"
-graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 setwd(paste0(indir,"/matbias"))
-file_name = "matbias"
+file_label = "matbias"
 parameter = "%maternal bias"
 parent = "mother"
 graph_header = "%maternal bias"
-graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_name, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
 # ------------------------- SIMILARITY SCORES -----------------------------
 setwd(paste0(indir,"/sim_score"))
-file_name = "sim_score"
+file_label = "sim_score"
 parameter = "%similarity"
 parent = "mother"
 graph_header = "%similarity between strains"
-graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 setwd(paste0(indir,"/sim_score"))
-file_name = "sim_score"
+file_label = "sim_score"
 parameter = "%similarity"
 parent = "father"
 graph_header = "%similarity between strains"
-graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_name, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
-# -------------------------- ALPHA ------------------------------------
+# -------------------------- P-VALUE ------------------------------------
 setwd(paste0(indir,"/alpha"))
-file_name = "alpha"
+file_label = "alpha"
 parameter = "p-value cutoffs"
 parent = "mother"
 graph_header = "p-value cutoffs"
-graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 setwd(paste0(indir,"/alpha"))
-file_name = "alpha"
+file_label = "alpha"
 parameter = "p-value cutoffs"
 parent = "father"
 graph_header = "p-value cutoffs"
-graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_name, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
+ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
 
 # ---------------------------- DISPERSION ------------------------------------------
+
 setwd(paste0(indir,"/disp"))
-file_name = "disp"
+file_label = "disp"
 parameter = "dispersion"
 parent = "mother"
 graph_header = "dispersion"
-graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph1 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 setwd(paste0(indir,"/disp"))
-file_name = "disp"
+file_label = "disp"
 parameter = "dispersion"
 parent = "father"
 graph_header = "dispersion"
-graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_name)
+graph2 = graph_maker(parameter, parent, graph_header, true_neg, see_table, file_label)
 
 wrap_plots(graph1, graph2, ncol = 2)
-ggsave(paste0(indir, "/",file_name, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
-
+ggsave(paste0(indir, "/",file_label, "_graph.png"), width = 13, height = 6, dpi = 150, units = "in", device='png')
