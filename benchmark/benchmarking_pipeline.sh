@@ -282,22 +282,21 @@ if [ "$fsim" == "true" ]; then
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/$param/roth_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/$param/roth_wyder_combined_${param}.txt
 	
-	benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
-
-	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
-	
 	old_outdir=$outdir
 	
 	for i in "${array[@]}"; do
 		
 		outdir=${old_outdir}_${i}
 		
+		benchmark_imprinting/config/read_config_simul.py benchmark_imprinting/config/simulation_config.txt benchmark_files/benchmark_simul_${param}.txt
 		benchmark_imprinting/benchmark/config_changer.sh -n $n -M $nmeg -P $npeg -m $meg_bias -p $peg_bias -d $disp -s $i -o $outdir -D $seqDepth -c benchmark_files/benchmark_simul_${param}.txt
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
 		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
-
+		
+		benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
+		benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
+	
 		run_imprint $param $i
 	done
 fi
@@ -323,9 +322,6 @@ if [ "$fdisp" == "true" ]; then
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/$param/anderson_wyder_combined_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/$param/roth_${param}.txt
 	printf "${param}\tmat\tpat\ttp_mat\ttp_pat\n" >> benchmark_files/$param/roth_wyder_combined_${param}.txt
-
-	benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
-	benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
 	
 	for i in "${array[@]}"; do
 		
@@ -334,7 +330,10 @@ if [ "$fdisp" == "true" ]; then
 
 		benchmark_imprinting/simulate_genome.sh benchmark_files/benchmark_simul_${param}.txt overwrite #> benchmark_files/log/genome_log.txt
 		benchmark_imprinting/simulate_reads.sh benchmark_files/benchmark_simul_${param}.txt #> benchmark_files/log/reads_log.txt
-	
+		
+		benchmark_imprinting/config/read_config_imprint.py benchmark_imprinting/config/imprinting_config.txt benchmark_files/benchmark_imprint_${param}.txt
+		benchmark_imprinting/benchmark/config_changer.sh -b $mat_bias -B $pat_bias -a $alpha -o $outdir -l $logfc -C benchmark_files/benchmark_imprint_${param}.txt
+
 		# call imprinting
 		run_imprint $param $i
 	done
