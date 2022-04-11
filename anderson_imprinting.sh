@@ -9,6 +9,7 @@ logfc=${logfc_anderson}
 if [ ${#stranded} == 0 ]; then
 	stranded=false
 fi
+index=true
 
 # ---------------------- step 7: rename annot and ref ------------------
 
@@ -54,9 +55,9 @@ count() {
 	cross=$3
 	map=$4
 	htseq_i=$5
-	stranded=$6
+	htseq_stranded=$6
 	
-	python3 -m HTSeq.scripts.count -s $stranded -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
+	python3 -m HTSeq.scripts.count -s $htseq_stranded -m union -a 0 -i ${htseq_i} -o ${map}/${strainA}_${strainB}_${cross}_count.sam ${map}/${strainA}_${strainB}_${cross}_map.sam ${map}/concat_${strainA}_${strainB}.gff3  --nonunique all > ${map}/counts_${strainA}_${strainB}_${cross}.txt	
 }
 
 # # qsub -V -N counts -cwd -j y -o qsub_logs/counts.txt -m bae -b y -l h_rt=01:00:00,h_data=8G "$cmd"
@@ -89,7 +90,7 @@ printf "using reference genome files: ${refA}, ${refB}\n"
 printf "using annotation files: ${annotA}, ${annotB}\n"
 printf "outdirectory: ${outdir}\n"
 printf "using FASTQ directory: ${fastq_dir}\n\n"
-printf "Using HTSeq -i option as: ${htseq_i}"
+printf "Using HTSeq -i option as: ${htseq_i}\n"
 
 workdir=$( pwd )
 outdir=${workdir}/${outdir}
@@ -99,13 +100,13 @@ mkdir ${outdir}/map
 map="${outdir}/map" # where intermediate files will be stored
 
 if [ "$stranded" == "false" ]; then
-	stranded="no"
+	htseq_stranded="no"
 else
-	stranded="yes"
+	htseq_stranded="yes"
 fi
 
 if [ ${#stranded} == 0 ]; then
-	stranded="no"
+	htseq_stranded="no"
 fi
 
 # preparing for concatenating:
@@ -124,11 +125,14 @@ fi
 
 # concatenates annot, ref + builds index for hisat2 (note: indexing takes long, possibly should qsub)
 # NOTE: these annotations / refs need to be RENAMED with strainA and strainB names.
-cat $refA $refB > $map/concat_${strainA}_${strainB}.fa
-# { cat $refA; sed '1d' $refB; } > $map/concat_${strainA}_${strainB}.fa
+if [ "$index" == "true" ]; then
+	echo indexing using hisat2...
+	cat $refA $refB > $map/concat_${strainA}_${strainB}.fa
+	# { cat $refA; sed '1d' $refB; } > $map/concat_${strainA}_${strainB}.fa
 
-hisat2-build $map/concat_${strainA}_${strainB}.fa $map/concat_${strainA}_${strainB} # build index
-cat $annotA $annotB > $map/concat_${strainA}_${strainB}.gff3
+	hisat2-build $map/concat_${strainA}_${strainB}.fa $map/concat_${strainA}_${strainB} # build index
+	cat $annotA $annotB > $map/concat_${strainA}_${strainB}.gff3
+fi
 
 # concatenates FASTQ files from reciprocal directions, maps them
 # produces file strainA_strainB_cross.sam (for igv + HTseqcount)
@@ -144,14 +148,19 @@ if [ ${#fastq_dir} == 0 ]; then
 	done < $config
 	printf "Mapping...\n"
 	for i in $(seq 0 1 $(($rep - 1))); do
+		echo replicate $((i + 1))
 		if [ "$paired_end" == "true" ]; then
+			echo Reads are paired-end
 			if [ "$stranded" == "true" ]; then
+				echo Library is stranded
 				start=$(($i * 4))
+				echo 
 				cross=AxB_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
 				cross=BxA_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} --rna-strandedness FR # --phred33
 			else
+				echo Library is unstranded
 				start=$(($i * 4))
 				cross=AxB_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
@@ -159,13 +168,16 @@ if [ ${#fastq_dir} == 0 ]; then
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
 			fi
 		else
+			echo Reads are single-end
 			if [ "$stranded" == "true" ]; then
+				echo Library is stranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} --rna-strandedness FR # --phred33
 				cross=BxA_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
 			else
+				echo Library is unstranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
 				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} # --phred33
@@ -188,8 +200,8 @@ printf "Counting...\n"
 # produces counts file strainA_strainB_cross.txt
 for i in $(seq 1 1 $rep)
 do
-	count $strainA $strainB AxB_${i} $map $htseq_i $stranded
-	count $strainA $strainB BxA_${i} $map $htseq_i $stranded
+	count $strainA $strainB AxB_${i} $map $htseq_i $htseq_stranded
+	count $strainA $strainB BxA_${i} $map $htseq_i $htseq_stranded
 done
 
 # gene key format MUST BE A | B, tab-delimited, syntelogs side-by-side, if user-provided
