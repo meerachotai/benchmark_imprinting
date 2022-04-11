@@ -158,7 +158,7 @@ Run the following scripts:
 
 Output from `get_counts_anderson.R` is in a similar format to the output from the Picard pipeline, so that the second half of the other pipelines (Picard, Wyder) can be used to call imprinting. The file names are as below:
 * `anderson_cross_rep.txt`files have columns with gene-names, A counts, B counts.
-* `anderson_cross_A_rep.txt` and `outprefix_cross_B_rep.txt` have the A and B counts separately as well.
+* `anderson_cross_A_rep.txt` and `anderson_cross_B_rep.txt` have the A and B counts separately as well.
 
 ## Method B: Picard and Gehring 
 
