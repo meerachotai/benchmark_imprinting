@@ -10,8 +10,8 @@ parser = ArgumentParser()
 parser$add_argument("-c", type = "character", default = "", help = "concatenated counts filename (only one contrast at a time) / prefix if you need to concatenate first")
 
 parser$add_argument("-p", type = "double", default = 0.05, help = "p-value/alpha cutoff for DESeq2")
-parser$add_argument("-u", type="double", default = 0.8, help = "RER upper limit, default = 0.8")
-parser$add_argument("-l", type = "double", default = 0.5, help = "RER lower limit, default = 0.5")
+parser$add_argument("-u", type="double", default = 80, help = "RER upper limit, default = 0.8")
+parser$add_argument("-l", type = "double", default = 50, help = "RER lower limit, default = 0.5")
 parser$add_argument("-f", type="double", default = 1, help = "log2fc cutoff, BxA / AxB")
 parser$add_argument("-r", type="double", default = "", help = "number of replicates")
 
