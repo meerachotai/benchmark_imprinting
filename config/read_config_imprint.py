@@ -21,7 +21,7 @@ with open(input_file, 'r') as f:
 			next_in = split_line[-1].strip()
 			if(next_in.isspace()):
 				next_in = ""
-			if(next_in.lower() == "true" or next_in.lower() == "false"):
+			if(next_in.lower() == "true" or next_in.lower() == "false" or next_in.lower() == "reverse"):
 				next_in = next_in.lower()
 			inputs.append(next_in)
 
@@ -93,10 +93,11 @@ file.write("rep="+inputs[33]+"\n")
 file.write("rename="+inputs[34]+"\n")
 file.write("a_annot="+inputs[35]+"\n")
 file.write("b_annot="+inputs[36]+"\n")
+file.write("index="+inputs[37]+"\n")
 
-file.write("counts_dir_roth="+inputs[37]+"\n")
-file.write("pval_roth="+inputs[38]+"\n")
-file.write("mat_cutoff_roth="+inputs[39]+"\n")
-file.write("pat_cutoff_roth="+inputs[40]+"\n")
+file.write("counts_dir_roth="+inputs[38]+"\n")
+file.write("pval_roth="+inputs[39]+"\n")
+file.write("mat_cutoff_roth="+inputs[40]+"\n")
+file.write("pat_cutoff_roth="+inputs[41]+"\n")
 
 file.close()
