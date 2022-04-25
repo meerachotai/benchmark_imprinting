@@ -9,7 +9,26 @@ logfc=${logfc_anderson}
 if [ ${#stranded} == 0 ]; then
 	stranded=false
 fi
-index=true
+
+if [ "$stranded" == "false" ]; then
+	htseq_stranded="no"
+elif [ "$stranded" == "reverse" ]; then
+	htseq_stranded="reverse"
+else
+	htseq_stranded="yes"
+fi
+
+if [ ${#index} == 0 ]; then
+	index=true
+fi
+
+	
+workdir=$( pwd )
+outdir=${workdir}/${outdir}
+
+mkdir -p $outdir
+mkdir ${outdir}/map
+map="${outdir}/map" # where intermediate files will be stored
 
 # ---------------------- step 7: rename annot and ref ------------------
 
@@ -92,23 +111,6 @@ printf "outdirectory: ${outdir}\n"
 printf "using FASTQ directory: ${fastq_dir}\n\n"
 printf "Using HTSeq -i option as: ${htseq_i}\n"
 
-workdir=$( pwd )
-outdir=${workdir}/${outdir}
-
-mkdir -p $outdir
-mkdir ${outdir}/map
-map="${outdir}/map" # where intermediate files will be stored
-
-if [ "$stranded" == "false" ]; then
-	htseq_stranded="no"
-else
-	htseq_stranded="yes"
-fi
-
-if [ ${#stranded} == 0 ]; then
-	htseq_stranded="no"
-fi
-
 # preparing for concatenating:
 # renames the ids to give strain names, adds A or B as needed for HTseq count
 
@@ -132,6 +134,16 @@ if [ "$index" == "true" ]; then
 
 	hisat2-build $map/concat_${strainA}_${strainB}.fa $map/concat_${strainA}_${strainB} # build index
 	cat $annotA $annotB > $map/concat_${strainA}_${strainB}.gff3
+	
+	hisat2_index="${map}/concat_${strainA}_${strainB}"
+	
+elif [ "$index" == "false" ]; then
+	echo using default index prefix
+	hisat2_index="${map}/concat_${strainA}_${strainB}"
+	echo using index: $hisat2_index
+else
+	hisat2_index=$index
+	echo using index: $hisat2_index 	
 fi
 
 # concatenates FASTQ files from reciprocal directions, maps them
@@ -152,37 +164,50 @@ if [ ${#fastq_dir} == 0 ]; then
 		if [ "$paired_end" == "true" ]; then
 			echo Reads are paired-end
 			if [ "$stranded" == "true" ]; then
-				echo Library is stranded
+				echo Library is forward-stranded
 				start=$(($i * 4))
-				echo 
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} --rna-strandness FR # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} --rna-strandedness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} --rna-strandness FR # --phred33
+			elif [ "$stranded" == "reverse" ]; then
+				echo Library is reverse-stranded
+				start=$(($i * 4))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} --rna-strandness RF # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} --rna-strandness RF # --phred33
 			else
 				echo Library is unstranded
 				start=$(($i * 4))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} # --phred33
 			fi
 		else
 			echo Reads are single-end
 			if [ "$stranded" == "true" ]; then
-				echo Library is stranded
+				echo Library is forward-stranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} --rna-strandedness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness FR # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} --rna-strandedness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness FR # --phred33
+			elif [ "$stranded" == "reverse" ]; then
+				echo Library is reverse-stranded
+				start=$(($i * 2))
+				cross=AxB_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF # --phred33
+				cross=BxA_$(( $i + 1 ))
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF # --phred33
 			else
 				echo Library is unstranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[${start}]} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${map}/concat_${strainA}_${strainB} ${fastq[$((${start} + 1))]} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} # --phred33
 			fi
 		fi
 	done
