@@ -21,6 +21,7 @@ STRAIN_B_NAME = strainB
 
 FASTQ_DIR = $outdir/reads_simul/strainA_strainB_
 PAIRED_END = FALSE
+# indicate TRUE / FALSE / REVERSE 
 STRANDED = FALSE
 
 # (use benchmark_imprinting/config/single-end_config.txt or benchmark_imprinting/config/paired-end_config.txt for reference)
@@ -82,6 +83,11 @@ RENAME_HEADERS_CONCAT = TRUE
 
 UNIQUE_ANNOT_ATTRIBUTE_ID_A = strainA
 UNIQUE_ANNOT_ATTRIBUTE_ID_B = strainB
+
+# if empty / TRUE, will create hisat2 index
+# else if FALSE, will use default index prefix (as if index already exists from a previous run)
+# else needs a path to find hisat2 index
+INDEX = TRUE
 
 #########################################################################
 ## ROTH IMPRINTING SETTINGS
