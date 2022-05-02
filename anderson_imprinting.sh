@@ -10,6 +10,7 @@ if [ ${#stranded} == 0 ]; then
 	stranded=false
 fi
 
+
 if [ "$stranded" == "false" ]; then
 	htseq_stranded="no"
 elif [ "$stranded" == "reverse" ]; then
@@ -18,6 +19,7 @@ else
 	htseq_stranded="yes"
 fi
 
+index=$index_anderson
 if [ ${#index} == 0 ]; then
 	index=true
 fi
