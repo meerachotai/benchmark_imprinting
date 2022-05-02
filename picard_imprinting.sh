@@ -8,6 +8,10 @@ pval=${pval_picard}
 if [ ${#stranded} == 0 ]; then
 	stranded=false
 fi
+index=$index_picard
+if [ ${#index} == 0 ]; then
+	index=true
+fi
 
 displaytime () {
   local T=$1
@@ -80,14 +84,30 @@ printf "using MEGs-cutoff: ${mat_cutoff}, PEGs-cutoff: ${pat_cutoff} for imprint
 # 
 # annot="$map/${strainA}_annot_fin.gff3"
 
-printf "Making metagenome...\n"
-${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB} --GTF $annot
-mkdir $map/${strainA}_${strainB}_meta_STAR
-STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49 --genomeSAindexNbases 9 # could change these values
+if [ "$index" == "true" ]; then
+	printf "Making metagenome...\n"
+	${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB} --GTF $annot
+	mkdir $map/${strainA}_${strainB}_meta_STAR
+	STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49 --genomeSAindexNbases 9 # could change these values
+	genome=$map/${strainA}_${strainB}_meta_STAR
+	metachrom=$map/${strainA}_${strainB}_metachrom.txt
+	echo genome: $genome
+	echo metachrom: $metachrom
+elif [ "$index" == "false" ]; then
+	echo using default index locations
+	genome=$map/${strainA}_${strainB}_meta_STAR
+	metachrom=$map/${strainA}_${strainB}_metachrom.txt
+	echo genome: $genome
+	echo metachrom: $metachrom
+else
+	echo using given genome/metachrom paths
+	genome=$(echo $index | cut -f 1 -d ";")
+	metachrom=$(echo $index | cut -f 2 -d ";")
+	echo genome: $genome
+	echo metachrom: $metachrom
+fi
 
 count=1
-
-
 
 printf "Calling imprinting...\n"
 if [ "$paired" = "true" ]; then
@@ -113,29 +133,29 @@ if [ "$paired" = "true" ]; then
 				if [ "$stranded" == "true" ]; then
 					start=$(($i * 4))
 					cross=AxB_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
 					start=$(($i * 4))
 					cross=AxB_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]}  -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			else
 				if [ "$stranded" == "true" ]; then
 					start=$(($i * 2))
 					cross=AxB_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
 					start=$(($i * 2))
 					cross=AxB_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
-					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			fi
 		done
@@ -144,26 +164,26 @@ if [ "$paired" = "true" ]; then
 			if [ "$paired_end" == "true" ]; then
 				if [ "$stranded" == "true" ]; then
 					cross="AxB_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross="BxA_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
 					cross="AxB_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross="BxA_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			else
 				if [ "$stranded" == "true" ]; then
 					cross="AxB_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross="BxA_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
 					cross="AxB_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross="BxA_${i}"
-					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
+					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			fi	
 		done	
