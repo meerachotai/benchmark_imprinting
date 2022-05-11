@@ -193,23 +193,23 @@ if [ ${#fastq_dir} == 0 ]; then
 				echo Library is forward-stranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[${start}]} --rna-strandness FR # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness FR # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start} + 1))]} --rna-strandness FR # --phred33
 			elif [ "$stranded" == "reverse" ]; then
 				echo Library is reverse-stranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF -1 ${fastq[${start}]} # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} --rna-strandness RF -1 ${fastq[$((${start} + 1))]} # --phred33
 			else
 				echo Library is unstranded
 				start=$(($i * 2))
 				cross=AxB_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start}))]} # --phred33
 				cross=BxA_$(( $i + 1 ))
-				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} # --phred33
+				hisat2 -k 20 -S ${map}/${strainA}_${strainB}_${cross}_map.sam -x ${hisat2_index} -1 ${fastq[$((${start} + 1))]} # --phred33
 			fi
 		fi
 	done
