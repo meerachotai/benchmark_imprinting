@@ -16,7 +16,7 @@ majority = args.m
 output_file = args.o
 
 if(total != 0):
-	majority = math.floor(total/2)
+	majority = math.ceil(total/2)
 	print("Using majority voting of >= ", majority, " for consensus calls")
 	
 imprinted = {}
