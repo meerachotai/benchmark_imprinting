@@ -8,6 +8,7 @@ pval=${pval_picard}
 if [ ${#stranded} == 0 ]; then
 	stranded=false
 fi
+
 index=$index_picard
 if [ ${#index} == 0 ]; then
 	index=true
@@ -130,13 +131,16 @@ if [ "$paired" = "true" ]; then
 		
 		for i in $(seq 0 1 $(($rep - 1))); do
 			if [ "$paired_end" == "true" ]; then
-				if [ "$stranded" == "true" ]; then
+				echo Reads are paired-end
+				if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+					echo Reads are stranded
 					start=$(($i * 4))
 					cross=AxB_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
+					echo Reads are unstranded
 					start=$(($i * 4))
 					cross=AxB_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -2 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
@@ -144,13 +148,16 @@ if [ "$paired" = "true" ]; then
 					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 2))]} -2 ${fastq[$((${start} + 3))]}  -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			else
-				if [ "$stranded" == "true" ]; then
+				echo Reads are single-end
+				if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+					echo Reads are stranded
 					start=$(($i * 2))
 					cross=AxB_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross=BxA_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[$((${start} + 1))]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
+					echo Reads are unstranded
 					start=$(($i * 2))
 					cross=AxB_$(( $i + 1 ))
 					${picard}/rna_seq_map.sh -1 ${fastq[${start}]} -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
@@ -162,24 +169,30 @@ if [ "$paired" = "true" ]; then
 	else
 		for i in $(seq 1 1 $rep); do
 			if [ "$paired_end" == "true" ]; then
-				if [ "$stranded" == "true" ]; then
+				echo Reads are paired-end
+				if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+					echo Reads are stranded
 					cross="AxB_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross="BxA_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
+					echo Reads are unstranded
 					cross="AxB_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross="BxA_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}_1.fq -2 ${fastq_dir}${cross}_2.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 				fi
 			else
-				if [ "$stranded" == "true" ]; then
+			echo Reads are single-end
+				if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+					echo Reads are stranded
 					cross="AxB_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 					cross="BxA_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 				else
+					echo Reads and unstranded
 					cross="AxB_${i}"
 					${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $genome -C $metachrom -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 					cross="BxA_${i}"
@@ -194,16 +207,40 @@ if [ "$paired" = "true" ]; then
 	rm ${outprefix}_all_PEGs.txt
 	for i in $(seq 1 1 $rep)
 	do
-		AxB="AxB_${i}"
-		BxA="BxA_${i}"
-		AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
-		BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+		if [ "$stranded" == "true" ]; then
+			AxB="AxB_${i}"
+			BxA="BxA_${i}"
+			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 		
-		${picard}/call_imprinting.sh -o $map/rep_${i}_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} >> $map/call_imprint_log.txt
+			${picard}/call_imprinting.sh -o $map/rep_${i}_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} -w -W >> $map/call_imprint_log.txt
 		
-		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
-		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
-		((count++))
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+			((count++))
+		elif [ "$stranded" == "reverse" ]; then
+			AxB="AxB_${i}"
+			BxA="BxA_${i}"
+			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+		
+			${picard}/call_imprinting.sh -o $map/rep_${i}_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} -v -V >> $map/call_imprint_log.txt
+		
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+			((count++))
+		else
+			AxB="AxB_${i}"
+			BxA="BxA_${i}"
+			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+		
+			${picard}/call_imprinting.sh -o $map/rep_${i}_${i}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${i} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} >> $map/call_imprint_log.txt
+		
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+			cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+			((count++))
+		fi
 	done
 	
 	count=$rep
@@ -225,9 +262,11 @@ else
 	for i in $(seq 1 1 $AxB_rep)
 	do
 		cross="AxB_${i}"
-		if [ "$stranded" == "true" ]; then		
+		if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+			echo Reads are stranded	
 			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 		else
+			echo Reads are unstranded
 			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 		fi
 	done
@@ -235,9 +274,11 @@ else
 	for i in $(seq 1 1 $BxA_rep)
 	do
 		cross="BxA_${i}"
-		if [ "$stranded" == "true" ]; then
+		if [ "$stranded" == "true" ] || ["$stranded" == "reverse" ]; then
+			echo Reads are stranded
 			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r -S # >> $map/mapping_log.txt
 		else
+			echo Reads are undstranded
 			${picard}/rna_seq_map.sh -1 ${fastq_dir}${cross}.fq -g $map/${strainA}_${strainB}_meta_STAR -C $map/${strainA}_${strainB}_metachrom.txt -o $map/${cross} -A $strainA -B $strainB -n ${cross} -a GATCGGAAGAGCGGTTCAG -3 -r # >> $map/mapping_log.txt
 		fi
 	done
@@ -247,18 +288,45 @@ else
 	rm ${outprefix}_all_PEGs.txt
 	for i in $(seq 1 1 $AxB_rep); do
 		for j in $(seq 1 1 $BxA_rep); do
-			printf "Running combination ${count}: AxB - ${i} and BxA - ${j}\n"
-			AxB="AxB_${i}"
-			BxA="BxA_${j}"
-			AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
-			BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+			if [ "$stranded" == "true" ]; then
+				printf "Running combination ${count}: AxB - ${i} and BxA - ${j}\n"
+				AxB="AxB_${i}"
+				BxA="BxA_${j}"
+				AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+				BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
 			
-			${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} # >> $map/call_imprint_log.txt
+				${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} -w -W # >> $map/call_imprint_log.txt
 			
-			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
-			cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
 			
-			((count++))
+				((count++))
+			elif [ "$stranded" == "reverse" ]; then
+				printf "Running combination ${count}: AxB - ${i} and BxA - ${j}\n"
+				AxB="AxB_${i}"
+				BxA="BxA_${j}"
+				AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+				BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+			
+				${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} -v -V # >> $map/call_imprint_log.txt
+			
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+			
+				((count++))
+			else
+				printf "Running combination ${count}: AxB - ${i} and BxA - ${j}\n"
+				AxB="AxB_${i}"
+				BxA="BxA_${j}"
+				AxB_bam="${map}/${AxB}/STAR/${AxB}_unique_alignments.bam" 
+				BxA_bam="${map}/${BxA}/STAR/${BxA}_unique_alignments.bam"
+			
+				${picard}/call_imprinting.sh -o $map/rep_${i}_${j}_imprinting -1 $AxB_bam -2  $BxA_bam -S $snps -G $annot -A $strainA -B $strainB -n rep_${i}_${j} -R 2 -I 2 -C 10 -M $mat_cutoff -P $pat_cutoff -c 10 -r -p ${pval} # >> $map/call_imprint_log.txt
+			
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
+				cat $map/rep_${i}_${j}_imprinting/imprinting/rep_${i}_${j}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+			
+				((count++))
 		done
 	done
 fi
