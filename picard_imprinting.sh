@@ -88,7 +88,7 @@ if [ "$index" == "true" ]; then
 	printf "Making metagenome...\n"
 	${picard}/make_metagenome.py $snps $genome $map/${strainA}_${strainB} --GTF $annot
 	mkdir $map/${strainA}_${strainB}_meta_STAR
-	STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49 --genomeSAindexNbases 9 # could change these values
+	STAR --runMode genomeGenerate --outFileNamePrefix "$map/${strainA}_${strainB}_meta_STAR/log" --genomeDir "$map/${strainA}_${strainB}_meta_STAR" --genomeFastaFiles $map/${strainA}_${strainB}.fa --sjdbGTFfile $map/${strainA}_${strainB}_metagtf.gtf --sjdbOverhang 49 # could change these values
 	genome=$map/${strainA}_${strainB}_meta_STAR
 	metachrom=$map/${strainA}_${strainB}_metachrom.txt
 	echo genome: $genome
@@ -203,6 +203,7 @@ if [ "$paired" = "true" ]; then
 		
 		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_MEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_MEGs.txt
 		cat $map/rep_${i}_${i}_imprinting/imprinting/rep_${i}_${i}_imprinting_filtered_PEGs.txt | awk -v var="$count" '{print $0 "\t"var }' >> ${outprefix}_all_PEGs.txt
+		((count++))
 	done
 	
 	count=$rep
